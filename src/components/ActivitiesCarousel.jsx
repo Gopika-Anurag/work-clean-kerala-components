@@ -144,7 +144,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
             {items.map((item, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 flex flex-row items-center shadow-md relative"
+                className="flex-shrink-0 flex flex-row items-center relative"
                 style={{
                   width: `${slideDims.width}px`,
                   height: `${slideDims.height}px`,

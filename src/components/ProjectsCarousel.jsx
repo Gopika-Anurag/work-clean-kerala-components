@@ -186,12 +186,7 @@ const walk = (x - startX) * dragSpeed;
                     e.preventDefault(); // Prevent default page scroll
                     scroll("right");
                 }
-                // Important: Also prevent up/down arrows if you want to completely stop page scroll
-                // when hovered over the carousel, as they might still cause a jump.
-                // You might need to experiment with this based on your page layout.
-                // if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                //     e.preventDefault();
-                // }
+               
             }
         };
 
@@ -200,7 +195,6 @@ const walk = (x - startX) * dragSpeed;
             document.addEventListener("keydown", handleKey);
         }
 
-        // Cleanup function: remove the listener when unhovered or component unmounts
         return () => {
             document.removeEventListener("keydown", handleKey);
         };
@@ -212,7 +206,6 @@ const walk = (x - startX) * dragSpeed;
             className="w-full relative bg-[#f0fdf4] py-6 overflow-visible"
             onMouseEnter={() => setIsHovered(true)} // Mouse enters this carousel
             onMouseLeave={() => setIsHovered(false)} // Mouse leaves this carousel
-            // Removed tabIndex, onFocus, onBlur from here
         >
             <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
                 <h2
@@ -258,7 +251,7 @@ const walk = (x - startX) * dragSpeed;
                         {projects.map((project, index) => (
                             <div
                                 key={index}
-                                className="relative flex-shrink-0 overflow-hidden shadow-md select-none"
+                                className="relative flex-shrink-0 overflow-hidden select-none"
                                 style={{
                                     width: `${slideWidth}px`,
                                     height: `${slideHeight}px`,

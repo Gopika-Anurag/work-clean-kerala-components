@@ -215,8 +215,8 @@ const ProjectsCarousel = ({ projects, settings }) => {
         >
             <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
                 <h2
-                    className="font-bold text-gray-800 mb-6 text-center
-                                 text-xl sm:text-2xl md:text-3xl lg:text-4xl"
+                    className="font-bold text-gray-800 mb-8 text-center
+                                 text-xl sm:text-3xl md:text-4xl lg:text-5xl"
                 >
                     OUR PROJECTS
                 </h2>
@@ -291,11 +291,11 @@ const ProjectsCarousel = ({ projects, settings }) => {
                                     }}
                                 >
                                     <h3
-                                        className="text-white font-bold text-center w-full
-                                                     text-base sm:text-lg md:text-xl lg:text-2xl"
+                                        className="text-white font-semibold text-center w-full
+                                                     text-base sm:text-xl md:text-2xl lg:text-3xl"
                                         style={{
                                             wordBreak: 'break-word',
-                                            lineHeight: 1.3,
+                                            lineHeight: 1.8,
                                             textAlign: 'center',
                                         }}
                                     >

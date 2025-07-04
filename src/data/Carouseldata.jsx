@@ -5,7 +5,7 @@ export const activitiesAtGlanceSettings = {
     slideWidth: 500, // Updated to 500px as requested for base calculation
     slideHeight: 250, // Updated to 250px as requested for base calculation
     minimumSlidesToShow: 3.2,
-    scrollSpeed: 0.3,
+    scrollSpeed: 5,
     dragSpeed: 0.85
 }
 
@@ -87,7 +87,7 @@ export const activitiesAtGlance = [
         valueColor: "#005A3C",
         labelColor: "#666B8A",
         circleBgColor: "#fff",
-        showKnowMoreButton: false,
+        showKnowMoreButton: true,
     },
     {
         // 7. Total Engagements (Using placeholder image)
@@ -100,7 +100,7 @@ export const activitiesAtGlance = [
         labelColor: "#374151",
         circleColor: "transparent",
         circleBgColor: "transparent",
-        showKnowMoreButton: false,
+        showKnowMoreButton: true,
     },
 ]
 

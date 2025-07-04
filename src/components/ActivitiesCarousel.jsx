@@ -156,11 +156,17 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
               >
                 <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
                   <img
-                    src={item.image}
-                    alt="icon"
-                    className="object-contain w-full h-[90%]"
-                    style={{ borderRadius: `${BASE.RADIUS * 1.5 * scale}px`, pointerEvents: "none" }}
-                  />
+  src={item.image}
+  alt="icon"
+  className="object-cover w-full h-[90%]"
+  style={{
+    borderRadius: `${BASE.RADIUS * scale}px`,  // consistent with outer card
+    objectFit: "cover",                         // fills cleanly like your sample
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none"
+  }}
+/>
                 </div>
 
                 <div className="w-1/2 flex flex-col justify-center items-start relative">

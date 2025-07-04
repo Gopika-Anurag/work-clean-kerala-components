@@ -105,17 +105,13 @@ export const activitiesAtGlance = [
 ]
 
 export const ourProjectsCarouselSettings = {
-    // These base settings are used by ProjectsCarousel.js for scaling calculations
-    // Ensure these match the BASE_SLIDE_WIDTH and BASE_SLIDE_HEIGHT constants
-    // in ProjectsCarousel.js if you want a direct 1:1 match for fontScale calculation.
-    // If not, ProjectsCarousel.js will use its internal constants.
-    slideWidth: 400, // Matches BASE_SLIDE_WIDTH in ProjectsCarousel.js
-    slideHeight: 600, // Matches BASE_SLIDE_HEIGHT in ProjectsCarousel.js
-    // Other settings specific to this carousel
-    minimumSlidesToShow: 1.1, // Adjusted based on how many slides you want visible, can be fine-tuned
-    scrollSpeed: 0.3, // You can make this 'wheelScrollSpeed' if you like
-    dragSpeed: 0.9,
-    wheelScrollSpeed: 0.8, // Added for ProjectsCarousel.js consumption
+    
+    slideWidth: 400, 
+    slideHeight: 600, 
+    minimumSlidesToShow: 1.1, 
+    scrollSpeed: 0.2, 
+    dragSpeed: 1.5,
+    wheelScrollSpeed: 0.8, 
 }
 
 export const ourProjects = [

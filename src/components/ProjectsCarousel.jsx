@@ -137,7 +137,8 @@ const ProjectsCarousel = ({ projects, settings }) => {
             if (!isDragging) return;
             e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 1.5;
+            const dragSpeed = settings.dragSpeed ?? 1.5; // fallback if not passed
+const walk = (x - startX) * dragSpeed;
             slider.scrollLeft = scrollLeft - walk;
         };
 

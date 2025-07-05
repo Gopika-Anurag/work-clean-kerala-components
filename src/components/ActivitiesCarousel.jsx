@@ -1,199 +1,300 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 
 const ActivitiesCarousel = ({ items, settings = {} }) => {
+  // Refs
   const containerRef = useRef(null);
-  const trackRef = useRef(null);
+  const scrollRef = useRef(null);
 
+  // State
   const [progress, setProgress] = useState(0);
-  const [slideDims, setSlideDims] = useState({ width: 0, height: 0, gap: 0 });
-  const [scale, setScale] = useState(1);
-  const [drag, setDrag] = useState({ active: false, startX: 0, scrollLeft: 0 });
-  const [focus, setFocus] = useState(false);
+  const [slideWidth, setSlideWidth] = useState(0);
+  const [slideHeight, setSlideHeight] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [carouselPadding, setCarouselPadding] = useState(0);
+  const [currentSlideGap, setCurrentSlideGap] = useState(0);
+  const [carouselBottomGap, setCarouselBottomGap] = useState(0);
+  const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
+  const [slideScaleFactor, setSlideScaleFactor] = useState(1);
 
-  const BASE = {
-    SLIDE_W: settings.baseSlideWidth ?? 500,
-    SLIDE_H: settings.baseSlideHeight ?? 250,
-    GAP: 50,
-    RADIUS: 20,
-    PADDING: 25,
-    FONT: 16,
-    BTN_W: 120,
-    BTN_H: 40,
-    BTN_RADIUS: 10,
-  };
+  // Base design constants
+  const BASE_SLIDE_WIDTH = settings.slideWidth ?? 500;
+  const BASE_SLIDE_HEIGHT = settings.slideHeight ?? 250;
+  const BASE_SLIDE_GAP = 50;
+  const BASE_CORNER_RADIUS = 20;
+  const BASE_TEXT_PADDING = 25;
+  const BASE_CAROUSEL_BOTTOM_GAP = 50;
+  const BASE_PROGRESS_BAR_HEIGHT = 6;
 
-  const computeSlidesToShow = () => {
-    const w = window.innerWidth;
-    if (w >= 1280) return 2.8;
-    if (w >= 1024) return 2.5;
-    if (w >= 768) return 1.8;
-    return 1.5;
-  };
+  // Scroll function
+  const scroll = useCallback((dir) => {
+    if (!scrollRef.current) return;
+    const scrollAmount = (slideWidth + currentSlideGap) * (settings.scrollSpeed ?? 1);
+    scrollRef.current.scrollBy({
+      left: dir === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  }, [slideWidth, currentSlideGap, settings.scrollSpeed]);
 
-  const updateDimensions = () => {
-    const containerW = containerRef.current?.offsetWidth || 0;
-    const slidesToShow = computeSlidesToShow();
-    const gapRatio = BASE.GAP / BASE.SLIDE_W;
-    let slideW = containerW / (slidesToShow + (slidesToShow - 1) * gapRatio);
-    slideW = Math.max(slideW, 200);
-    const gap = slideW * gapRatio;
-    const ratio = slideW / BASE.SLIDE_W;
-    setSlideDims({ width: slideW, height: (slideW * BASE.SLIDE_H) / BASE.SLIDE_W, gap });
-    setScale(ratio);
-  };
-
+  // Update layout dimensions
   useEffect(() => {
-    updateDimensions();
-    const resizeHandler = () => requestAnimationFrame(updateDimensions);
-    window.addEventListener("resize", resizeHandler);
-    return () => window.removeEventListener("resize", resizeHandler);
-  }, []);
+    const updateDimensions = () => {
+      if (!containerRef.current) return;
 
-  useEffect(() => {
-    const el = trackRef.current;
-    const onScroll = () => {
-      const max = el.scrollWidth - el.clientWidth;
-      setProgress(max > 0 ? (el.scrollLeft / max) * 100 : 0);
+      const containerWidth = containerRef.current.offsetWidth;
+      const windowWidth = window.innerWidth;
+      const slidesToDisplay = settings.minimumSlidesToShow ?? (windowWidth >= 1280 ? 2.8 : windowWidth >= 1024 ? 2.5 : windowWidth >= 768 ? 1.8 : 1.5);
+
+      const assumedGapRatio = BASE_SLIDE_GAP / BASE_SLIDE_WIDTH;
+      let calcSlideWidth = containerWidth / (slidesToDisplay + (slidesToDisplay - 1) * assumedGapRatio);
+      let calcSlideGap = calcSlideWidth * assumedGapRatio;
+
+      const MIN_WIDTH = 200;
+      if (calcSlideWidth < MIN_WIDTH) {
+        calcSlideWidth = MIN_WIDTH;
+        calcSlideGap = MIN_WIDTH * assumedGapRatio;
+      }
+
+      const slideRatio = calcSlideWidth / BASE_SLIDE_WIDTH;
+      setSlideWidth(calcSlideWidth);
+      setSlideHeight(calcSlideWidth * (BASE_SLIDE_HEIGHT / BASE_SLIDE_WIDTH));
+      setCurrentSlideGap(calcSlideGap);
+      setCarouselPadding(calcSlideGap);
+      setCarouselBottomGap(BASE_CAROUSEL_BOTTOM_GAP * slideRatio);
+      setCurrentProgressBarHeight(BASE_PROGRESS_BAR_HEIGHT * slideRatio);
+      setSlideScaleFactor(slideRatio);
     };
-    el?.addEventListener("scroll", onScroll);
-    return () => el?.removeEventListener("scroll", onScroll);
-  }, []);
 
-  const scrollBy = useCallback((dx) => {
-    trackRef.current?.scrollBy({ left: dx, behavior: "smooth" });
-  }, []);
+    updateDimensions();
+    const debounce = (fn, delay) => {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+      };
+    };
+    const handleResize = debounce(updateDimensions, 100);
 
-  const keyNav = useCallback(
-    (e) => {
-      if (!focus) return;
-      if (e.key === "ArrowLeft") scrollBy(-slideDims.width);
-      if (e.key === "ArrowRight") scrollBy(slideDims.width);
-    },
-    [focus, slideDims.width]
-  );
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [settings.minimumSlidesToShow]);
 
+  // Scroll progress tracking
   useEffect(() => {
-    document.addEventListener("keydown", keyNav);
-    return () => document.removeEventListener("keydown", keyNav);
-  }, [keyNav]);
+    const handleScroll = () => {
+      const slider = scrollRef.current;
+      if (!slider) return;
+      const maxScroll = slider.scrollWidth - slider.clientWidth;
+      setProgress(maxScroll > 0 ? (slider.scrollLeft / maxScroll) * 100 : 0);
+    };
 
-  const wheelHandler = useCallback(
-    (e) => {
-      if (!focus) return;
+    const slider = scrollRef.current;
+    slider?.addEventListener("scroll", handleScroll);
+    return () => slider?.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Mouse drag scroll
+  useEffect(() => {
+    const slider = scrollRef.current;
+    if (!slider) return;
+
+    const handleMouseDown = (e) => {
+      setIsDragging(true);
+      setStartX(e.pageX - slider.offsetLeft);
+      setScrollLeft(slider.scrollLeft);
+      slider.classList.add("select-none");
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      slider.classList.remove("select-none");
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
       e.preventDefault();
-      const speed = settings.scrollSpeed ?? 0.3;
-      scrollBy(e.deltaY * speed);
-    },
-    [focus, scrollBy, settings.scrollSpeed]
-  );
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * (settings.dragSpeed ?? 2);
+      slider.scrollLeft = scrollLeft - walk;
+    };
 
+    slider.addEventListener("mousedown", handleMouseDown);
+    slider.addEventListener("mouseleave", handleMouseUp);
+    slider.addEventListener("mouseup", handleMouseUp);
+    slider.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      slider.removeEventListener("mousedown", handleMouseDown);
+      slider.removeEventListener("mouseleave", handleMouseUp);
+      slider.removeEventListener("mouseup", handleMouseUp);
+      slider.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [isDragging, startX, scrollLeft, settings.dragSpeed]);
+
+  // Touch drag scroll
   useEffect(() => {
-    const el = trackRef.current;
-    el?.addEventListener("wheel", wheelHandler, { passive: false });
-    return () => el?.removeEventListener("wheel", wheelHandler);
-  }, [wheelHandler]);
+    const slider = scrollRef.current;
+    if (!slider) return;
 
-  const dragStart = (e) => {
-    if (e.target.tagName.toLowerCase() === "img") return;
-    setDrag({ active: true, startX: e.pageX - trackRef.current.offsetLeft, scrollLeft: trackRef.current.scrollLeft });
-  };
+    const handleTouchStart = (e) => {
+      if (e.touches.length > 1) return;
+      setIsDragging(true);
+      setStartX(e.touches[0].pageX - slider.offsetLeft);
+      setScrollLeft(slider.scrollLeft);
+    };
 
-  const dragMove = (e) => {
-    if (!drag.active) return;
-    const walk = (e.pageX - trackRef.current.offsetLeft - drag.startX) * (settings.dragSpeed ?? 1);
-    trackRef.current.scrollLeft = drag.scrollLeft - walk;
-  };
+    const handleTouchMove = (e) => {
+      if (!isDragging || e.touches.length > 1) return;
+      e.preventDefault();
+      const currentX = e.touches[0].pageX - slider.offsetLeft;
+      const dx = currentX - startX;
+      slider.scrollLeft = scrollLeft - dx * (settings.dragSpeed ?? 2);
+    };
 
-  const dragEnd = () => setDrag((d) => ({ ...d, active: false }));
+    const handleTouchEnd = () => setIsDragging(false);
 
+    slider.addEventListener("touchstart", handleTouchStart);
+    slider.addEventListener("touchmove", handleTouchMove, { passive: false });
+    slider.addEventListener("touchend", handleTouchEnd);
+    slider.addEventListener("touchcancel", handleTouchEnd);
+
+    return () => {
+      slider.removeEventListener("touchstart", handleTouchStart);
+      slider.removeEventListener("touchmove", handleTouchMove);
+      slider.removeEventListener("touchend", handleTouchEnd);
+      slider.removeEventListener("touchcancel", handleTouchEnd);
+    };
+  }, [isDragging, startX, scrollLeft, settings.dragSpeed]);
+
+  // Wheel scroll
+  useEffect(() => {
+    const slider = scrollRef.current;
+    if (!slider) return;
+
+    const handleWheel = (e) => {
+      if (!isHovered) return;
+
+      const delta = e.deltaY || e.deltaX;
+      const isTouchpad = Math.abs(delta) < 50;
+
+      if (isTouchpad) {
+        const touchpadSpeed = settings.touchpadScrollSpeed ?? 1.2;
+        const wheelMultiplier = settings.wheelScrollMultiplier ?? 1;
+        slider.scrollBy({
+          left: delta * touchpadSpeed * wheelMultiplier,
+          behavior: "auto",
+        });
+      } else {
+        e.preventDefault();
+        const direction = delta > 0 ? 1 : -1;
+        const scrollAmount = (slideWidth + currentSlideGap) * direction * (settings.scrollSpeed ?? 1);
+        slider.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    slider.addEventListener("wheel", handleWheel, { passive: false });
+    return () => slider.removeEventListener("wheel", handleWheel);
+  }, [isHovered, settings, slideWidth, currentSlideGap]);
+
+  // Keyboard scroll
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (!isHovered) return;
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        scroll("left");
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        scroll("right");
+      }
+    };
+
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [isHovered, scroll]);
+
+  // Render
   return (
     <section
       ref={containerRef}
-      onMouseEnter={() => setFocus(true)}
-      onMouseLeave={() => setFocus(false)}
       className="w-full relative bg-[#f0fdf4] py-6"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="px-4 sm:px-6 lg:px-12">
         <h2 className="text-center font-bold text-gray-800 text-3xl md:text-5xl mb-5">
           Activities at a Glance
         </h2>
 
-        <div
-          className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black"
-          onClick={() => scrollBy(-slideDims.width)}
-        >
+        {/* Navigation buttons */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black" onClick={() => scroll("left")}>
           &lt;
         </div>
-        <div
-          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black"
-          onClick={() => scrollBy(slideDims.width)}
-        >
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black" onClick={() => scroll("right")}>
           &gt;
         </div>
 
+        {/* Carousel */}
         <div
-          ref={trackRef}
-          className="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
-          style={{ padding: `0 ${slideDims.gap}px` }}
-          onMouseDown={dragStart}
-          onMouseMove={dragMove}
-          onMouseUp={dragEnd}
-          onMouseLeave={dragEnd}
+          ref={scrollRef}
+          className="cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar scroll-smooth"
+          style={{ scrollSnapType: "x mandatory", padding: `0 ${carouselPadding}px` }}
         >
-          <div className="flex w-max select-none" style={{ gap: `${slideDims.gap}px` }}>
+          <div className="flex w-max select-none" style={{ gap: `${currentSlideGap}px` }}>
             {items.map((item, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 flex flex-row items-center relative"
+                className="flex-shrink-0 flex flex-row items-center"
                 style={{
-                  width: `${slideDims.width}px`,
-                  height: `${slideDims.height}px`,
-                  borderRadius: `${BASE.RADIUS * scale}px`,
-                  padding: `${BASE.PADDING * scale}px`,
-                  gap: `${slideDims.gap / 2}px`,
-                  background: item.bgColor || "#E6F4EA",
+                  width: `${slideWidth}px`,
+                  height: `${slideHeight}px`,
+                  padding: `${BASE_TEXT_PADDING * slideScaleFactor}px`,
+                  borderRadius: `${BASE_CORNER_RADIUS * slideScaleFactor}px`,
+                  background: item.bgColor ?? "#E6F4EA",
+                  gap: `${currentSlideGap / 2}px`,
                 }}
               >
+                {/* Left Image */}
                 <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
                   <img
-  src={item.image}
-  alt="icon"
-  className="object-cover w-full h-[90%]"
-  style={{
-    borderRadius: `${BASE.RADIUS * scale}px`,  // consistent with outer card
-    objectFit: "cover",                         // fills cleanly like your sample
-    width: "100%",
-    height: "100%",
-    pointerEvents: "none"
-  }}
-/>
+                    src={item.image}
+                    alt=""
+                    className="object-cover w-full h-[90%] pointer-events-none"
+                    style={{ borderRadius: `${BASE_CORNER_RADIUS * slideScaleFactor}px` }}
+                  />
                 </div>
 
+                {/* Right Content */}
                 <div className="w-1/2 flex flex-col justify-center items-start relative">
                   {item.topRightText && (
-                    <div
-                      className="absolute"
+                    <span
                       style={{
-                        top: `${8 * scale}px`,
-                        right: `${BASE.PADDING * scale}px`,
+                        position: "absolute",
+                        top: `${8 * slideScaleFactor}px`,
+                        right: `${BASE_TEXT_PADDING * slideScaleFactor}px`,
+                        fontSize: `${16 * slideScaleFactor}px`,
                         fontWeight: "bold",
-                        fontSize: `${16 * scale}px`,
-                        color: item.topRightTextColor || "#374151",
+                        color: item.topRightTextColor ?? "#374151",
                       }}
                     >
                       {item.topRightText}
-                    </div>
+                    </span>
                   )}
-                  <p style={{ font: `bold ${30 * scale}px/1 sans-serif`, color: item.valueColor }}>{item.value}</p>
-                  <p style={{ font: `${15 * scale}px/1.2 sans-serif`, color: item.labelColor }}>{item.label}</p>
+                  <p style={{ font: `bold ${30 * slideScaleFactor}px/1 sans-serif`, color: item.valueColor }}>{item.value}</p>
+                  <p style={{ font: `${15 * slideScaleFactor}px/1.2 sans-serif`, color: item.labelColor }}>{item.label}</p>
                   {item.showKnowMoreButton && (
                     <button
                       className="mt-3 bg-green-600 text-white hover:bg-green-700 transition font-semibold"
                       style={{
-                        width: `${BASE.BTN_W * scale}px`,
-                        height: `${BASE.BTN_H * scale}px`,
-                        borderRadius: `${BASE.BTN_RADIUS * scale}px`,
-                        fontSize: `${BASE.FONT * scale}px`,
+                        width: `${120 * slideScaleFactor}px`,
+                        height: `${40 * slideScaleFactor}px`,
+                        borderRadius: `${10 * slideScaleFactor}px`,
+                        fontSize: `${16 * slideScaleFactor}px`,
                       }}
                     >
                       Know More
@@ -205,8 +306,9 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
           </div>
         </div>
 
-        <div className="bg-gray-200 rounded mt-6" style={{ height: "6px" }}>
-          <div className="bg-green-700 rounded" style={{ width: `${progress}%`, height: "100%" }}></div>
+        {/* Progress Bar */}
+        <div className="bg-gray-200 rounded mt-6" style={{ height: `${currentProgressBarHeight}px` }}>
+          <div className="bg-green-700 rounded" style={{ width: `${progress}%`, height: "100%" }} />
         </div>
       </div>
     </section>

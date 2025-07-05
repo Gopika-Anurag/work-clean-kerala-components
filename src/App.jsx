@@ -34,13 +34,15 @@ function App() {
 
         <br />
         <br />
-        <br />
-        <br />
+        
 
         <section className="my-12">
           {/* Assuming StepByStepCarousel expects 'steps', 'carouselSettings', and 'title' props */}
           <StepByStepCarousel steps={steps} carouselSettings={stepByStepCarouselSettings} title="Our Process" />
         </section>
+
+        <br />
+        <br />
 
         <section className="my-12">
           {/* Another instance of StepByStepCarousel */}

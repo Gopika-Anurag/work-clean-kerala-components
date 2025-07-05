@@ -2,12 +2,15 @@
 // NOTE: Make sure these image URLs are publicly accessible on your server or hosting service.
 
 export const activitiesAtGlanceSettings = {
-    slideWidth: 500, // Updated to 500px as requested for base calculation
-    slideHeight: 250, // Updated to 250px as requested for base calculation
-    minimumSlidesToShow: 3.2,
-    scrollSpeed: 5,
-    dragSpeed: 0.85
-}
+  slideWidth: 500,
+  slideHeight: 250,
+  minimumSlidesToShow: 3.2,
+  scrollSpeed: 1,
+  dragSpeed: 2,
+  touchpadScrollSpeed: 0.25,     // Keep this high for smooth 2-finger scroll
+  wheelScrollMultiplier: 1,  // Controls scroll sensitivity
+  mouseScrollSpeed: 0.3        // 🔧 REDUCE this to slow mouse wheel scrolling
+};
 
 export const activitiesAtGlance = [
     {
@@ -111,7 +114,7 @@ export const ourProjectsCarouselSettings = {
     minimumSlidesToShow: 1.1, 
     scrollSpeed: 0.2, 
     dragSpeed: 1.5,
-    wheelScrollSpeed: 0.8, 
+    wheelScrollSpeed: 0.1, 
 }
 
 export const ourProjects = [
@@ -150,6 +153,7 @@ export const ourProjects = [
         titleColor: "#FFFFFF",
         textPosition: "bottom", // IMPORTANT: Add this property. "top" or "bottom"
     },
+    
 ]
 export const steps = [
     {
@@ -273,7 +277,7 @@ export const stepByStepCarouselSettings = {
     slideWidth: 640,
     slideHeight: 290,
     minimumSlidesToShow: 1.3,
-    scrollSpeed: 200,
-    keyScrollSpeed: 900,
-    dragSpeed: 0.75,
+    dragSpeed: 2.5,
+    touchpadScrollSpeed: .5,  // 💨 Increase this for faster two-finger scroll
+    wheelScrollSpeed: 4 
 };

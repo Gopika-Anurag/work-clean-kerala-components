@@ -153,6 +153,41 @@ export const ourProjects = [
         titleColor: "#FFFFFF",
         textPosition: "bottom", // IMPORTANT: Add this property. "top" or "bottom"
     },
+    {
+        title: "Segregated Plastic Collection",
+        image: "https://project251.hrstride.academy/wp-content/uploads/2025/06/ChatGPT-Image-Jun-27-2025-01_00_44-AM.png", // Direct URL
+        bgColor: "#F0FFF0",
+        titleColor: "#FFFFFF",
+        textPosition: "bottom", // IMPORTANT: Add this property. "top" or "bottom"
+    },
+    {
+        title: "E-Waste Management",
+        image: "https://project251.hrstride.academy/wp-content/uploads/2025/06/ChatGPT-Image-Jun-27-2025-01_10_06-AM.png", // Direct URL
+        bgColor: "#FFF3E0",
+        titleColor: "#FFFFFF",
+        textPosition: "top", // IMPORTANT: Add this property. "top" or "bottom"
+    },
+    {
+        title: "Glass Waste Collection",
+        image: "https://project251.hrstride.academy/wp-content/uploads/2025/06/ChatGPT-Image-Jun-27-2025-01_10_06-AM.png", // Direct URL
+        bgColor: "#F0F8FF",
+        titleColor: "#FFFFFF",
+        textPosition: "bottom", // IMPORTANT: Add this property. "top" or "bottom"
+    },
+    {
+        title: "Organic Waste Composting",
+        image: "https://project251.hrstride.academy/wp-content/uploads/2025/06/ChatGPT-Image-Jun-27-2025-01_00_44-AM.png", // Direct URL
+        bgColor: "#FFF8E1",
+        titleColor: "#FFFFFF",
+        textPosition: "top", // IMPORTANT: Add this property. "top" or "bottom"
+    },
+    {
+        title: "Awareness & Education Drives",
+        image: "https://project251.hrstride.academy/wp-content/uploads/2025/06/ChatGPT-Image-Jun-27-2025-01_12_54-AM.png", // Direct URL
+        bgColor: "#F3E5F5",
+        titleColor: "#FFFFFF",
+        textPosition: "bottom", // IMPORTANT: Add this property. "top" or "bottom"
+    },
     
 ]
 export const steps = [

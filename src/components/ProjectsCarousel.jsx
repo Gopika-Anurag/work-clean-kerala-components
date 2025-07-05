@@ -40,68 +40,62 @@ const ProjectsCarousel = ({ projects, settings }) => {
     }, [slideWidth, currentSlideGap]);
 
     useEffect(() => {
-        const updateDimensions = () => {
-            if (containerRef.current) {
-                const containerWidth = containerRef.current.offsetWidth;
-                const windowWidth = window.innerWidth;
+  const updateDimensions = () => {
+  if (!containerRef.current) return;
 
-                let slidesToDisplay;
-                let calculatedSlideWidth;
-                let calculatedSlideGap;
-                let calculatedCarouselPadding;
+  const windowWidth = window.innerWidth;
+  const containerWidth = containerRef.current.offsetWidth;
 
-                if (windowWidth >= 1024) {
-                    slidesToDisplay = 3.8;
-                } else {
-                    slidesToDisplay = 2.4;
-                }
+  const slidesToDisplay = settings.minimumSlidesToShow ?? (
+    windowWidth >= 1280 ? 3.8 :
+    windowWidth >= 1024 ? 3.2 :
+    windowWidth >= 768  ? 2.4 :
+                          2.4  // ✅ force 2.4 even on small screen
+  );
 
-                const assumedGapRatio = BASE_SLIDE_GAP / BASE_SLIDE_WIDTH;
-                calculatedSlideWidth = (containerWidth) / (slidesToDisplay + (slidesToDisplay - 1) * assumedGapRatio);
-                calculatedSlideGap = calculatedSlideWidth * assumedGapRatio;
+  const gapRatio = BASE_SLIDE_GAP / BASE_SLIDE_WIDTH;
+  const totalGapCount = slidesToDisplay - 1;
+  const slideAndGapFactor = slidesToDisplay + totalGapCount * gapRatio;
 
-                const MIN_ALLOWED_SLIDE_WIDTH = 250;
-                if (calculatedSlideWidth < MIN_ALLOWED_SLIDE_WIDTH) {
-                    calculatedSlideWidth = MIN_ALLOWED_SLIDE_WIDTH;
-                    calculatedSlideGap = MIN_ALLOWED_SLIDE_WIDTH * assumedGapRatio;
-                }
+  let calculatedSlideWidth = containerWidth / slideAndGapFactor;
+  let calculatedGap = calculatedSlideWidth * gapRatio;
 
-                calculatedCarouselPadding = calculatedSlideGap;
+  // Ensure min slide width doesn't shrink too much
+  if (calculatedSlideWidth < 150) {
+    calculatedSlideWidth = 150;
+    calculatedGap = calculatedSlideWidth * gapRatio;
+  }
 
-                const slideWidthRatio = calculatedSlideWidth / BASE_SLIDE_WIDTH;
+  const slideWidthRatio = calculatedSlideWidth / BASE_SLIDE_WIDTH;
 
-                const calculatedCarouselBottomGap = BASE_CAROUSEL_BOTTOM_GAP * slideWidthRatio;
-                const calculatedProgressBarHeight = BASE_PROGRESS_BAR_HEIGHT * slideWidthRatio;
+  setSlideWidth(calculatedSlideWidth);
+  setSlideHeight(calculatedSlideWidth * (BASE_SLIDE_HEIGHT / BASE_SLIDE_WIDTH));
+  setCurrentSlideGap(calculatedGap);
+  setCarouselPadding(calculatedGap);
+  setCarouselBottomGap(BASE_CAROUSEL_BOTTOM_GAP * slideWidthRatio);
+  setCurrentProgressBarHeight(BASE_PROGRESS_BAR_HEIGHT * slideWidthRatio);
+};
 
-                setSlideWidth(calculatedSlideWidth);
-                setSlideHeight(calculatedSlideWidth * (BASE_SLIDE_HEIGHT / BASE_SLIDE_WIDTH));
-                setCurrentSlideGap(calculatedSlideGap);
-                setCarouselPadding(calculatedCarouselPadding);
-                setCarouselBottomGap(calculatedCarouselBottomGap);
-                setCurrentProgressBarHeight(calculatedProgressBarHeight);
-            }
-        };
 
-        const debounce = (func, delay) => {
-            let timeout;
-            return function executed(...args) {
-                const context = this;
-                const later = () => {
-                    timeout = null;
-                    func.apply(context, args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, delay);
-            };
-        };
+  const debounce = (func, delay) => {
+    let timeout;
+    return function executed(...args) {
+      const later = () => {
+        timeout = null;
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, delay);
+    };
+  };
 
-        const debouncedUpdateDimensions = debounce(updateDimensions, 100);
+  const debouncedUpdateDimensions = debounce(updateDimensions, 100);
+  updateDimensions();
+  window.addEventListener("resize", debouncedUpdateDimensions);
 
-        updateDimensions();
-        window.addEventListener("resize", debouncedUpdateDimensions);
+  return () => window.removeEventListener("resize", debouncedUpdateDimensions);
+}, []);
 
-        return () => window.removeEventListener("resize", debouncedUpdateDimensions);
-    }, [BASE_SLIDE_WIDTH, BASE_SLIDE_HEIGHT, BASE_SLIDE_GAP, BASE_CAROUSEL_BOTTOM_GAP, BASE_PROGRESS_BAR_HEIGHT]);
 
     useEffect(() => {
         const ref = scrollRef.current;
@@ -203,7 +197,7 @@ const walk = (x - startX) * dragSpeed;
     return (
         <section
             ref={containerRef}
-            className="w-full relative bg-[#f0fdf4] py-6 overflow-visible"
+            className="w-full max-w-[100vw] relative bg-[#f0fdf4] py-6 overflow-visible"
             onMouseEnter={() => setIsHovered(true)} // Mouse enters this carousel
             onMouseLeave={() => setIsHovered(false)} // Mouse leaves this carousel
         >

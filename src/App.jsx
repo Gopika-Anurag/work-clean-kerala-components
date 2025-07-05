@@ -24,16 +24,14 @@ function App() {
           <ActivitiesCarousel items={activitiesAtGlance} settings={activitiesAtGlanceSettings} />
         </section>
 
-        <br />
-        <br />
+   
 
         <section className="my-12">
           {/* Assuming ProjectsCarousel expects 'projects' and 'settings' props */}
           <ProjectsCarousel projects={ourProjects} settings={ourProjectsCarouselSettings} />
         </section>
 
-        <br />
-        <br />
+     
         
 
         <section className="my-12">
@@ -41,8 +39,7 @@ function App() {
           <StepByStepCarousel steps={steps} carouselSettings={stepByStepCarouselSettings} title="Our Process" />
         </section>
 
-        <br />
-        <br />
+    
 
         <section className="my-12">
           {/* Another instance of StepByStepCarousel */}

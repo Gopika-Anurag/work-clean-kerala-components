@@ -4,7 +4,7 @@
 export const activitiesAtGlanceSettings = {
   slideWidth: 500,
   slideHeight: 250,
-  minimumSlidesToShow: 2.8,
+  minimumSlidesToShow: 2.6,
   scrollSpeed: 1,
   dragSpeed: 2,
   touchpadScrollSpeed: 0.25,     // Keep this high for smooth 2-finger scroll

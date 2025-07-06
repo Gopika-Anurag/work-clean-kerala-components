@@ -1,11 +1,9 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 
 const ActivitiesCarousel = ({ items, settings = {} }) => {
-  // Refs
   const containerRef = useRef(null);
   const scrollRef = useRef(null);
 
-  // State
   const [progress, setProgress] = useState(0);
   const [slideWidth, setSlideWidth] = useState(0);
   const [slideHeight, setSlideHeight] = useState(0);
@@ -19,7 +17,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [slideScaleFactor, setSlideScaleFactor] = useState(1);
 
-  // Base design constants
   const BASE_SLIDE_WIDTH = settings.slideWidth ?? 500;
   const BASE_SLIDE_HEIGHT = settings.slideHeight ?? 250;
   const BASE_SLIDE_GAP = 50;
@@ -28,17 +25,18 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const BASE_CAROUSEL_BOTTOM_GAP = 50;
   const BASE_PROGRESS_BAR_HEIGHT = 6;
 
-  // Scroll function
-  const scroll = useCallback((dir) => {
-    if (!scrollRef.current) return;
-    const scrollAmount = (slideWidth + currentSlideGap) * (settings.scrollSpeed ?? 1);
-    scrollRef.current.scrollBy({
-      left: dir === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  }, [slideWidth, currentSlideGap, settings.scrollSpeed]);
+  const scroll = useCallback(
+    (dir) => {
+      if (!scrollRef.current) return;
+      const scrollAmount = (slideWidth + currentSlideGap) * (settings.scrollSpeed ?? 1);
+      scrollRef.current.scrollBy({
+        left: dir === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    },
+    [slideWidth, currentSlideGap, settings.scrollSpeed]
+  );
 
-  // Update layout dimensions
   useEffect(() => {
     const updateDimensions = () => {
       if (!containerRef.current) return;
@@ -47,7 +45,12 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
       const windowWidth = window.innerWidth;
       const slidesToDisplay = settings.minimumSlidesToShow ?? (windowWidth >= 1280 ? 2.8 : windowWidth >= 1024 ? 2.5 : windowWidth >= 768 ? 1.8 : 1.5);
 
-      const assumedGapRatio = BASE_SLIDE_GAP / BASE_SLIDE_WIDTH;
+      let dynamicBaseGap = BASE_SLIDE_GAP;
+      if (windowWidth < 640) dynamicBaseGap = 24;
+      else if (windowWidth < 768) dynamicBaseGap = 32;
+      else if (windowWidth < 1024) dynamicBaseGap = 40;
+
+      const assumedGapRatio = dynamicBaseGap / BASE_SLIDE_WIDTH;
       let calcSlideWidth = containerWidth / (slidesToDisplay + (slidesToDisplay - 1) * assumedGapRatio);
       let calcSlideGap = calcSlideWidth * assumedGapRatio;
 
@@ -81,7 +84,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, [settings.minimumSlidesToShow]);
 
-  // Scroll progress tracking
   useEffect(() => {
     const handleScroll = () => {
       const slider = scrollRef.current;
@@ -95,7 +97,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     return () => slider?.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Mouse drag scroll
   useEffect(() => {
     const slider = scrollRef.current;
     if (!slider) return;
@@ -133,42 +134,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     };
   }, [isDragging, startX, scrollLeft, settings.dragSpeed]);
 
-  // Touch drag scroll
-  useEffect(() => {
-    const slider = scrollRef.current;
-    if (!slider) return;
-
-    const handleTouchStart = (e) => {
-      if (e.touches.length > 1) return;
-      setIsDragging(true);
-      setStartX(e.touches[0].pageX - slider.offsetLeft);
-      setScrollLeft(slider.scrollLeft);
-    };
-
-    const handleTouchMove = (e) => {
-      if (!isDragging || e.touches.length > 1) return;
-      e.preventDefault();
-      const currentX = e.touches[0].pageX - slider.offsetLeft;
-      const dx = currentX - startX;
-      slider.scrollLeft = scrollLeft - dx * (settings.dragSpeed ?? 2);
-    };
-
-    const handleTouchEnd = () => setIsDragging(false);
-
-    slider.addEventListener("touchstart", handleTouchStart);
-    slider.addEventListener("touchmove", handleTouchMove, { passive: false });
-    slider.addEventListener("touchend", handleTouchEnd);
-    slider.addEventListener("touchcancel", handleTouchEnd);
-
-    return () => {
-      slider.removeEventListener("touchstart", handleTouchStart);
-      slider.removeEventListener("touchmove", handleTouchMove);
-      slider.removeEventListener("touchend", handleTouchEnd);
-      slider.removeEventListener("touchcancel", handleTouchEnd);
-    };
-  }, [isDragging, startX, scrollLeft, settings.dragSpeed]);
-
-  // Wheel scroll
   useEffect(() => {
     const slider = scrollRef.current;
     if (!slider) return;
@@ -201,7 +166,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     return () => slider.removeEventListener("wheel", handleWheel);
   }, [isHovered, settings, slideWidth, currentSlideGap]);
 
-  // Keyboard scroll
   useEffect(() => {
     const handleKey = (e) => {
       if (!isHovered) return;
@@ -218,7 +182,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     return () => document.removeEventListener("keydown", handleKey);
   }, [isHovered, scroll]);
 
-  // Render
   return (
     <section
       ref={containerRef}
@@ -231,7 +194,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
           Activities at a Glance
         </h2>
 
-        {/* Navigation buttons */}
         <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black" onClick={() => scroll("left")}>
           &lt;
         </div>
@@ -239,7 +201,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
           &gt;
         </div>
 
-        {/* Carousel */}
         <div
           ref={scrollRef}
           className="cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar scroll-smooth"
@@ -259,7 +220,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                   gap: `${currentSlideGap / 2}px`,
                 }}
               >
-                {/* Left Image */}
                 <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
                   <img
                     src={item.image}
@@ -269,7 +229,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                   />
                 </div>
 
-                {/* Right Content */}
                 <div className="w-1/2 flex flex-col justify-center items-start relative">
                   {item.topRightText && (
                     <span
@@ -306,7 +265,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
           </div>
         </div>
 
-        {/* Progress Bar */}
         <div className="bg-gray-200 rounded mt-6" style={{ height: `${currentProgressBarHeight}px` }}>
           <div className="bg-green-700 rounded" style={{ width: `${progress}%`, height: "100%" }} />
         </div>

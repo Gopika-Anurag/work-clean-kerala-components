@@ -264,11 +264,11 @@ const ProjectsCarousel = ({ projects, settings = {} }) => {
                     paddingTop:
                       project.textPosition === "top"
                         ? `${BASE_TEXT_PADDING * 0.3 * slideWidthRatio}px`
-                        : "0",
+                        : `${dynamicTextMargin}px`,
                     paddingBottom:
                       project.textPosition === "bottom"
                         ? `${BASE_TEXT_PADDING * 0.3 * slideWidthRatio}px`
-                        : "0",
+                        : `${dynamicTextMargin}px`,
                     paddingLeft: `${BASE_TEXT_PADDING * 0.5 * slideWidthRatio}px`,
                     paddingRight: `${BASE_TEXT_PADDING * 0.5 * slideWidthRatio}px`,
                     transition: "padding 0.3s ease-out",
@@ -278,9 +278,9 @@ const ProjectsCarousel = ({ projects, settings = {} }) => {
                     className="text-white font-semibold text-center"
                     style={{
                       maxWidth: `${300 * slideWidthRatio}px`,
-                      margin: `${dynamicTextMargin}px auto 0`,
+                      margin: `0 auto`,
                       fontSize: `${24 * slideWidthRatio * BASE_FONT_SCALE}px`,
-                      lineHeight: 1,
+                      lineHeight: 1.2,
                       wordBreak: "break-word",
                     }}
                   >

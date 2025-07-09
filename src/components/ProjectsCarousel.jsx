@@ -278,7 +278,7 @@ const ProjectsCarousel = ({ projects, settings = {} }) => {
                     className="text-white font-semibold text-center"
                     style={{
                       maxWidth: `${300 * slideWidthRatio}px`,
-                      margin: `0 auto`,
+                      margin: `${dynamicTextMargin}px auto`,
                       fontSize: `${24 * slideWidthRatio * BASE_FONT_SCALE}px`,
                       lineHeight: 1.2,
                       wordBreak: "break-word",

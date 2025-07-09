@@ -12,6 +12,7 @@ import {
   steps,
   stepByStepCarouselSettings,
 } from "./data/Carouseldata"; // Ensure this path is correct based on your project structure
+import AboutUsCarousel from "./components/AboutUsCarousel";
 
 function App() {
   return (
@@ -48,6 +49,11 @@ function App() {
 
         {/* Add more sections or components as needed */}
       </div>
+
+      <div className="min-h-screen bg-gray-100">
+      <AboutUsCarousel />
+    </div>
+
     </div>
   );
 }

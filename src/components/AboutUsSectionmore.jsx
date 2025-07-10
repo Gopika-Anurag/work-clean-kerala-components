@@ -1,41 +1,54 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
+const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
   const { image } = carouselData;
-  const { title, description } = aboutUsHomepage;
+  const { title, description } = aboutUsHomepagemore;
 
   const scrollRefDesktop = useRef(null);
   const scrollRefMobile = useRef(null);
 
-  // ✅ Reusable auto-scroll hook
-  useEffect(() => {
-    const scrollAuto = (ref) => {
-      const scrollContainer = ref.current;
-      if (!scrollContainer) return;
+  const [isHoveredDesktop, setIsHoveredDesktop] = useState(false);
+  const [isHoveredMobile, setIsHoveredMobile] = useState(false);
 
-      const scrollSpeed = 1; // pixels per step
-      const delay = 50; // ms per step
+  const intervalDesktop = useRef(null);
+  const intervalMobile = useRef(null);
 
-      const scrollInterval = setInterval(() => {
-        if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight) {
-          scrollContainer.scrollTop = 0;
+  const scrollSpeed = 1;
+  const delay = 50;
+
+  const setupAutoScroll = (ref, isPaused, intervalRef) => {
+    const container = ref.current;
+    if (!container) return;
+
+    const startScrolling = () => {
+      intervalRef.current = setInterval(() => {
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+          container.scrollTop = 0;
         } else {
-          scrollContainer.scrollTop += scrollSpeed;
+          container.scrollTop += scrollSpeed;
         }
       }, delay);
-
-      return () => clearInterval(scrollInterval);
     };
 
-    const clearDesktop = scrollAuto(scrollRefDesktop);
-    const clearMobile = scrollAuto(scrollRefMobile);
+    if (!isPaused) {
+      startScrolling();
+    }
 
-    return () => {
-      clearDesktop?.();
-      clearMobile?.();
-    };
-  }, []);
+    return () => clearInterval(intervalRef.current);
+  };
+
+  // 🖥️ Desktop scroll
+  useEffect(() => {
+    const cleanup = setupAutoScroll(scrollRefDesktop, isHoveredDesktop, intervalDesktop);
+    return cleanup;
+  }, [isHoveredDesktop]);
+
+  // 📱 Mobile scroll
+  useEffect(() => {
+    const cleanup = setupAutoScroll(scrollRefMobile, isHoveredMobile, intervalMobile);
+    return cleanup;
+  }, [isHoveredMobile]);
 
   return (
     <div className="w-full">
@@ -49,23 +62,23 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
           <h3 className="text-2xl font-bold text-green-800 uppercase mb-2">About Us</h3>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
 
-          {/* ✅ Scrollable description (Mobile) */}
+          {/* ✅ Scrollable mobile text */}
           <div
             ref={scrollRefMobile}
+            onTouchStart={() => setIsHoveredMobile(true)}
+            onTouchEnd={() => setIsHoveredMobile(false)}
             style={{
-              height: "120px",
+              height: "180px",
               overflow: "hidden",
               position: "relative",
               paddingRight: "10px",
             }}
             className="text-sm text-gray-700 mb-2"
           >
-            <div style={{ whiteSpace: "pre-wrap" }}>
-              {description}
-            </div>
+            <div style={{ whiteSpace: "pre-wrap" }}>{description}</div>
           </div>
 
-          {/* ✅ Centered Read more (Mobile) */}
+          {/* ✅ Read more */}
           <div className="text-center">
             <Link
               to="/about"
@@ -90,23 +103,23 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
               {title}
             </h2>
 
-            {/* ✅ Scrollable description (Desktop) */}
+            {/* ✅ Scrollable desktop text */}
             <div
               ref={scrollRefDesktop}
+              onMouseEnter={() => setIsHoveredDesktop(true)}
+              onMouseLeave={() => setIsHoveredDesktop(false)}
               style={{
-                height: "150px",
+                height: "250px",
                 overflow: "hidden",
                 position: "relative",
                 paddingRight: "10px",
               }}
               className="text-sm sm:text-base md:text-lg text-gray-700 mb-2"
             >
-              <div style={{ whiteSpace: "pre-wrap" }}>
-                {description}
-              </div>
+              <div style={{ whiteSpace: "pre-wrap" }}>{description}</div>
             </div>
 
-            {/* ✅ Centered Read more (Desktop) */}
+            {/* ✅ Read more */}
             <div className="text-center">
               <Link
                 to="/about"
@@ -133,4 +146,4 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
   );
 };
 
-export default AboutUsSection;
+export default AboutUsSectionmore;

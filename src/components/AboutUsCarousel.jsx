@@ -38,7 +38,9 @@ const AboutUsCarousel = () => {
   const lines = aboutUsData.description.trim().split("\n");
 
   return (
-    <div className="w-full bg-white py-10 px-4 sm:px-6 lg:px-12 flex justify-center">
+    <div className="w-full bg-white p-0 px-4 sm:px-6 lg:px-12 flex justify-center">
+
+
       <div className="w-full max-w-[1400px] font-serif leading-7 text-black">
         <h2
           className="font-semibold mb-6 text-center"
@@ -56,7 +58,7 @@ const AboutUsCarousel = () => {
             ref={scrollRef}
             className="h-full overflow-y-scroll no-scrollbar scroll-smooth pr-2"
           >
-            <div className="max-w-6xl mx-auto text-justify space-y-4 pb-40">
+            <div className="max-w-6xl mx-auto text-justify space-y-4 ">
               {[...lines, ...lines].map((line, index) => (
                 <p
                   key={index}

@@ -15,7 +15,9 @@ import {
   stepByStepCarouselSettings,
   carouselData,
   aboutUsHomepage,
+  aboutUsHomepagemore,
 } from "./data/Carouseldata"; // ✅ Make sure this file exports all of these
+import AboutUsSectionmore from "./components/AboutUsSectionmore";
 
 function App() {
   return (
@@ -26,10 +28,17 @@ function App() {
         carouselData={carouselData}
         aboutUsHomepage={aboutUsHomepage}
       />
+    <br />
+      <AboutUsSectionmore
+        carouselData={carouselData}
+        aboutUsHomepagemore={aboutUsHomepagemore}
+      />
 
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-fit bg-gray-100">
         <AboutUsCarousel />
       </div>
+
+      <br />
 
         <section className="my-12">
           <ActivitiesCarousel items={activitiesAtGlance} settings={activitiesAtGlanceSettings} />

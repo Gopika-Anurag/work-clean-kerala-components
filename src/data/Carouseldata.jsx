@@ -400,3 +400,14 @@ export const aboutUsHomepage = {
     "Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.",
 };
 
+
+
+export const aboutUsHomepagemore = {
+  title: "Committed to a Cleaner, Greener Korea",
+  description:
+    `Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly .
+     Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly .
+     Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly .
+     Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly .
+    `,
+};

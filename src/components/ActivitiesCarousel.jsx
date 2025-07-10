@@ -185,7 +185,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   return (
     <section
       ref={containerRef}
-      className="w-full relative bg-[#f0fdf4] py-6"
+      className="w-full relative bg-[#f0fdf4] pt-2 pb-6"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

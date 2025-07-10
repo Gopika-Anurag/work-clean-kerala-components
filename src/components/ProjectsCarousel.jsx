@@ -18,6 +18,7 @@ const ProjectsCarousel = ({ projects, settings = {} }) => {
   const [carouselBottomGap, setCarouselBottomGap] = useState(0);
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [dynamicTextMargin, setDynamicTextMargin] = useState(0);
+  const [wheelTimeout, setWheelTimeout] = useState(null);
 
   const BASE_SLIDE_WIDTH = 400;
   const BASE_SLIDE_HEIGHT = 600;

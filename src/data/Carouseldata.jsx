@@ -113,7 +113,7 @@ export const ourProjectsCarouselSettings = {
     slideHeight: 600, 
     minimumSlidesToShow: 3.8, 
     scrollSpeed: 0.2, 
-    dragSpeed: 1.5,
+    dragSpeed: 1,
     wheelScrollSpeed: 0.1, 
 }
 
@@ -385,3 +385,18 @@ Our story is one of collaboration — with citizens, schools, local governments,
 
 `,
 };
+
+
+
+
+
+export const carouselData = {
+  image: "https://static.vecteezy.com/system/resources/thumbnails/049/139/500/small_2x/serene-rainforest-scene-with-lush-green-foliage-and-gentle-rainfall-natural-background-for-relaxation-photo.jpg",
+};
+
+export const aboutUsHomepage = {
+  title: "Committed to a Cleaner, Greener Korea",
+  description:
+    "Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.",
+};
+

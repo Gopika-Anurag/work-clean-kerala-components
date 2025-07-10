@@ -3,6 +3,8 @@ import React from "react";
 import ActivitiesCarousel from "./components/ActivitiesCarousel";
 import ProjectsCarousel from "./components/ProjectsCarousel";
 import StepByStepCarousel from "./components/StepByStepCarosel";
+import AboutUsCarousel from "./components/AboutUsCarousel";
+import AboutUsSection from "./components/AboutUsSection"; // ✅ You missed this import
 
 import {
   activitiesAtGlance,
@@ -11,49 +13,43 @@ import {
   ourProjectsCarouselSettings,
   steps,
   stepByStepCarouselSettings,
-} from "./data/Carouseldata"; // Ensure this path is correct based on your project structure
-import AboutUsCarousel from "./components/AboutUsCarousel";
+  carouselData,
+  aboutUsHomepage,
+} from "./data/Carouseldata"; // ✅ Make sure this file exports all of these
 
 function App() {
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
-        {/* The ActivitiesCarousel component now directly imports commonCarouselStyles internally,
-            so no need to pass it here. */}
+        
+        <AboutUsSection
+        carouselData={carouselData}
+        aboutUsHomepage={aboutUsHomepage}
+      />
+
+        <div className="min-h-screen bg-gray-100">
+        <AboutUsCarousel />
+      </div>
 
         <section className="my-12">
           <ActivitiesCarousel items={activitiesAtGlance} settings={activitiesAtGlanceSettings} />
         </section>
 
-   
-
         <section className="my-12">
-          {/* Assuming ProjectsCarousel expects 'projects' and 'settings' props */}
           <ProjectsCarousel projects={ourProjects} settings={ourProjectsCarouselSettings} />
         </section>
 
-     
-        
-
         <section className="my-12">
-          {/* Assuming StepByStepCarousel expects 'steps', 'carouselSettings', and 'title' props */}
           <StepByStepCarousel steps={steps} carouselSettings={stepByStepCarouselSettings} title="Our Process" />
         </section>
 
-    
-
         <section className="my-12">
-          {/* Another instance of StepByStepCarousel */}
           <StepByStepCarousel steps={steps} carouselSettings={stepByStepCarouselSettings} title="Our Process" />
         </section>
-
-        {/* Add more sections or components as needed */}
       </div>
 
-      <div className="min-h-screen bg-gray-100">
-      <AboutUsCarousel />
-    </div>
-
+      
+      
     </div>
   );
 }

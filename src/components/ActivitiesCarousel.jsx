@@ -210,7 +210,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
             {items.map((item, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 flex flex-row items-center"
+                className="flex-shrink-0 flex flex-row"
                 style={{
                   width: `${slideWidth}px`,
                   height: `${slideHeight}px`,
@@ -220,35 +220,58 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                   gap: `${currentSlideGap / 2}px`,
                 }}
               >
+                {/* Left Half: Image */}
                 <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
                   <img
                     src={item.image}
                     alt=""
-                    className="object-cover w-full h-[90%] pointer-events-none"
+                    // Ensure image fills its container height if that's the goal for alignment
+                    // Changed h-[90%] to h-full
+                    className="object-cover w-full h-full pointer-events-none"
                     style={{ borderRadius: `${BASE_CORNER_RADIUS * slideScaleFactor}px` }}
                   />
                 </div>
 
-                <div className="w-1/2 flex flex-col justify-center items-start relative">
-                  {item.topRightText && (
-                    <span
+                {/* Right Half: Text and Button */}
+                <div className="w-1/2 flex flex-col justify-between items-start h-full">
+                  {/* Top Text Content */}
+                  <div>
+                    {item.topRightText && (
+                      <span
+                        style={{
+                          fontSize: `${16 * slideScaleFactor}px`,
+                          fontWeight: "bold",
+                          color: item.topRightTextColor ?? "#374151",
+                          display: "block",
+                          marginBottom: `${8 * slideScaleFactor}px`,
+                        }}
+                      >
+                        {item.topRightText}
+                      </span>
+                    )}
+                    <p
                       style={{
-                        position: "absolute",
-                        top: `${8 * slideScaleFactor}px`,
-                        right: `${BASE_TEXT_PADDING * slideScaleFactor}px`,
-                        fontSize: `${16 * slideScaleFactor}px`,
-                        fontWeight: "bold",
-                        color: item.topRightTextColor ?? "#374151",
+                        font: `bold ${30 * slideScaleFactor}px/1 sans-serif`,
+                        color: item.valueColor,
+                        marginBottom: `${4 * slideScaleFactor}px`,
                       }}
                     >
-                      {item.topRightText}
-                    </span>
-                  )}
-                  <p style={{ font: `bold ${30 * slideScaleFactor}px/1 sans-serif`, color: item.valueColor }}>{item.value}</p>
-                  <p style={{ font: `${15 * slideScaleFactor}px/1.2 sans-serif`, color: item.labelColor }}>{item.label}</p>
+                      {item.value}
+                    </p>
+                    <p
+                      style={{
+                        font: `${15 * slideScaleFactor}px/1.2 sans-serif`,
+                        color: item.labelColor,
+                      }}
+                    >
+                      {item.label}
+                    </p>
+                  </div>
+
+                  {/* Button Content */}
                   {item.showKnowMoreButton && (
                     <button
-                      className="mt-3 bg-green-600 text-white hover:bg-green-700 transition font-semibold"
+                      className="bg-green-600 text-white hover:bg-green-700 transition font-semibold"
                       style={{
                         width: `${120 * slideScaleFactor}px`,
                         height: `${40 * slideScaleFactor}px`,

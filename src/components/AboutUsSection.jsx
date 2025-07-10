@@ -83,7 +83,7 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
           About Us
         </h3>
 
-        <div className="flex items-stretch justify-between gap-8">
+        <div className="flex items-start  justify-between gap-8">
           {/* Text Content */}
           <div className="w-1/2 flex flex-col justify-center">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">

@@ -5,50 +5,82 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
   const { image } = carouselData;
   const { title, description } = aboutUsHomepagemore;
 
-  const scrollRefDesktop = useRef(null);
   const scrollRefMobile = useRef(null);
+  const scrollRefDesktop = useRef(null);
 
+  const mobileAnimationRef = useRef(null);
+  const desktopIntervalRef = useRef(null);
+  const resumeTimeoutRef = useRef(null);
+
+  const [isMobilePaused, setIsMobilePaused] = useState(false);
   const [isHoveredDesktop, setIsHoveredDesktop] = useState(false);
-  const [isHoveredMobile, setIsHoveredMobile] = useState(false);
 
-  const intervalDesktop = useRef(null);
-  const intervalMobile = useRef(null);
+  const scrollSpeed = 0.5;
 
-  const scrollSpeed = 1;
-  const delay = 50;
+  // ✅ Single scroll function with stable ref
+const scrollMobile = () => {
+  const el = scrollRefMobile.current;
+  if (!el || isMobilePaused) return;
 
-  const setupAutoScroll = (ref, isPaused, intervalRef) => {
-    const container = ref.current;
-    if (!container) return;
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+    el.scrollTop = 0;
+  } else {
+    el.scrollTop += scrollSpeed;
+  }
+};
 
-    const startScrolling = () => {
-      intervalRef.current = setInterval(() => {
-        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-          container.scrollTop = 0;
-        } else {
-          container.scrollTop += scrollSpeed;
-        }
-      }, delay);
-    };
 
-    if (!isPaused) {
-      startScrolling();
-    }
-
-    return () => clearInterval(intervalRef.current);
+  // 📱 Start/stop mobile scroll
+  // ✅ Start continuous loop on mount (once)
+useEffect(() => {
+  const loop = () => {
+    scrollMobile();
+    mobileAnimationRef.current = requestAnimationFrame(loop);
   };
 
-  // 🖥️ Desktop scroll
-  useEffect(() => {
-    const cleanup = setupAutoScroll(scrollRefDesktop, isHoveredDesktop, intervalDesktop);
-    return cleanup;
-  }, [isHoveredDesktop]);
+  mobileAnimationRef.current = requestAnimationFrame(loop);
 
-  // 📱 Mobile scroll
+  return () => cancelAnimationFrame(mobileAnimationRef.current);
+}, []);
+
+
+  // 📱 Pause on touch or scroll, then resume after delay
+ const handleMobileTouchStart = () => {
+  setIsMobilePaused(true);
+  clearTimeout(resumeTimeoutRef.current);
+};
+
+const handleMobileTouchEnd = () => {
+  resumeTimeoutRef.current = setTimeout(() => {
+    setIsMobilePaused(false);
+  }, 3000);
+};
+
+
+
+  // 🖥️ Desktop scroll via setInterval
+  const startDesktopScroll = () => {
+    const el = scrollRefDesktop.current;
+    if (!el) return;
+
+    desktopIntervalRef.current = setInterval(() => {
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+        el.scrollTop = 0;
+      } else {
+        el.scrollTop += scrollSpeed;
+      }
+    }, 30);
+  };
+
   useEffect(() => {
-    const cleanup = setupAutoScroll(scrollRefMobile, isHoveredMobile, intervalMobile);
-    return cleanup;
-  }, [isHoveredMobile]);
+    if (!isHoveredDesktop) {
+      startDesktopScroll();
+    } else {
+      clearInterval(desktopIntervalRef.current);
+    }
+
+    return () => clearInterval(desktopIntervalRef.current);
+  }, [isHoveredDesktop]);
 
   return (
     <div className="w-full">
@@ -62,28 +94,23 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
           <h3 className="text-2xl font-bold text-green-800 uppercase mb-2">About Us</h3>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
 
-          {/* ✅ Scrollable mobile text */}
           <div
-            ref={scrollRefMobile}
-            onTouchStart={() => setIsHoveredMobile(true)}
-            onTouchEnd={() => setIsHoveredMobile(false)}
-            style={{
-              height: "180px",
-              overflow: "hidden",
-              position: "relative",
-              paddingRight: "10px",
-            }}
-            className="text-sm text-gray-700 mb-2"
-          >
-            <div style={{ whiteSpace: "pre-wrap" }}>{description}</div>
-          </div>
+  ref={scrollRefMobile}
+  onTouchStart={handleMobileTouchStart}
+  onTouchEnd={handleMobileTouchEnd}
+  onScroll={handleMobileTouchStart}
+  style={{
+    height: "200px",
+    overflowY: "auto",
+    paddingRight: "10px",
+  }}
+  className="text-sm text-gray-700 mb-4 scroll-smooth no-scrollbar"
+>
+  <div style={{ whiteSpace: "pre-wrap" }}>{description}</div>
+</div>
 
-          {/* ✅ Read more */}
           <div className="text-center">
-            <Link
-              to="/about"
-              className="text-green-700 hover:underline font-medium text-sm"
-            >
+            <Link to="/about" className="text-green-700 hover:underline font-medium text-sm">
               Read more →
             </Link>
           </div>
@@ -97,34 +124,27 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
         </h3>
 
         <div className="flex items-stretch justify-between gap-8">
-          {/* Text Content */}
           <div className="w-1/2 flex flex-col justify-center">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
               {title}
             </h2>
 
-            {/* ✅ Scrollable desktop text */}
             <div
               ref={scrollRefDesktop}
               onMouseEnter={() => setIsHoveredDesktop(true)}
               onMouseLeave={() => setIsHoveredDesktop(false)}
               style={{
                 height: "250px",
-                overflow: "hidden",
-                position: "relative",
+                overflowY: "auto",
                 paddingRight: "10px",
               }}
-              className="text-sm sm:text-base md:text-lg text-gray-700 mb-2"
+              className="text-sm sm:text-base md:text-lg text-gray-700 mb-4 scroll-smooth no-scrollbar"
             >
               <div style={{ whiteSpace: "pre-wrap" }}>{description}</div>
             </div>
 
-            {/* ✅ Read more */}
             <div className="text-center">
-              <Link
-                to="/about"
-                className="text-green-700 hover:underline font-medium text-sm"
-              >
+              <Link to="/about" className="text-green-700 hover:underline font-medium text-sm">
                 Read more →
               </Link>
             </div>
@@ -133,11 +153,7 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
           {/* Image */}
           <div className="w-1/2">
             <div className="h-full min-h-[280px] max-h-[400px] overflow-hidden rounded-xl">
-              <img
-                src={image}
-                alt="About us"
-                className="w-full h-full object-cover"
-              />
+              <img src={image} alt="About us" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>

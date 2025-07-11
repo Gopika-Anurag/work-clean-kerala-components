@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
@@ -6,39 +6,92 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
   const { title, description } = aboutUsHomepage;
 
   const scrollRefDesktop = useRef(null);
-  const scrollRefMobile = useRef(null);
+  const contentRef = useRef(null);
 
-  // ✅ Reusable auto-scroll hook
+  const mobileScrollRef = useRef(null);
+  const mobileAnimationRef = useRef(null);
+  const resumeTimeoutRef = useRef(null);
+
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [isMobileOverflowing, setIsMobileOverflowing] = useState(false);
+  const [isMobilePaused, setIsMobilePaused] = useState(false);
+
+  const scrollSpeed = 0.5;
+
+  // ✅ Desktop: Check overflow
   useEffect(() => {
-    const scrollAuto = (ref) => {
-      const scrollContainer = ref.current;
-      if (!scrollContainer) return;
-
-      const scrollSpeed = 1; // pixels per step
-      const delay = 50; // ms per step
-
-      const scrollInterval = setInterval(() => {
-        if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight) {
-          scrollContainer.scrollTop = 0;
-        } else {
-          scrollContainer.scrollTop += scrollSpeed;
-        }
-      }, delay);
-
-      return () => clearInterval(scrollInterval);
+    const el = scrollRefDesktop.current;
+    const checkOverflow = () => {
+      if (el) setIsOverflowing(el.scrollHeight > el.clientHeight);
     };
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
+  }, [description]);
 
-    const clearDesktop = scrollAuto(scrollRefDesktop);
-    const clearMobile = scrollAuto(scrollRefMobile);
+  // ✅ Desktop: Auto-scroll
+  useEffect(() => {
+    const el = scrollRefDesktop.current;
+    if (!el || !isOverflowing) return;
+    const interval = setInterval(() => {
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+        el.scrollTop = 0;
+      } else {
+        el.scrollTop += 1;
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  }, [isOverflowing]);
 
-    return () => {
-      clearDesktop?.();
-      clearMobile?.();
+  // ✅ Mobile: Detect overflow
+  useEffect(() => {
+    const el = mobileScrollRef.current;
+    if (el) {
+      setIsMobileOverflowing(el.scrollHeight > el.clientHeight);
+    }
+    const handleResize = () => {
+      if (el) {
+        setIsMobileOverflowing(el.scrollHeight > el.clientHeight);
+      }
     };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [description]);
+
+  // ✅ Mobile: Auto-scroll
+  const scrollMobile = () => {
+    const el = mobileScrollRef.current;
+    if (!el || isMobilePaused) return;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+      el.scrollTop = 0;
+    } else {
+      el.scrollTop += scrollSpeed;
+    }
+  };
+
+  useEffect(() => {
+    const loop = () => {
+      scrollMobile();
+      mobileAnimationRef.current = requestAnimationFrame(loop);
+    };
+    mobileAnimationRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(mobileAnimationRef.current);
   }, []);
+
+  const handleMobilePause = () => {
+    setIsMobilePaused(true);
+    clearTimeout(resumeTimeoutRef.current);
+  };
+
+  const handleMobileResume = () => {
+    resumeTimeoutRef.current = setTimeout(() => {
+      setIsMobilePaused(false);
+    }, 3000);
+  };
 
   return (
     <div className="w-full">
+
       {/* ✅ Mobile View */}
       <div
         className="relative block md:hidden bg-cover bg-center px-4 py-20"
@@ -49,31 +102,42 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
           <h3 className="text-2xl font-bold text-green-800 uppercase mb-2">About Us</h3>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
 
-          {/* ✅ Scrollable description (Mobile) */}
           <div
-            ref={scrollRefMobile}
+            ref={mobileScrollRef}
+            onTouchStart={handleMobilePause}
+            onTouchEnd={handleMobileResume}
+            onScroll={handleMobilePause}
             style={{
-              height: "120px",
-              overflow: "hidden",
-              position: "relative",
+              height: "200px",
+              overflowY: "auto",
               paddingRight: "10px",
+              whiteSpace: "pre-wrap",
             }}
-            className="text-sm text-gray-700 mb-2"
+            className="text-sm text-gray-700 scroll-smooth no-scrollbar"
           >
-            <div style={{ whiteSpace: "pre-wrap" }}>
+            <span>
               {description}
-            </div>
+              {!isMobileOverflowing && (
+                <>
+                  {" "}
+                  <Link
+                    to="/about"
+                    className="text-green-700 hover:underline font-medium text-sm"
+                  >
+                    Read more →
+                  </Link>
+                </>
+              )}
+            </span>
           </div>
 
-          {/* ✅ Centered Read more (Mobile) */}
-          <div className="text-center">
-            <Link
-              to="/about"
-              className="text-green-700 hover:underline font-medium text-sm"
-            >
-              Read more →
-            </Link>
-          </div>
+          {isMobileOverflowing && (
+            <div className="mt-4 text-center">
+              <Link to="/about" className="text-green-700 hover:underline font-medium text-sm">
+                Read more →
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
@@ -83,41 +147,53 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
           About Us
         </h3>
 
-        <div className="flex items-start  justify-between gap-8">
-          {/* Text Content */}
-          <div className="w-1/2 flex flex-col justify-center">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
-              {title}
-            </h2>
+        <div className="flex items-stretch justify-between gap-8 h-full">
+          {/* Left Column */}
+          <div className="w-1/2 flex flex-col justify-start h-full">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">{title}</h2>
 
-            {/* ✅ Scrollable description (Desktop) */}
             <div
               ref={scrollRefDesktop}
+              className="text-gray-700 text-base scroll-smooth no-scrollbar"
               style={{
-                height: "150px",
-                overflow: "hidden",
-                position: "relative",
+                maxHeight: "250px",
+                overflowY: "auto",
                 paddingRight: "10px",
+                fontSize: "18px"
               }}
-              className="text-sm sm:text-base md:text-lg text-gray-700 mb-2"
             >
-              <div style={{ whiteSpace: "pre-wrap" }}>
+              <div
+                ref={contentRef}
+                style={{ whiteSpace: "pre-wrap", display: "inline" }}
+              >
                 {description}
+                {!isOverflowing && (
+                  <>
+                    {" "}
+                    <Link
+                      to="/about"
+                      className="text-green-700 hover:underline font-medium text-sm"
+                    >
+                      Read more →
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* ✅ Centered Read more (Desktop) */}
-            <div className="text-center">
-              <Link
-                to="/about"
-                className="text-green-700 hover:underline font-medium text-sm"
-              >
-                Read more →
-              </Link>
-            </div>
+            {isOverflowing && (
+              <div className="mt-4 text-center">
+                <Link
+                  to="/about"
+                  className="text-green-700 hover:underline font-medium text-sm"
+                >
+                  Read more →
+                </Link>
+              </div>
+            )}
           </div>
 
-          {/* Image */}
+          {/* Right Column */}
           <div className="w-1/2">
             <div className="h-full min-h-[280px] max-h-[400px] overflow-hidden rounded-xl">
               <img

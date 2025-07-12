@@ -18,6 +18,7 @@ import {
   aboutUsHomepagemore,
 } from "./data/Carouseldata"; // ✅ Make sure this file exports all of these
 import AboutUsSectionmore from "./components/AboutUsSectionmore";
+import AboutUsCarouselBG from "./components/AboutUsCarouselBG";
 
 function App() {
   
@@ -38,6 +39,10 @@ function App() {
 
         <div className="min-h-fit bg-gray-100">
         <AboutUsCarousel />
+      </div>
+
+      <div className="min-h-fit bg-gray-100">
+        <AboutUsCarouselBG />
       </div>
 
       <br />

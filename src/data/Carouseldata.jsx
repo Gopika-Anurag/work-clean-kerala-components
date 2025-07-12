@@ -322,68 +322,19 @@ export const stepByStepCarouselSettings = {
 
 export const aboutUsData = {
   title: "About Us",
-  description: `
-1Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
+  description : `
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, urna eu tincidunt consectetur, nisi nisl lacinia mi, nec iaculis nunc nisl sit amet lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
+  `.repeat(25)
+};
 
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
 
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
 
-2Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-3Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-4Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-5Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-6Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-7Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-8Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-9Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-10Clean Kerala is an initiative driven by the vision of a waste-free and sustainable society. Founded on the principles of community engagement and environmental responsibility, the mission focuses on reducing plastic use, managing waste effectively, and fostering civic participation through awareness programs and cleanup drives.
-
-Since 2020, our programs have expanded across 14 districts, partnering with over 100 LSGIs. Through campaigns, educational outreach, and infrastructure support, we’ve recycled thousands of tonnes of plastic waste while building strong local networks that ensure long-term impact.
-
-Our story is one of collaboration — with citizens, schools, local governments, and volunteers. Together, we’re rewriting the future of Kerala with cleaner streets, greener habits, and empowered communities.
-
-`,
+export const aboutUsDatabg = {
+  title: "About Us",
+  image: "https://static.vecteezy.com/system/resources/thumbnails/053/730/005/small_2x/serene-spring-valley-misty-meadow-lush-green-trees-mountain-landscape-photo.jpeg",
+  description : `
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, urna eu tincidunt consectetur, nisi nisl lacinia mi, nec iaculis nunc nisl sit amet lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
+  `.repeat(25)
 };
 
 
@@ -395,6 +346,7 @@ export const carouselData = {
 };
 
 export const aboutUsHomepage = {
+    mainTitle: "ABOUT US",
   title: "Committed to a Cleaner, Greener Korea",
   description:"Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practicesCreating a sustainable environment is essential.",
 
@@ -405,9 +357,11 @@ export const aboutUsHomepage = {
 
 
 export const aboutUsHomepagemore = {
+    mainTitle: "ABOUT US",
   title: "Committed to a Cleaner, Greener Korea",
   description : `
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, urna eu tincidunt consectetur, nisi nisl lacinia mi, nec iaculis nunc nisl sit amet lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-  `.repeat(20)
-  
+  `.repeat(15),
+    // description:" Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practicesCreating a sustainable environment is essential.",
+
 };

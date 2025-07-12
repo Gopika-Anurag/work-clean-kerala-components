@@ -112,7 +112,7 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
     <div className="w-full">
       {/* ─── Mobile ─── */}
       <div
-        className="relative block md:hidden bg-cover bg-center px-4 py-5"
+        className="relative block md:hidden bg-cover bg-center px-4 py-15"
         style={{ backgroundImage: `url(${image})` }}
       >
         <div className="absolute inset-0 bg-white/70" />

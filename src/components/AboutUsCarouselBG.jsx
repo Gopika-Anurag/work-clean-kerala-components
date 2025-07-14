@@ -6,7 +6,7 @@ const AboutUsCarouselBG = () => {
   const animationRef = useRef(null);
   const accumulatedRef = useRef(0);
 
-  const scrollSpeed = 0.4; // Adjust speed as needed
+  const scrollSpeed = 0.4;
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -22,7 +22,6 @@ const AboutUsCarouselBG = () => {
         container.scrollTop += pixels;
         accumulatedRef.current -= pixels;
 
-        // Scroll back to top smoothly when reaching the end
         if (container.scrollTop >= container.scrollHeight - container.clientHeight) {
           container.scrollTop = 0;
         }
@@ -61,27 +60,32 @@ const AboutUsCarouselBG = () => {
           {aboutUsDatabg.title}
         </h2>
 
-        <div className="relative h-[400px] overflow-hidden mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
-          <div
-            ref={scrollRef}
-            className="h-full overflow-y-scroll no-scrollbar pr-2"
-          >
-            <div className="max-w-6xl mx-auto text-justify space-y-4">
-              {lines.map((line, index) => (
-                <p
-                  key={index}
-                  style={{
-                    fontSize: "clamp(14px, 2vw, 17px)",
-                    lineHeight: "1.75",
-                  }}
-                >
-                  {line}
-                </p>
-              ))}
+        {/* Main container height 75vh */}
+        <div className="relative h-[75vh] mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
+          {/* Scrollable content with 80% height */}
+          <div className="relative h-[90%]">
+            <div
+              ref={scrollRef}
+              className="h-full overflow-y-scroll no-scrollbar pr-2"
+            >
+              <div className="max-w-6xl mx-auto text-justify space-y-3">
+                {lines.map((line, index) => (
+                  <p
+                    key={index}
+                    style={{
+                      fontSize: "clamp(14px, 2vw, 17px)",
+                      lineHeight: "1.75",
+                    }}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#e4f0e4cc]/70 to-transparent pointer-events-none z-20" />
+            {/* Fixed fade overlay on bottom of visible scroll area */}
+<div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[#e4f0e4cc] to-transparent pointer-events-none z-20" />          
+</div>
         </div>
       </div>
     </div>

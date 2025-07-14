@@ -41,6 +41,8 @@ function App() {
         <AboutUsCarousel />
       </div>
 
+      <br />
+
       <div className="min-h-fit bg-gray-100">
         <AboutUsCarouselBG />
       </div>

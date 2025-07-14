@@ -6,7 +6,7 @@ const AboutUsCarousel = () => {
   const animationRef = useRef(null);
   const accumulatedRef = useRef(0);
 
-  const scrollSpeed = 0.6; // Slow and smooth
+  const scrollSpeed = 0.6; // Smooth scroll
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -24,7 +24,7 @@ const AboutUsCarousel = () => {
 
         const halfHeight = container.scrollHeight / 2;
         if (container.scrollTop >= halfHeight) {
-          container.scrollTop -= halfHeight; // Reset at midpoint
+          container.scrollTop -= halfHeight; // Loop from midpoint
         }
       }
 
@@ -45,7 +45,7 @@ const AboutUsCarousel = () => {
   }, []);
 
   const lines = aboutUsData.description.trim().split("\n");
-  const duplicatedLines = [...lines, ...lines]; // Required for infinite loop illusion
+  const duplicatedLines = [...lines, ...lines]; // For infinite scroll
 
   return (
     <div className="w-full bg-white px-4 sm:px-6 lg:px-12 flex justify-center py-16 sm:py-20">
@@ -60,27 +60,31 @@ const AboutUsCarousel = () => {
           {aboutUsData.title}
         </h2>
 
-        <div className="relative h-[400px] overflow-hidden mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
-          <div
-            ref={scrollRef}
-            className="h-full overflow-y-scroll no-scrollbar pr-2"
-          >
-            <div className="max-w-6xl mx-auto text-justify space-y-4">
-              {duplicatedLines.map((line, index) => (
-                <p
-                  key={index}
-                  style={{
-                    fontSize: "clamp(14px, 2vw, 17px)",
-                    lineHeight: "1.75",
-                  }}
-                >
-                  {line}
-                </p>
-              ))}
+        <div className="relative h-[75vh] mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
+          {/* 80% height scroll area inside container */}
+          <div className="relative h-[80%]">
+            <div
+              ref={scrollRef}
+              className="h-full overflow-y-scroll no-scrollbar pr-2"
+            >
+              <div className="max-w-6xl mx-auto text-justify space-y-3">
+                {duplicatedLines.map((line, index) => (
+                  <p
+                    key={index}
+                    style={{
+                      fontSize: "clamp(14px, 2vw, 17px)",
+                      lineHeight: "1.75",
+                    }}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-white to-transparent pointer-events-none z-20" />
+            {/* Gradient overlay using background-matching shade */}
+            <div className="pointer-events-none absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent z-20" />
+          </div>
         </div>
       </div>
     </div>

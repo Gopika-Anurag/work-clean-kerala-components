@@ -334,7 +334,7 @@ export const aboutUsDatabg = {
   image: "https://static.vecteezy.com/system/resources/thumbnails/053/730/005/small_2x/serene-spring-valley-misty-meadow-lush-green-trees-mountain-landscape-photo.jpeg",
   description : `
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, urna eu tincidunt consectetur, nisi nisl lacinia mi, nec iaculis nunc nisl sit amet lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-  `.repeat(25)
+  `.repeat(15)
 };
 
 

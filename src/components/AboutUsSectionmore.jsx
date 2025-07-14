@@ -112,7 +112,7 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
     <div className="w-full">
       {/* ─── Mobile ─── */}
       <div
-        className="relative block md:hidden bg-cover bg-center px-4 py-15"
+        className="relative block md:hidden bg-cover bg-center px-4 py-18"
         style={{ backgroundImage: `url(${image})` }}
       >
         <div className="absolute inset-0 bg-white/70" />
@@ -128,26 +128,30 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
               onScroll={debounceMobileResume}
               className="text-sm text-gray-700 no-scrollbar overflow-y-auto"
               style={{
-                height: "200px",
+                height: "300px",
                 paddingRight: "10px",
                 whiteSpace: "pre-wrap",
               }}
             >
               {description}
               {!isMobileOverflowing && (
-                <Link to="/about" className="text-green-700 hover:underline font-medium text-sm ml-1">
+                <Link to="/about" className="text-green-800 hover:underline font-medium text-sm ml-1">
                   Read more →
                 </Link>
               )}
             </div>
 
             {isMobileOverflowing && (
-              <div className="absolute bottom-0 left-0 w-full text-center bg-gradient-to-t from-white/30 to-transparent pt-4 pb-2 z-10">
-                <Link to="/about" className="text-green-700 hover:underline font-medium text-sm">
-                  Read more →
-                </Link>
-              </div>
-            )}
+  <div className="absolute bottom-0 left-0 w-full text-center bg-gradient-to-t from-white/40 to-transparent z-10 py-6">
+    <div className="translate-y-7">
+      <Link to="/about" className="text-green-800 font-bold text-sm hover:underline">
+        Read more →
+      </Link>
+    </div>
+  </div>
+)}
+
+
           </div>
         </div>
       </div>
@@ -171,19 +175,22 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
               >
                 {description}
                 {!isOverflowing && (
-                  <Link to="/about" className="text-green-700 hover:underline font-medium text-sm ml-1">
+                  <Link to="/about" className="text-green-700 hover:underline font-bold text-sm ml-1">
                     Read more →
                   </Link>
                 )}
               </div>
 
               {isOverflowing && (
-                <div className="absolute bottom-0 left-0 w-full h-20 text-center bg-gradient-to-t from-white to-transparent pt-12 pb-2 z-10">
-                  <Link to="/about" className="text-green-700 hover:underline font-medium text-sm">
-                    Read more →
-                  </Link>
-                </div>
-              )}
+  <div className="absolute bottom-0 left-0 w-full text-center bg-gradient-to-t from-white to-transparent z-10 py-6">
+  <div className="translate-y-4">
+    <Link to="/about" className="text-green-800 font-bold text-sm hover:underline">
+      Read more →
+    </Link>
+  </div>
+</div>
+)}
+
             </div>
           </div>
 

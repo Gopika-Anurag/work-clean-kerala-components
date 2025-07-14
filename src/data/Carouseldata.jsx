@@ -348,7 +348,7 @@ export const carouselData = {
 export const aboutUsHomepage = {
     mainTitle: "ABOUT US",
   title: "Committed to a Cleaner, Greener Korea",
-  description:"Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practices.Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practicesCreating a sustainable environment is essential.",
+  description:"Creating a sustainable environment is essential. Our recycling and waste management programs are designed to reduce pollution and encourage eco-friendly practicesCreating a sustainable environment is essential.",
 
 //   description : `
 //   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, urna eu tincidunt consectetur, nisi nisl lacinia mi, nec iaculis nunc nisl sit amet lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;

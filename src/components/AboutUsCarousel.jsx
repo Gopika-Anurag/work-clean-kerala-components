@@ -51,7 +51,7 @@ const AboutUsCarousel = () => {
     <div className="w-full bg-white px-4 sm:px-6 lg:px-12 flex justify-center py-16 sm:py-20">
       <div className="w-full max-w-[1400px] font-serif leading-7 text-black">
         <h2
-          className="font-semibold mb-11 text-center"
+          className="font-semibold mt-16 mb-11 text-center"
           style={{
             fontSize: "clamp(20px, 4vw, 32px)",
             lineHeight: "1.3",
@@ -60,7 +60,7 @@ const AboutUsCarousel = () => {
           {aboutUsData.title}
         </h2>
 
-        <div className="relative h-[75vh] mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
+        <div className="relative h-[68vh] mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
           {/* 80% height scroll area inside container */}
           <div className="relative h-[80%]">
             <div

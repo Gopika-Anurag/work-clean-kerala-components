@@ -142,7 +142,7 @@ const AboutUsSection = ({ carouselData, aboutUsHomepage }) => {
             </div>
 
             {isMobileOverflowing && (
-              <div className="absolute bottom-0 left-0 w-full text-center bg-gradient-to-t from-white/40 to-transparent z-10 py-6">
+              <div className="absolute bottom-0 left-0 w-full text-center bg-gradient-to-t from-[#e6f4e6] via-[#e6f4e6cc]/80 to-transparent z-10 py-10">
                 <div className="translate-y-7">
                   <Link to="/about" className="text-green-800 font-bold text-sm hover:underline">
                     Read more →

@@ -54,14 +54,14 @@ const AboutUsCarouselBG = () => {
 
       <div className="w-full max-w-[1400px] font-serif leading-7 text-black relative z-10">
         <h2
-          className="font-semibold mb-11 text-center text-green-800 uppercase"
+          className="font-semibold mt-16 mb-11 text-center text-green-800 uppercase"
           style={{ fontSize: "clamp(20px, 4vw, 32px)", lineHeight: "1.3" }}
         >
           {aboutUsDatabg.title}
         </h2>
 
         {/* Main container height 75vh */}
-        <div className="relative h-[75vh] mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
+        <div className="relative h-[68vh] mx-auto w-full max-w-[1100px] px-6 sm:px-10 lg:px-20">
           {/* Scrollable content with 80% height */}
           <div className="relative h-[90%]">
             <div

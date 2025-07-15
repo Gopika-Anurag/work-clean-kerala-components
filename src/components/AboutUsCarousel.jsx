@@ -51,7 +51,7 @@ const AboutUsCarousel = () => {
     <div className="w-full bg-white px-4 sm:px-6 lg:px-12 flex justify-center py-16 sm:py-20">
       <div className="w-full max-w-[1400px] font-serif leading-7 text-black">
         <h2
-          className="font-semibold mb-6 text-center"
+          className="font-semibold mb-11 text-center"
           style={{
             fontSize: "clamp(20px, 4vw, 32px)",
             lineHeight: "1.3",

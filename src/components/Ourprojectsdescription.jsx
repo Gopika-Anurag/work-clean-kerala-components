@@ -15,7 +15,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
   const [carouselBottomGap, setCarouselBottomGap] = useState(0);
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [dynamicTextMargin, setDynamicTextMargin] = useState(0);
-  const [activeIndex, setActiveIndex] = useState(null); // ✅ for mobile touch
+  const [activeIndex, setActiveIndex] = useState(null);
 
   const BASE_SLIDE_WIDTH = 400;
   const BASE_SLIDE_HEIGHT = 600;
@@ -175,7 +175,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
-        setActiveIndex(null); // Clear activeIndex when mouse leaves
+        setActiveIndex(null);
       }}
     >
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
@@ -191,7 +191,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
           &gt;
         </div>
 
-        {/* Scrollable Project Cards */}
+        {/* Scrollable Cards */}
         <div ref={scrollRef} className="cursor-grab active:cursor-grabbing overflow-x-auto scroll-smooth no-scrollbar" style={{ scrollSnapType: "x mandatory" }}>
           <div className="flex w-max select-none" style={{
             gap: `${currentSlideGap}px`,
@@ -199,42 +199,61 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
             paddingRight: `${BASE_TEXT_PADDING * 0.5 * slideWidthRatio}px`,
             transition: "gap 0.3s ease-out, padding 0.3s ease-out",
           }}>
-            {projects.map((project, index) => (
-              <div
-                key={index}
-                onTouchStart={() => setActiveIndex(index)} // ✅ handle mobile touch
-                className="relative group flex-shrink-0 overflow-hidden select-none"
-                style={{
-                  width: `${slideWidth}px`,
-                  height: `${slideHeight}px`,
-                  scrollSnapAlign: "start",
-                  backgroundColor: project.bgColor || "#f0f0f0",
-                  borderRadius: `${BASE_CORNER_RADIUS * slideWidthRatio}px`,
-                  transition: "all 0.3s",
-                }}
-              >
-                <img src={project.image} alt={project.title} className="w-full h-full object-cover pointer-events-none" onError={(e) => (e.target.style.opacity = 0.1)} />
+            {projects.map((project, index) => {
+              const isActive = activeIndex === index;
 
-                {/* Gradient Background behind Title */}
-                <div className={`absolute inset-x-0 ${project.textPosition === "top" ? "top-0" : "bottom-0"} h-1/2 bg-gradient-to-${project.textPosition === "top" ? "b" : "t"} from-black/70 to-transparent z-10`} />
+              return (
+                <div
+                  key={index}
+                  onTouchStart={() => setActiveIndex(index)}
+                  className="relative group flex-shrink-0 overflow-hidden select-none"
+                  style={{
+                    width: `${slideWidth}px`,
+                    height: `${slideHeight}px`,
+                    scrollSnapAlign: "start",
+                    backgroundColor: project.bgColor || "#f0f0f0",
+                    borderRadius: `${BASE_CORNER_RADIUS * slideWidthRatio}px`,
+                    transition: "all 0.3s",
+                  }}
+                >
+                  <img src={project.image} alt={project.title} className="w-full h-full object-cover pointer-events-none" onError={(e) => (e.target.style.opacity = 0.1)} />
 
-                {/* Title */}
-                <div className={`absolute w-full px-4 text-center font-semibold text-white z-20 transition-all duration-300 ${project.textPosition === "top" ? "top-4 group-hover:top-2" : "bottom-4 group-hover:top-2"}`}
-                  style={{ fontSize: `${22 * slideWidthRatio}px` }}>
-                  {project.title}
+                  {/* Gradient */}
+                  {project.textPosition === "top" ? (
+                    <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-black/70 to-transparent z-30" />
+                  ) : (
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent z-30" />
+                  )}
+
+                  {/* Title */}
+                  <div
+                    className={`absolute w-full px-4 text-center font-semibold text-white transition-all duration-300 ${
+                      project.textPosition === "top"
+                        ? (isActive ? "top-2" : "top-4 group-hover:top-2")
+                        : (isActive ? "top-2" : "bottom-4 group-hover:top-2")
+                    }`}
+                    style={{
+                      fontSize: `${22 * slideWidthRatio}px`,
+                      zIndex: 40,
+                    }}
+                  >
+                    {project.title}
+                  </div>
+
+                  {/* Description */}
+                  <div className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${
+                    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  }`} style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4, zIndex: 40 }}>
+                    {project.description}
+                  </div>
+
+                  {/* Overlay */}
+                  <div className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
+                    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  }`} style={{ zIndex: 20 }} />
                 </div>
-
-                {/* Centered Description */}
-                <div className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 z-20 ${
-                  activeIndex === index ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                }`} style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4 }}>
-                  {project.description}
-                </div>
-
-                {/* Optional dark overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

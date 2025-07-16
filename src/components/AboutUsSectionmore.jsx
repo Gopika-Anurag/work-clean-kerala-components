@@ -182,7 +182,7 @@ const AboutUsSectionmore = ({ carouselData, aboutUsHomepagemore }) => {
               </div>
 
               {isOverflowing && (
-  <div className="absolute bottom-0 left-0 w-full text-center bg-gradient-to-t from-white via-white/90 to-transparent z-10 py-7">
+<div className="absolute bottom-0 left-0 w-full text-center bg-gradient-to-t from-[#f8f9fa] via-[#f8f9fa]/90 to-transparent z-10 py-7">
   <div className="translate-y-2">
     <Link to="/about" className="text-green-800 font-bold text-sm hover:underline">
       Read more →

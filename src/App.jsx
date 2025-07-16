@@ -19,6 +19,8 @@ import {
 } from "./data/Carouseldata"; // ✅ Make sure this file exports all of these
 import AboutUsSectionmore from "./components/AboutUsSectionmore";
 import AboutUsCarouselBG from "./components/AboutUsCarouselBG";
+import Ourprojectsdescription from "./components/Ourprojectsdescription";
+import {Projectsdescription, ProjectsdescriptionSettings } from "./data/Projectdescriptiondata"
 
 function App() {
   
@@ -26,6 +28,10 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <section className="my-12">
+          <Ourprojectsdescription projects={Projectsdescription} settings={ProjectsdescriptionSettings} />
+        </section>
         
         <AboutUsSection
         carouselData={carouselData}

@@ -243,12 +243,36 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
 </div>
 
 
-                  {/* Description */}
-                  <div className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${
+                  {/* Animated Description */}
+<div
+  className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${
+    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+  }`}
+  style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4, zIndex: 40 }}
+>
+  <div className="leading-snug">
+    {project.description.split(" ").map((word, i) => (
+      <span
+        key={i}
+        className="inline-block opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ transitionDelay: `${i * 80}ms` }}
+      >
+        {word}&nbsp;
+      </span>
+    ))}
+  </div>
+</div>
+
+
+
+{/* <div className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${
                     isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   }`} style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4, zIndex: 40 }}>
                     {project.description}
-                  </div>
+                  </div> */}
+
+
+
 
                   {/* Overlay */}
                   <div className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${

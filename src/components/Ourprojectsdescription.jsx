@@ -15,6 +15,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
   const [carouselBottomGap, setCarouselBottomGap] = useState(0);
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [dynamicTextMargin, setDynamicTextMargin] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(null); // ✅ for mobile touch
 
   const BASE_SLIDE_WIDTH = 400;
   const BASE_SLIDE_HEIGHT = 600;
@@ -172,7 +173,10 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
       ref={containerRef}
       className="w-full max-w-[100vw] relative bg-[#f0fdf4] py-6 overflow-visible"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setActiveIndex(null); // Clear activeIndex when mouse leaves
+      }}
     >
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
         <h2 className="font-bold text-gray-800 mb-8 text-center text-xl sm:text-3xl md:text-4xl lg:text-5xl">
@@ -196,7 +200,10 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
             transition: "gap 0.3s ease-out, padding 0.3s ease-out",
           }}>
             {projects.map((project, index) => (
-              <div key={index} className="relative group flex-shrink-0 overflow-hidden select-none"
+              <div
+                key={index}
+                onTouchStart={() => setActiveIndex(index)} // ✅ handle mobile touch
+                className="relative group flex-shrink-0 overflow-hidden select-none"
                 style={{
                   width: `${slideWidth}px`,
                   height: `${slideHeight}px`,
@@ -204,7 +211,8 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
                   backgroundColor: project.bgColor || "#f0f0f0",
                   borderRadius: `${BASE_CORNER_RADIUS * slideWidthRatio}px`,
                   transition: "all 0.3s",
-                }}>
+                }}
+              >
                 <img src={project.image} alt={project.title} className="w-full h-full object-cover pointer-events-none" onError={(e) => (e.target.style.opacity = 0.1)} />
 
                 {/* Gradient Background behind Title */}
@@ -217,8 +225,9 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
                 </div>
 
                 {/* Centered Description */}
-                <div className="absolute inset-0 flex items-center justify-center text-white text-center px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
-                  style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4 }}>
+                <div className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 z-20 ${
+                  activeIndex === index ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                }`} style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4 }}>
                   {project.description}
                 </div>
 

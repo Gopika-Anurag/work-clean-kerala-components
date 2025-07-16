@@ -227,18 +227,21 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
 
                   {/* Title */}
                   <div
-                    className={`absolute w-full px-4 text-center font-semibold text-white transition-all duration-300 ${
-                      project.textPosition === "top"
-                        ? (isActive ? "top-2" : "top-4 group-hover:top-2")
-                        : (isActive ? "top-2" : "bottom-4 group-hover:top-2")
-                    }`}
-                    style={{
-                      fontSize: `${22 * slideWidthRatio}px`,
-                      zIndex: 40,
-                    }}
-                  >
-                    {project.title}
-                  </div>
+  className={`absolute w-full px-4 text-center font-semibold text-white transition-all duration-300 ${
+    project.textPosition === "top"
+      ? (isActive ? "top-2" : "top-4 group-hover:top-2")
+      : (isActive ? "top-2" : "bottom-4 group-hover:top-2")
+  }`}
+  style={{
+    fontSize: `${24 * slideWidthRatio}px`,
+    zIndex: 40,
+    marginTop: `${dynamicTextMargin}px`,
+    marginBottom: `${dynamicTextMargin}px`,
+  }}
+>
+  {project.title}
+</div>
+
 
                   {/* Description */}
                   <div className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${

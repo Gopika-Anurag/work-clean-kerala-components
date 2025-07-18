@@ -14,6 +14,8 @@ export const Projectsdescription = [
     bgColor: "#F0FFF0",
     titleColor: "#FFFFFF",
     textPosition: "bottom",
+    useAnimation: true,
+    animationType: "wordByWord",
     description: "Promotes the separation and collection of plastic waste at source for effective recycling.",
   },
   {
@@ -22,6 +24,8 @@ export const Projectsdescription = [
     bgColor: "#FFF3E0",
     titleColor: "#FFFFFF",
     textPosition: "top",
+    useAnimation: true,
+    animationType: "fadeBlock",
     description: "Ensures safe collection and disposal of electronic waste through certified centers.",
   },
   {
@@ -30,6 +34,8 @@ export const Projectsdescription = [
     bgColor: "#F0F8FF",
     titleColor: "#FFFFFF",
     textPosition: "bottom",
+    useAnimation: true,
+    animationType: "wordByWord",
     description: "Focuses on efficient collection and repurposing of glass waste from households and industries.",
   },
   {
@@ -38,6 +44,8 @@ export const Projectsdescription = [
     bgColor: "#FFF8E1",
     titleColor: "#FFFFFF",
     textPosition: "top",
+    useAnimation: true,
+    animationType: "fadeBlock",
     description: "Converts biodegradable organic waste into compost to enrich soil quality sustainably.",
   },
   {
@@ -46,6 +54,8 @@ export const Projectsdescription = [
     bgColor: "#F3E5F5",
     titleColor: "#FFFFFF",
     textPosition: "bottom",
+    useAnimation: true,
+    animationType: "wordByWord",
     description: "Conducts campaigns to educate the public on eco-friendly practices and waste segregation.",
   },
   {
@@ -54,6 +64,8 @@ export const Projectsdescription = [
     bgColor: "#F0FFF0",
     titleColor: "#FFFFFF",
     textPosition: "top",
+    useAnimation: true,
+    animationType: "fadeBlock",
     description: "Encourages individuals and institutions to sort plastics before disposal.",
   },
   {
@@ -62,6 +74,8 @@ export const Projectsdescription = [
     bgColor: "#FFF3E0",
     titleColor: "#FFFFFF",
     textPosition: "bottom",
+    useAnimation: true,
+    animationType: "wordByWord",
     description: "Improves recovery of valuable materials from outdated electronics.",
   },
   {
@@ -70,6 +84,8 @@ export const Projectsdescription = [
     bgColor: "#F0F8FF",
     titleColor: "#FFFFFF",
     textPosition: "top",
+    useAnimation: true,
+    animationType: "fadeBlock",
     description: "Implements community drop-off points for easy disposal of glass bottles and jars.",
   },
   {
@@ -78,6 +94,8 @@ export const Projectsdescription = [
     bgColor: "#FFF8E1",
     titleColor: "#FFFFFF",
     textPosition: "bottom",
+    useAnimation: true,
+    animationType: "wordByWord",
     description: "Empowers homes and markets to compost food waste for local gardening.",
   },
   {
@@ -86,6 +104,8 @@ export const Projectsdescription = [
     bgColor: "#F3E5F5",
     titleColor: "#FFFFFF",
     textPosition: "top",
+    useAnimation: true,
+    animationType: "fadeBlock",
     description: "Engages students and local groups through eco-clubs and training workshops.",
   },
 ];

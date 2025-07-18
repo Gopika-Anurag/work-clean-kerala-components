@@ -183,7 +183,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
           OUR PROJECTS
         </h2>
 
-        {/* Navigation Arrows */}
+        {/* Arrows */}
         <div onClick={() => scroll("left")} className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 hover:text-black cursor-pointer select-none text-2xl font-bold">
           &lt;
         </div>
@@ -191,7 +191,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
           &gt;
         </div>
 
-        {/* Scrollable Cards */}
+        {/* Carousel Scroll */}
         <div ref={scrollRef} className="cursor-grab active:cursor-grabbing overflow-x-auto scroll-smooth no-scrollbar" style={{ scrollSnapType: "x mandatory" }}>
           <div className="flex w-max select-none" style={{
             gap: `${currentSlideGap}px`,
@@ -227,52 +227,48 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
 
                   {/* Title */}
                   <div
-  className={`absolute w-full px-4 text-center font-semibold text-white transition-all duration-300 ${
-    project.textPosition === "top"
-      ? (isActive ? "top-2" : "top-4 group-hover:top-2")
-      : (isActive ? "top-2" : "bottom-4 group-hover:top-2")
-  }`}
-  style={{
-    fontSize: `${24 * slideWidthRatio}px`,
-    zIndex: 40,
-    marginTop: `${dynamicTextMargin}px`,
-    marginBottom: `${dynamicTextMargin}px`,
-  }}
->
-  {project.title}
-</div>
+                    className={`absolute w-full px-4 text-center font-semibold text-white transition-all duration-300 ${
+                      project.textPosition === "top"
+                        ? (isActive ? "top-2" : "top-4 group-hover:top-2")
+                        : (isActive ? "top-2" : "bottom-4 group-hover:top-2")
+                    }`}
+                    style={{
+                      fontSize: `${24 * slideWidthRatio}px`,
+                      zIndex: 40,
+                      marginTop: `${dynamicTextMargin}px`,
+                      marginBottom: `${dynamicTextMargin}px`,
+                    }}
+                  >
+                    {project.title}
+                  </div>
 
-
-                  {/* Animated Description */}
-<div
-  className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${
-    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-  }`}
-  style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4, zIndex: 40 }}
->
-  <div className="leading-snug">
-    {project.description.split(" ").map((word, i) => (
-      <span
-        key={i}
-        className="inline-block opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{ transitionDelay: `${i * 80}ms` }}
-      >
-        {word}&nbsp;
-      </span>
-    ))}
-  </div>
-</div>
-
-
-
-{/* <div className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${
-                    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                  }`} style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4, zIndex: 40 }}>
-                    {project.description}
-                  </div> */}
-
-
-
+                  {/* Conditional Animated Description */}
+                  {project.useAnimation && (
+                    <div
+                      className={`absolute inset-0 flex items-center justify-center text-white text-center px-4 transition-opacity duration-300 ${
+                        isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                      }`}
+                      style={{ fontSize: `${15 * slideWidthRatio}px`, lineHeight: 1.4, zIndex: 40 }}
+                    >
+                      {project.animationType === "wordByWord" ? (
+                        <div className="leading-snug">
+                          {project.description.split(" ").map((word, i) => (
+                            <span
+                              key={i}
+                              className="inline-block opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                              style={{ transitionDelay: `${i * 80}ms` }}
+                            >
+                              {word}&nbsp;
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="leading-snug transition-opacity duration-500">
+                          {project.description}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Overlay */}
                   <div className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${

@@ -20,11 +20,16 @@ export const activitiesAtGlance = [
     topRightDotColor: "#2563EB",
     topRightTextColor: "#1e3a8a",
     items: [
-    //   {
-    //     year: "2024–25",
-    //     value: 20,
-    //     color: "#10B981"
-    //   },
+          {
+        year: "2023–2024",
+        value: 30,
+        color: "#10B981"
+      },
+      {
+        year: "2024–2025",
+        value: 50,
+        color: "#10B981"
+      },
       {
         year: "2025–2026",
         value: 100,

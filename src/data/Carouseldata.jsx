@@ -23,7 +23,7 @@ export const activitiesAtGlance = [
           {
         year: "2023–2024",
         value: 30,
-        color: "#EF444"
+        color: "#EF4444"
       },
       {
         year: "2024–2025",

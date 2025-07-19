@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const ActivitiesCarousel = ({ items, settings = {} }) => {
   const containerRef = useRef(null);
@@ -13,7 +14,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [carouselPadding, setCarouselPadding] = useState(0);
   const [currentSlideGap, setCurrentSlideGap] = useState(0);
-  const [carouselBottomGap, setCarouselBottomGap] = useState(0);
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [slideScaleFactor, setSlideScaleFactor] = useState(1);
 
@@ -22,8 +22,8 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const BASE_SLIDE_GAP = 50;
   const BASE_CORNER_RADIUS = 20;
   const BASE_TEXT_PADDING = 25;
-  const BASE_CAROUSEL_BOTTOM_GAP = 50;
   const BASE_PROGRESS_BAR_HEIGHT = 6;
+  const BASE_CAROUSEL_BOTTOM_GAP = 50;
 
   const scroll = useCallback(
     (dir) => {
@@ -43,7 +43,9 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
 
       const containerWidth = containerRef.current.offsetWidth;
       const windowWidth = window.innerWidth;
-      const slidesToDisplay = settings.minimumSlidesToShow ?? (windowWidth >= 1280 ? 2.8 : windowWidth >= 1024 ? 2.5 : windowWidth >= 768 ? 1.8 : 1.5);
+      const slidesToDisplay =
+        settings.minimumSlidesToShow ??
+        (windowWidth >= 1280 ? 2.8 : windowWidth >= 1024 ? 2.5 : windowWidth >= 768 ? 1.8 : 1.5);
 
       let dynamicBaseGap = BASE_SLIDE_GAP;
       if (windowWidth < 640) dynamicBaseGap = 24;
@@ -65,7 +67,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
       setSlideHeight(calcSlideWidth * (BASE_SLIDE_HEIGHT / BASE_SLIDE_WIDTH));
       setCurrentSlideGap(calcSlideGap);
       setCarouselPadding(calcSlideGap);
-      setCarouselBottomGap(BASE_CAROUSEL_BOTTOM_GAP * slideRatio);
       setCurrentProgressBarHeight(BASE_PROGRESS_BAR_HEIGHT * slideRatio);
       setSlideScaleFactor(slideRatio);
     };
@@ -79,22 +80,21 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
       };
     };
     const handleResize = debounce(updateDimensions, 100);
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [settings.minimumSlidesToShow]);
 
   useEffect(() => {
+    const slider = scrollRef.current;
+    if (!slider) return;
+
     const handleScroll = () => {
-      const slider = scrollRef.current;
-      if (!slider) return;
       const maxScroll = slider.scrollWidth - slider.clientWidth;
       setProgress(maxScroll > 0 ? (slider.scrollLeft / maxScroll) * 100 : 0);
     };
 
-    const slider = scrollRef.current;
-    slider?.addEventListener("scroll", handleScroll);
-    return () => slider?.removeEventListener("scroll", handleScroll);
+    slider.addEventListener("scroll", handleScroll);
+    return () => slider.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -105,17 +105,11 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
       setIsDragging(true);
       setStartX(e.pageX - slider.offsetLeft);
       setScrollLeft(slider.scrollLeft);
-      slider.classList.add("select-none");
     };
 
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      slider.classList.remove("select-none");
-    };
-
+    const handleMouseUp = () => setIsDragging(false);
     const handleMouseMove = (e) => {
       if (!isDragging) return;
-      e.preventDefault();
       const x = e.pageX - slider.offsetLeft;
       const walk = (x - startX) * (settings.dragSpeed ?? 2);
       slider.scrollLeft = scrollLeft - walk;
@@ -125,7 +119,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     slider.addEventListener("mouseleave", handleMouseUp);
     slider.addEventListener("mouseup", handleMouseUp);
     slider.addEventListener("mousemove", handleMouseMove);
-
     return () => {
       slider.removeEventListener("mousedown", handleMouseDown);
       slider.removeEventListener("mouseleave", handleMouseUp);
@@ -155,27 +148,19 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
         e.preventDefault();
         const direction = delta > 0 ? 1 : -1;
         const scrollAmount = (slideWidth + currentSlideGap) * direction * (settings.scrollSpeed ?? 1);
-        slider.scrollBy({
-          left: scrollAmount,
-          behavior: "smooth",
-        });
+        slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
       }
     };
 
     slider.addEventListener("wheel", handleWheel, { passive: false });
     return () => slider.removeEventListener("wheel", handleWheel);
-  }, [isHovered, settings, slideWidth, currentSlideGap]);
+  }, [isHovered, slideWidth, currentSlideGap]);
 
   useEffect(() => {
     const handleKey = (e) => {
       if (!isHovered) return;
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        scroll("left");
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        scroll("right");
-      }
+      if (e.key === "ArrowLeft") scroll("left");
+      else if (e.key === "ArrowRight") scroll("right");
     };
 
     document.addEventListener("keydown", handleKey);
@@ -208,83 +193,163 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
         >
           <div className="flex w-max select-none" style={{ gap: `${currentSlideGap}px` }}>
             {items.map((item, i) => (
+  <div
+    key={i}
+    className="flex-shrink-0 flex flex-row"
+    style={{
+      width: `${slideWidth}px`,
+      height: `${slideHeight}px`,
+      padding: `${BASE_TEXT_PADDING * slideScaleFactor}px`,
+      borderRadius: `${BASE_CORNER_RADIUS * slideScaleFactor}px`,
+      background: item.bgColor ?? "#E6F4EA",
+      gap: `${currentSlideGap / 2}px`,
+    }}
+  >
+    {item.type === "chart" ? (
+      <div className="relative flex w-full items-center justify-between">
+        <div className="w-1/2 h-full flex items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              {(() => {
+                const chartData = [...item.items];
+                const value = Number(chartData[0]?.value || 0);
+
+                if (chartData.length === 1) {
+                  if (value < 100) {
+                    chartData.push({
+                      name: "dummy",
+                      value: 100 - value,
+                      color: "transparent",
+                    });
+                  } else if (value === 100) {
+                    chartData.push({
+                      name: "dummy",
+                      value: 0.0001,
+                      color: "transparent",
+                    });
+                  }
+                }
+
+                return (
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="year"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40 * slideScaleFactor}
+                    outerRadius={70 * slideScaleFactor}
+                    isAnimationActive={true}
+                    paddingAngle={0}
+                    cornerRadius={0}
+                    startAngle={90}
+                    endAngle={450}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.color || "#8884d8"}
+                        stroke="none"
+                      />
+                    ))}
+                  </Pie>
+                );
+              })()}
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="absolute top-4 right-4 space-y-2 z-10">
+          {item.items?.map((entry, idx) => (
+            <div key={idx} className="flex items-center gap-2">
               <div
-                key={i}
-                className="flex-shrink-0 flex flex-row"
                 style={{
-                  width: `${slideWidth}px`,
-                  height: `${slideHeight}px`,
-                  padding: `${BASE_TEXT_PADDING * slideScaleFactor}px`,
-                  borderRadius: `${BASE_CORNER_RADIUS * slideScaleFactor}px`,
-                  background: item.bgColor ?? "#E6F4EA",
-                  gap: `${currentSlideGap / 2}px`,
+                  width: `${10 * slideScaleFactor}px`,
+                  height: `${10 * slideScaleFactor}px`,
+                  backgroundColor: entry.color || "#2563EB",
+                  borderRadius: "9999px",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: `${20 * slideScaleFactor}px`,
+                  fontWeight: 500,
+                  color: item.topRightTextColor ?? "#374151",
                 }}
               >
-                {/* Left Half: Image */}
-                <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt=""
-                    // Ensure image fills its container height if that's the goal for alignment
-                    // Changed h-[90%] to h-full
-                    className="object-cover w-full h-full pointer-events-none"
-                    style={{ borderRadius: `${BASE_CORNER_RADIUS * slideScaleFactor}px` }}
-                  />
-                </div>
+                {entry.year}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <>
+        <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
+          <img
+            src={item.image}
+            alt=""
+            className="object-cover w-full h-full pointer-events-none"
+            style={{
+              borderRadius: `${BASE_CORNER_RADIUS * slideScaleFactor}px`,
+            }}
+          />
+        </div>
 
-                {/* Right Half: Text and Button */}
-                <div className="w-1/2 flex flex-col justify-between items-start h-full">
-                  {/* Top Text Content */}
-                  <div>
-                    {item.topRightText && (
-                      <span
-                        style={{
-                          fontSize: `${16 * slideScaleFactor}px`,
-                          fontWeight: "bold",
-                          color: item.topRightTextColor ?? "#374151",
-                          display: "block",
-                          marginBottom: `${8 * slideScaleFactor}px`,
-                        }}
-                      >
-                        {item.topRightText}
-                      </span>
-                    )}
-                    <p
-                      style={{
-                        font: `bold ${30 * slideScaleFactor}px/1 sans-serif`,
-                        color: item.valueColor,
-                        marginBottom: `${4 * slideScaleFactor}px`,
-                      }}
-                    >
-                      {item.value}
-                    </p>
-                    <p
-                      style={{
-                        font: `${15 * slideScaleFactor}px/1.2 sans-serif`,
-                        color: item.labelColor,
-                      }}
-                    >
-                      {item.label}
-                    </p>
-                  </div>
+        <div className="w-1/2 flex flex-col justify-between items-start h-full">
+          <div>
+            {item.topRightText && (
+              <span
+                style={{
+                  fontSize: `${16 * slideScaleFactor}px`,
+                  fontWeight: "bold",
+                  color: item.topRightTextColor ?? "#374151",
+                  display: "block",
+                  marginBottom: `${8 * slideScaleFactor}px`,
+                }}
+              >
+                {item.topRightText}
+              </span>
+            )}
+            <p
+              style={{
+                font: `bold ${30 * slideScaleFactor}px/1 sans-serif`,
+                color: item.valueColor,
+                marginBottom: `${4 * slideScaleFactor}px`,
+              }}
+            >
+              {item.value}
+            </p>
+            <p
+              style={{
+                font: `${15 * slideScaleFactor}px/1.2 sans-serif`,
+                color: item.labelColor,
+              }}
+            >
+              {item.label}
+            </p>
+          </div>
 
-                  {/* Button Content */}
-                  {item.showKnowMoreButton && (
-                    <button
-                      className="bg-green-600 text-white hover:bg-green-700 transition font-semibold"
-                      style={{
-                        width: `${120 * slideScaleFactor}px`,
-                        height: `${40 * slideScaleFactor}px`,
-                        borderRadius: `${10 * slideScaleFactor}px`,
-                        fontSize: `${16 * slideScaleFactor}px`,
-                      }}
-                    >
-                      Know More
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+          {item.showKnowMoreButton && (
+            <button
+              className="bg-green-600 text-white hover:bg-green-700 transition font-semibold"
+              style={{
+                width: `${120 * slideScaleFactor}px`,
+                height: `${40 * slideScaleFactor}px`,
+                borderRadius: `${10 * slideScaleFactor}px`,
+                fontSize: `${16 * slideScaleFactor}px`,
+              }}
+            >
+              Know More
+            </button>
+          )}
+        </div>
+      </>
+    )}
+  </div>
+))}
+
           </div>
         </div>
 

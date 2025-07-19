@@ -13,20 +13,25 @@ export const activitiesAtGlanceSettings = {
 };
 
 export const activitiesAtGlance = [
-    {
-        // 1. 2025-2026 Card (image_b1e41b.png)
-        type: "circle-icon",
-        image: "https://png.pngtree.com/png-vector/20190505/ourmid/pngtree-vector-hole-icon-png-image_1023130.jpg", // Direct URL
-        topRightText: "2025-2026", // Special text for this card
-        topRightTextColor: "#374151",
-        topRightDotColor: "#2563EB",
-        value: "", // No value for this card
-        label: "", // No label for this card
-        bgColor: "#E6F4EA", // Consistent light background
-        circleColor: "transparent",
-        circleBgColor: "transparent",
-        showKnowMoreButton: false,
-    },
+  {
+    type: "chart",
+    bgColor: "#E6F4EA",
+    topRightText: "Activity Stats",
+    topRightDotColor: "#2563EB",
+    topRightTextColor: "#1e3a8a",
+    items: [
+    //   {
+    //     year: "2024–25",
+    //     value: 20,
+    //     color: "#10B981"
+    //   },
+      {
+        year: "2025–2026",
+        value: 100,
+        color: "#3B82F6"
+      }
+    ]
+  },
     {
         // 2. MT of Segregated Plastic Collected (image_c0fe86.jpg)
         type: "circle-icon",

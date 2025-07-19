@@ -64,6 +64,30 @@ export const activitiesAtGlance = [
         showKnowMoreButton: true,
     },
     {
+    type: "chart",
+    bgColor: "#E6F4EA",
+    topRightText: "Activity Stats",
+    topRightDotColor: "#2563EB",
+    topRightTextColor: "#1e3a8a",
+    items: [
+          {
+        year: "2023–2024",
+        value: 30,
+        color: "#EF4444"
+      },
+      {
+        year: "2024–2025",
+        value: 50,
+        color: "#10B981"
+      },
+      {
+        year: "2025–2026",
+        value: 100,
+        color: "#3B82F6"
+      }
+    ]
+  },
+    {
         // 4. Rs Roi From Waste (image_b2e059.jpg)
         type: "circle-icon",
         label: "Rs Roi From Waste",
@@ -89,6 +113,30 @@ export const activitiesAtGlance = [
         circleBgColor: "transparent",
         showKnowMoreButton: true,
     },
+    {
+    type: "chart",
+    bgColor: "#E6F4EA",
+    topRightText: "Activity Stats",
+    topRightDotColor: "#2563EB",
+    topRightTextColor: "#1e3a8a",
+    items: [
+          {
+        year: "2023–2024",
+        value: 30,
+        color: "#EF4444"
+      },
+      {
+        year: "2024–2025",
+        value: 50,
+        color: "#10B981"
+      },
+      {
+        year: "2025–2026",
+        value: 100,
+        color: "#3B82F6"
+      }
+    ]
+  },
     {
         // 6. Active Volunteers (image_b2d8f5.png)
         type: "circle-icon",

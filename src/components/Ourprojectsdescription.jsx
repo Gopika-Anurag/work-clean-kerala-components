@@ -121,6 +121,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
     const handleMouseMove = (e) => {
       if (!isDragging) return;
       e.preventDefault();
+      e.stopPropagation();
       const x = e.pageX - slider.offsetLeft;
       const dragSpeed = settings.dragSpeed ?? 1.5;
       const walk = (x - startX) * dragSpeed;
@@ -140,29 +141,47 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
     };
   }, [isDragging, startX, scrollLeft]);
 
-  useEffect(() => {
-    const slider = scrollRef.current;
-    if (!slider) return;
+ useEffect(() => {
+  const slider = scrollRef.current;
+  if (!slider) return;
 
-    const handleWheel = (e) => {
-      if (!isHovered) return;
-      e.preventDefault();
-      const delta = e.deltaY || e.deltaX;
-      if (Math.abs(delta) < 5) return;
-      const dir = delta > 0 ? "right" : "left";
-      const dist = slideWidth + currentSlideGap;
-      slider.scrollBy({ left: dir === "right" ? dist : -dist, behavior: "smooth" });
-    };
+  const handleWheel = (e) => {
+    if (!isHovered) return;
 
-    slider.addEventListener("wheel", handleWheel, { passive: false });
-    return () => slider.removeEventListener("wheel", handleWheel);
-  }, [isHovered, slideWidth, currentSlideGap]);
+    // Prevent vertical scroll on body
+    e.preventDefault();
+    e.stopPropagation();
+
+    const delta = e.deltaY || e.deltaX;
+    if (Math.abs(delta) < 5) return;
+
+    const dir = delta > 0 ? "right" : "left";
+    const dist = slideWidth + currentSlideGap;
+
+    slider.scrollBy({
+      left: dir === "right" ? dist : -dist,
+      behavior: "smooth",
+    });
+  };
+
+  // Attach to window so body scrolling is controlled
+  window.addEventListener("wheel", handleWheel, { passive: false });
+
+  return () => {
+    window.removeEventListener("wheel", handleWheel);
+  };
+}, [isHovered, slideWidth, currentSlideGap]);
+
 
   useEffect(() => {
     const handleKey = (e) => {
       if (!isHovered) return;
-      if (e.key === "ArrowLeft") scroll("left");
-      else if (e.key === "ArrowRight") scroll("right");
+      if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+  e.preventDefault();
+  if (e.key === "ArrowLeft") scroll("left");
+  else if (e.key === "ArrowRight") scroll("right");
+}
+
     };
     if (isHovered) document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
@@ -170,14 +189,17 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
 
   return (
     <section
-      ref={containerRef}
-      className="w-full max-w-[100vw] relative bg-[#f0fdf4] py-6 overflow-visible"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setActiveIndex(null);
-      }}
-    >
+  ref={containerRef}
+  className="w-full min-h-screen max-w-[100vw] relative z-[10] bg-[#f0fdf4] overflow-hidden"
+  onMouseEnter={() => setIsHovered(true)}
+  onMouseLeave={() => {
+    setIsHovered(false);
+    setActiveIndex(null);
+  }}
+>
+
+
+
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
         <h2 className="font-bold text-gray-800 mb-8 text-center text-xl sm:text-3xl md:text-4xl lg:text-5xl">
           OUR PROJECTS
@@ -192,7 +214,7 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
         </div>
 
         {/* Carousel Scroll */}
-        <div ref={scrollRef} className="cursor-grab active:cursor-grabbing overflow-x-auto scroll-smooth no-scrollbar" style={{ scrollSnapType: "x mandatory" }}>
+        <div ref={scrollRef} tabIndex={0} className="cursor-grab active:cursor-grabbing overflow-x-auto scroll-smooth no-scrollbar" style={{ scrollSnapType: "x mandatory" }}>
           <div className="flex w-max select-none" style={{
             gap: `${currentSlideGap}px`,
             paddingLeft: `${BASE_TEXT_PADDING * 0.5 * slideWidthRatio}px`,

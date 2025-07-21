@@ -30,6 +30,10 @@ function App() {
       <div className="w-full">
 
         <section className="my-12">
+          <ActivitiesCarousel items={activitiesAtGlance} settings={activitiesAtGlanceSettings} />
+        </section>
+
+        <section className="my-12">
           <Ourprojectsdescription projects={Projectsdescription} settings={ProjectsdescriptionSettings} />
         </section>
         
@@ -54,10 +58,6 @@ function App() {
       </div>
 
       <br />
-
-        <section className="my-12">
-          <ActivitiesCarousel items={activitiesAtGlance} settings={activitiesAtGlanceSettings} />
-        </section>
 
         <section className="my-12">
           <ProjectsCarousel projects={ourProjects} settings={ourProjectsCarouselSettings} />

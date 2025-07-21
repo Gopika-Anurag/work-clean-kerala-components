@@ -5,38 +5,33 @@ export const activitiesAtGlanceSettings = {
   slideWidth: 500,
   slideHeight: 250,
   minimumSlidesToShow: 2.6,
-  scrollSpeed: 1,
+//   scrollSpeed: 0.8,
   dragSpeed: 2,
   touchpadScrollSpeed: 0.25,     // Keep this high for smooth 2-finger scroll
   wheelScrollMultiplier: 1,  // Controls scroll sensitivity
-  mouseScrollSpeed: 0.3        // 🔧 REDUCE this to slow mouse wheel scrolling
+  mouseScrollSpeed: 0.3,        // 🔧 REDUCE this to slow mouse wheel scrolling
+  pixelScroll: 300,
+
 };
 
 export const activitiesAtGlance = [
   {
-    type: "chart",
-    bgColor: "#E6F4EA",
-    topRightText: "Activity Stats",
-    topRightDotColor: "#2563EB",
-    topRightTextColor: "#1e3a8a",
-    items: [
-          {
-        year: "2023–2024",
-        value: 30,
-        color: "#EF4444"
-      },
-      {
-        year: "2024–2025",
-        value: 50,
-        color: "#10B981"
-      },
-      {
-        year: "2025–2026",
-        value: 100,
-        color: "#3B82F6"
-      }
-    ]
-  },
+  type: "chart",
+  bgColor: "#E6F4EA",
+  topRightText: "Activity Status",
+  topRightDotColor: "#2563EB",
+  topRightTextColor: "#1e3a8a",
+  items: [
+    // { year: "2019–2020", value: 30, color: "#F97316" },  // Orange
+    { year: "2020–2021", value: 50, color: "#10B981" },  // Emerald
+    { year: "2021–2022", value: 100, color: "#3B82F6" }, // Blue
+    { year: "2022–2023", value: 30, color: "#A855F7" },  // Purple
+    { year: "2023–2024", value: 50, color: "#EAB308" },  // Yellow
+    { year: "2024–2025", value: 100, color: "#EC4899" }, // Pink
+    { year: "2025–2026", value: 20, color: "#14B8A6" },  // Teal
+    // { year: "2026–2027", value: 30, color: "#6366F1" },  // Indigo
+  ]
+},
     {
         // 2. MT of Segregated Plastic Collected (image_c0fe86.jpg)
         type: "circle-icon",
@@ -64,29 +59,23 @@ export const activitiesAtGlance = [
         showKnowMoreButton: true,
     },
     {
-    type: "chart",
-    bgColor: "#E6F4EA",
-    topRightText: "Activity Stats",
-    topRightDotColor: "#2563EB",
-    topRightTextColor: "#1e3a8a",
-    items: [
-          {
-        year: "2023–2024",
-        value: 30,
-        color: "#EF4444"
-      },
-      {
-        year: "2024–2025",
-        value: 50,
-        color: "#10B981"
-      },
-      {
-        year: "2025–2026",
-        value: 100,
-        color: "#3B82F6"
-      }
-    ]
-  },
+  type: "chart",
+  bgColor: "#E6F4EA",
+  topRightText: "Activity Stats",
+  topRightDotColor: "#2563EB",
+  topRightTextColor: "#1e3a8a",
+  items: [
+     { year: "2019–2020", value: 30, color: "#F97316" },  // Orange
+    { year: "2020–2021", value: 50, color: "#10B981" },  // Emerald
+    { year: "2021–2022", value: 100, color: "#3B82F6" }, // Blue
+    { year: "2022–2023", value: 30, color: "#A855F7" },  // Purple
+    { year: "2023–2024", value: 50, color: "#EAB308" },  // Yellow
+    { year: "2024–2025", value: 100, color: "#EC4899" }, // Pink
+    { year: "2025–2026", value: 20, color: "#14B8A6" },  // Teal
+    { year: "2026–2027", value: 30, color: "#6366F1" },  // Indigo
+   
+  ]
+},
     {
         // 4. Rs Roi From Waste (image_b2e059.jpg)
         type: "circle-icon",
@@ -114,29 +103,22 @@ export const activitiesAtGlance = [
         showKnowMoreButton: true,
     },
     {
-    type: "chart",
-    bgColor: "#E6F4EA",
-    topRightText: "Activity Stats",
-    topRightDotColor: "#2563EB",
-    topRightTextColor: "#1e3a8a",
-    items: [
-          {
-        year: "2023–2024",
-        value: 30,
-        color: "#EF4444"
-      },
-      {
-        year: "2024–2025",
-        value: 50,
-        color: "#10B981"
-      },
-      {
-        year: "2025–2026",
-        value: 100,
-        color: "#3B82F6"
-      }
-    ]
-  },
+  type: "chart",
+  bgColor: "#E6F4EA",
+  topRightText: "Activity Status",
+  topRightDotColor: "#2563EB",
+  topRightTextColor: "#1e3a8a",
+  items: [
+    //  { year: "2019–2020", value: 30, color: "#F97316" },  // Orange
+    { year: "2020–2021", value: 50, color: "#10B981" },  // Emerald
+    { year: "2021–2022", value: 100, color: "#3B82F6" }, // Blue
+    { year: "2022–2023", value: 30, color: "#A855F7" },  // Purple
+    { year: "2023–2024", value: 50, color: "#EAB308" },  // Yellow
+    { year: "2024–2025", value: 100, color: "#EC4899" }, // Pink
+    { year: "2025–2026", value: 20, color: "#14B8A6" },  // Teal
+    { year: "2026–2027", value: 30, color: "#6366F1" },  // Indigo
+  ]
+},
     {
         // 6. Active Volunteers (image_b2d8f5.png)
         type: "circle-icon",

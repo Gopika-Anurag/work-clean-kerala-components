@@ -5,6 +5,8 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const containerRef = useRef(null);
   const scrollRef = useRef(null);
   const yearListRef = useRef(null);
+    const observers = useRef([]);
+
 
   const [progress, setProgress] = useState(0);
   const [slideWidth, setSlideWidth] = useState(0);
@@ -17,6 +19,9 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const [currentSlideGap, setCurrentSlideGap] = useState(0);
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [slideScaleFactor, setSlideScaleFactor] = useState(1);
+
+  // New state for animated values (keyed by item index)
+  const [animatedValues, setAnimatedValues] = useState({});
 
   const BASE_SLIDE_WIDTH = settings.slideWidth ?? 500;
   const BASE_SLIDE_HEIGHT = settings.slideHeight ?? 250;
@@ -167,6 +172,73 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     return () => document.removeEventListener("keydown", handleKey);
   }, [scroll]);
 
+  // Count-up effect for numerical values
+  useEffect(() => {
+
+    items.forEach((item, i) => {
+      if (item.type !== "chart" && item.value !== undefined && item.value !== null) {
+        const targetValue = parseFloat(item.value.replace(/[^0-9.-]+/g, "")); // Extract number, handle currency/units
+        if (isNaN(targetValue)) return;
+
+        const startCountUp = (element) => {
+          let startTimestamp = null;
+          const duration = 2000; // milliseconds
+          const initialValue = 0; // Always start from 0 for countup
+
+          const animate = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = (timestamp - startTimestamp) / duration;
+            const currentValue = Math.min(progress, 1) * targetValue;
+
+            // Format the number based on the original string
+            let formattedValue = Math.floor(currentValue);
+            if (item.value.includes("MT")) {
+                formattedValue = `${formattedValue} MT`;
+            } else if (item.value.includes("Rs") || item.value.includes("₹")) {
+                formattedValue = `₹${formattedValue.toLocaleString('en-IN')}`; // Indian Rupee format
+            } else if (item.value.includes("KM")) {
+                formattedValue = `${formattedValue} KM`;
+            } else {
+                formattedValue = formattedValue.toLocaleString(); // General number formatting
+            }
+
+
+            setAnimatedValues(prev => ({ ...prev, [i]: formattedValue }));
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              setAnimatedValues(prev => ({ ...prev, [i]: item.value })); // Ensure final value is exactly as provided
+            }
+          };
+          requestAnimationFrame(animate);
+        };
+
+        const targetElement = document.getElementById(`countup-value-${i}`);
+        if (targetElement) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting && !animatedValues[i]) { // Only animate if not already animated
+                  startCountUp(entry.target);
+                  observer.unobserve(entry.target); // Stop observing after animation starts
+                }
+              });
+            },
+            { threshold: 0.5 } // Trigger when 50% of the element is visible
+          );
+
+          observer.observe(targetElement);
+          observers.current.push(observer);
+        }
+      }
+    });
+
+    return () => {
+      observers.current.forEach(observer => observer.disconnect());
+    };
+  }, [items, animatedValues]); // Dependency on animatedValues to re-run for new items
+
   return (
     <div
       className="relative w-full"
@@ -179,7 +251,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
       <section
         ref={containerRef}
         className="w-full max-w-[100vw] relative bg-[#f0fdf4] py-6 overflow-hidden transition-all duration-300 z-10"
-        style={{ pointerEvents: isHovered ? "auto" : "none" }}
+        style={{ pointerEvents: "auto" }}
       >
         <div className="px-4 sm:px-6 lg:px-12">
           <h2 className="text-center font-bold text-gray-800 text-3xl md:text-5xl mb-5">
@@ -264,10 +336,10 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                         <div
                           ref={yearListRef}
                           onWheel={handleYearListWheel}
-                          className="absolute top-4 right-4 z-10 overflow-y-auto pr-1 no-scrollbar"
+                          className="absolute top-0 right-4 z-10 overflow-y-auto pr-1 no-scrollbar"
                           style={{
                             maxHeight: `${slideHeight * 0.92}px`,
-                            minHeight: `${slideHeight * 0.65}px`,
+                            // minHeight: `${slideHeight * 0.65}px`,
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "flex-start",
@@ -276,9 +348,9 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                         >
                           <div
                             style={{
-                              fontSize: `${16 * slideScaleFactor}px`,
+                              fontSize: `${22 * slideScaleFactor}px`,
                               fontWeight: "600",
-                              marginBottom: `${6 * slideScaleFactor}px`,
+                              marginBottom: `${2 * slideScaleFactor}px`,
                               color: item.topRightTextColor ?? "#374151",
                             }}
                           >
@@ -343,14 +415,17 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                               </span>
                             )}
                             <p
+                              id={`countup-value-${i}`} 
                               style={{
                                 fontSize: `${38 * slideScaleFactor}px`,
                                 fontWeight: "bold",
                                 color: item.valueColor,
                                 marginBottom: `${10 * slideScaleFactor}px`,
+                                opacity: animatedValues[i] !== undefined ? 1 : 0, // Control visibility
+                                transition: 'opacity 0.5s ease-in-out', // Smooth transition
                               }}
                             >
-                              {item.value}
+                              {animatedValues[i] !== undefined ? animatedValues[i] : '0'} {/* Display animated value */}
                             </p>
                             <p
                               style={{

@@ -190,7 +190,9 @@ const Ourprojectsdescription = ({ projects, settings = {} }) => {
   return (
     <section
   ref={containerRef}
-  className="w-full min-h-screen max-w-[100vw] relative z-[10] bg-[#f0fdf4] overflow-hidden"
+  className="w-full min-h-fit md:min-h-screen max-w-[100vw] relative z-[10] bg-[#f0fdf4] overflow-hidden"
+
+
   onMouseEnter={() => setIsHovered(true)}
   onMouseLeave={() => {
     setIsHovered(false);

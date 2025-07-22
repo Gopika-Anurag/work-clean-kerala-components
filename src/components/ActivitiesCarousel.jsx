@@ -19,9 +19,11 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const [currentSlideGap, setCurrentSlideGap] = useState(0);
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [slideScaleFactor, setSlideScaleFactor] = useState(1);
-
-  // New state for animated values (keyed by item index)
   const [animatedValues, setAnimatedValues] = useState({});
+  const [animatedPieValues, setAnimatedPieValues] = useState({});
+  const [activeIndex, setActiveIndex] = useState(null);
+
+
 
   const BASE_SLIDE_WIDTH = settings.slideWidth ?? 500;
   const BASE_SLIDE_HEIGHT = settings.slideHeight ?? 250;
@@ -239,6 +241,40 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     };
   }, [items, animatedValues]); // Dependency on animatedValues to re-run for new items
 
+ const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length > 0) {
+    const data = payload[0].payload;
+    const borderColor = data.color || "#4CAF50";
+
+    return (
+      <div
+        className="bg-white border-l-4 rounded-md shadow-md px-4 py-3"
+        style={{
+          borderColor: borderColor,
+          minWidth: "220px",
+        }}
+      >
+        <p className="text-gray-700 font-semibold text-sm mb-1">
+          {data.year}
+        </p>
+
+        <p className="text-xl font-bold text-gray-900 leading-tight">
+          {data.unit || "$"}
+          {data.value?.toLocaleString()}
+        </p>
+
+        <p className="text-sm text-gray-500 mt-1">
+          {data.label || ""}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
+
+
+
   return (
     <div
       className="relative w-full"
@@ -298,7 +334,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                       <div className="relative flex w-full items-center justify-between">
                         <div className="w-1/2 h-full flex items-center justify-center">
                           <div className="w-full" style={{ height: `${180 * slideScaleFactor}px` }}>
-                            <ResponsiveContainer width="100%" height="100%" className="pointer-events-none">
+                            <ResponsiveContainer width="100%" height="100%" >
                               <PieChart>
                                 {(() => {
                                   const chartData = item.items?.filter(entry => entry.value > 0) || [];
@@ -327,7 +363,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                                     </Pie>
                                   );
                                 })()}
-                                <Tooltip />
+<Tooltip content={<CustomTooltip />} />
                               </PieChart>
                             </ResponsiveContainer>
                           </div>

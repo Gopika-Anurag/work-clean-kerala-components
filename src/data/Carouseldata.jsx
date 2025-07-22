@@ -23,12 +23,12 @@ export const activitiesAtGlance = [
   topRightTextColor: "#1e3a8a",
   items: [
     // { year: "2019–2020", value: 30, color: "#F97316" },  // Orange
-    { year: "2020–2021", value: 50, color: "#10B981" },  // Emerald
-    { year: "2021–2022", value: 100, color: "#3B82F6" }, // Blue
-    { year: "2022–2023", value: 30, color: "#A855F7" },  // Purple
-    { year: "2023–2024", value: 50, color: "#EAB308" },  // Yellow
-    { year: "2024–2025", value: 100, color: "#EC4899" }, // Pink
-    { year: "2025–2026", value: 20, color: "#14B8A6" },  // Teal
+    { year: "2020–2021", value: 20000, color: "#10B981", label: "Paid to Haritha Karma Sena", unit: "$" },  // Emerald
+    { year: "2021–2022", value: 15000, color: "#3B82F6" , label: "Paid to Haritha Karma Sena", unit: "$"}, // Blue
+    { year: "2022–2023", value: 30000, color: "#A855F7" , label: "Paid to Haritha Karma Sena", unit: "$"},  // Purple
+    { year: "2023–2024", value: 50000, color: "#EAB308", label: "Paid to Haritha Karma Sena", unit: "$" },  // Yellow
+    { year: "2024–2025", value: 10000, color: "#EC4899", label: "Paid to Haritha Karma Sena", unit: "$" }, // Pink
+    { year: "2025–2026", value: 20000, color: "#14B8A6", label: "Paid to Haritha Karma Sena", unit: "$" },  // Teal
     // { year: "2026–2027", value: 30, color: "#6366F1" },  // Indigo
   ]
 },

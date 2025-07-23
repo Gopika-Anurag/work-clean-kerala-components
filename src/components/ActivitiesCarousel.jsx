@@ -1,28 +1,25 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import AnimatedNumber from "./AnimatedNumber";
 
 const ActivitiesCarousel = ({ items, settings = {} }) => {
   const containerRef = useRef(null);
   const scrollRef = useRef(null);
   const yearListRef = useRef(null);
-    const observers = useRef([]);
-
+  const observers = useRef([]); // To keep track of IntersectionObservers for cleanup
 
   const [progress, setProgress] = useState(0);
   const [slideWidth, setSlideWidth] = useState(0);
   const [slideHeight, setSlideHeight] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [carouselPadding, setCarouselPadding] = useState(0);
   const [currentSlideGap, setCurrentSlideGap] = useState(0);
   const [currentProgressBarHeight, setCurrentProgressBarHeight] = useState(0);
   const [slideScaleFactor, setSlideScaleFactor] = useState(1);
-  const [animatedValues, setAnimatedValues] = useState({});
-  const [animatedPieValues, setAnimatedPieValues] = useState({});
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [itemActive, setItemActive] = useState({});
 
+  // State to control when a pie chart should re-animate
+  const [pieChartShouldAnimate, setPieChartShouldAnimate] = useState({});
 
 
   const BASE_SLIDE_WIDTH = settings.slideWidth ?? 500;
@@ -32,15 +29,17 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
   const BASE_TEXT_PADDING = 25;
   const BASE_PROGRESS_BAR_HEIGHT = 6;
 
-  const handleYearListWheel = (e) => {
+  // Handles vertical scrolling for the year list (if present)
+  const handleYearListWheel = useCallback((e) => {
     if (!yearListRef.current) return;
-    e.preventDefault();
+    e.preventDefault(); // Prevent default page scroll
     yearListRef.current.scrollBy({
       top: e.deltaY,
       behavior: "smooth",
     });
-  };
+  }, []); // Empty dependency array means this function is created once
 
+  // Scrolls the main carousel left or right
   const scroll = useCallback(
     (dir) => {
       if (!scrollRef.current) return;
@@ -51,12 +50,16 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     [settings.pixelScroll]
   );
 
+  // Effect to update carousel dimensions on resize and initial load
   useEffect(() => {
     const updateDimensions = () => {
       if (!containerRef.current) return;
       const containerWidth = containerRef.current.offsetWidth;
       const windowWidth = window.innerWidth;
-      const slidesToDisplay = settings.minimumSlidesToShow ?? (windowWidth >= 1280 ? 2.8 : windowWidth >= 1024 ? 2.5 : windowWidth >= 768 ? 1.8 : 1.5);
+
+      const slidesToDisplay =
+        settings.minimumSlidesToShow ??
+        (windowWidth >= 1280 ? 2.8 : windowWidth >= 1024 ? 2.5 : windowWidth >= 768 ? 1.8 : 1.5);
 
       let dynamicBaseGap = BASE_SLIDE_GAP;
       if (windowWidth < 640) dynamicBaseGap = 24;
@@ -64,7 +67,8 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
       else if (windowWidth < 1024) dynamicBaseGap = 40;
 
       const assumedGapRatio = dynamicBaseGap / BASE_SLIDE_WIDTH;
-      let calcSlideWidth = containerWidth / (slidesToDisplay + (slidesToDisplay - 1) * assumedGapRatio);
+      let calcSlideWidth =
+        containerWidth / (slidesToDisplay + (slidesToDisplay - 1) * assumedGapRatio);
       let calcSlideGap = calcSlideWidth * assumedGapRatio;
 
       const MIN_WIDTH = 200;
@@ -83,6 +87,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     };
 
     updateDimensions();
+
     const debounce = (fn, delay) => {
       let timeout;
       return (...args) => {
@@ -91,10 +96,12 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
       };
     };
     const handleResize = debounce(updateDimensions, 100);
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [settings.minimumSlidesToShow]);
 
+  // Effect to update scroll progress bar
   useEffect(() => {
     const slider = scrollRef.current;
     if (!slider) return;
@@ -106,19 +113,30 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     return () => slider.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Mouse drag functionality
   useEffect(() => {
     const slider = scrollRef.current;
     if (!slider) return;
 
+    let isDragging = false;
+    let startX;
+    let scrollLeft;
+
     const handleMouseDown = (e) => {
-      setIsDragging(true);
-      setStartX(e.pageX - slider.offsetLeft);
-      setScrollLeft(slider.scrollLeft);
+      isDragging = true;
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+      slider.style.cursor = "grabbing";
     };
 
-    const handleMouseUp = () => setIsDragging(false);
+    const handleMouseUp = () => {
+      isDragging = false;
+      slider.style.cursor = "grab";
+    };
+
     const handleMouseMove = (e) => {
       if (!isDragging) return;
+      e.preventDefault();
       const x = e.pageX - slider.offsetLeft;
       const walk = (x - startX) * (settings.dragSpeed ?? 2);
       slider.scrollLeft = scrollLeft - walk;
@@ -128,14 +146,16 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
     slider.addEventListener("mouseleave", handleMouseUp);
     slider.addEventListener("mouseup", handleMouseUp);
     slider.addEventListener("mousemove", handleMouseMove);
+
     return () => {
       slider.removeEventListener("mousedown", handleMouseDown);
       slider.removeEventListener("mouseleave", handleMouseUp);
       slider.removeEventListener("mouseup", handleMouseUp);
       slider.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [isDragging, startX, scrollLeft, settings.dragSpeed]);
+  }, [settings.dragSpeed]);
 
+  // Mouse wheel scroll functionality
   useEffect(() => {
     const slider = scrollRef.current;
     if (!slider) return;
@@ -159,129 +179,114 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
 
     slider.addEventListener("wheel", handleWheel, { passive: false });
     return () => slider.removeEventListener("wheel", handleWheel);
-  }, [isHovered, slideWidth, currentSlideGap]);
+  }, [isHovered, slideWidth, currentSlideGap, settings.touchpadScrollSpeed, settings.wheelScrollMultiplier, settings.scrollSpeed]);
 
+  // Keyboard navigation (ArrowLeft, ArrowRight)
   useEffect(() => {
     const handleKey = (e) => {
-      const isActive = document.activeElement === scrollRef.current;
-      if (!isActive) return;
+      if (!isHovered) return;
+
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
         e.preventDefault();
         scroll(e.key === "ArrowLeft" ? "left" : "right");
       }
     };
+
     document.addEventListener("keydown", handleKey, { passive: false });
     return () => document.removeEventListener("keydown", handleKey);
-  }, [scroll]);
+  }, [isHovered, scroll]);
 
-  // Count-up effect for numerical values
+  // Initialize visibility for the first few slides on load
   useEffect(() => {
-
-    items.forEach((item, i) => {
-      if (item.type !== "chart" && item.value !== undefined && item.value !== null) {
-        const targetValue = parseFloat(item.value.replace(/[^0-9.-]+/g, "")); // Extract number, handle currency/units
-        if (isNaN(targetValue)) return;
-
-        const startCountUp = (element) => {
-          let startTimestamp = null;
-          const duration = 2000; // milliseconds
-          const initialValue = 0; // Always start from 0 for countup
-
-          const animate = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = (timestamp - startTimestamp) / duration;
-            const currentValue = Math.min(progress, 1) * targetValue;
-
-            // Format the number based on the original string
-            let formattedValue = Math.floor(currentValue);
-            if (item.value.includes("MT")) {
-                formattedValue = `${formattedValue} MT`;
-            } else if (item.value.includes("Rs") || item.value.includes("₹")) {
-                formattedValue = `₹${formattedValue.toLocaleString('en-IN')}`; // Indian Rupee format
-            } else if (item.value.includes("KM")) {
-                formattedValue = `${formattedValue} KM`;
-            } else {
-                formattedValue = formattedValue.toLocaleString(); // General number formatting
-            }
-
-
-            setAnimatedValues(prev => ({ ...prev, [i]: formattedValue }));
-
-            if (progress < 1) {
-              requestAnimationFrame(animate);
-            } else {
-              setAnimatedValues(prev => ({ ...prev, [i]: item.value })); // Ensure final value is exactly as provided
-            }
-          };
-          requestAnimationFrame(animate);
-        };
-
-        const targetElement = document.getElementById(`countup-value-${i}`);
-        if (targetElement) {
-          const observer = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting && !animatedValues[i]) { // Only animate if not already animated
-                  startCountUp(entry.target);
-                  observer.unobserve(entry.target); // Stop observing after animation starts
-                }
-              });
-            },
-            { threshold: 0.5 } // Trigger when 50% of the element is visible
-          );
-
-          observer.observe(targetElement);
-          observers.current.push(observer);
+    const initialActive = {};
+    const initialPieChartAnimate = {};
+    items.forEach((_, i) => {
+      if (i < 2) { // Consider the first 2 items as initially "active"
+        initialActive[i] = true;
+        // For charts, if initially active, mark them to animate
+        if (items[i].type === "chart") {
+          initialPieChartAnimate[i] = Date.now(); // Set an initial timestamp
         }
       }
     });
+    setItemActive(initialActive);
+    setPieChartShouldAnimate(initialPieChartAnimate); // Set initial state
+  }, [items]);
+
+  // Intersection Observer for triggering active state and Pie Chart animation
+  useEffect(() => {
+    observers.current.forEach((observer) => observer.disconnect());
+    observers.current = [];
+
+    items.forEach((item, i) => {
+      const targetElement = document.getElementById(`observe-target-${i}`);
+      if (!targetElement) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            setItemActive((prev) => ({ ...prev, [i]: entry.isIntersecting }));
+
+            // If item is a chart AND it's entering the viewport
+            if (item.type === "chart" && entry.isIntersecting) {
+              // Trigger the Pie Chart to animate by changing its key.
+              // A small timeout helps ensure React's render cycle processes
+              // `itemActive[i] = true` before the key change.
+              setTimeout(() => {
+                  setPieChartShouldAnimate((prev) => ({ ...prev, [i]: Date.now() }));
+              }, 100); // Adjust delay if necessary
+            } else if (item.type === "chart" && !entry.isIntersecting) {
+              // If item is a chart AND it's leaving the viewport, reset its animation state
+              // This allows it to re-animate next time it enters
+              setPieChartShouldAnimate((prev) => ({ ...prev, [i]: undefined })); // Reset key
+            }
+          });
+        },
+        // Adjust threshold based on how much of the chart needs to be visible
+        // for the animation to trigger. 0.5 (50%) is a good starting point.
+        { threshold: 0.5 }
+      );
+
+      observer.observe(targetElement);
+      observers.current.push(observer);
+    });
 
     return () => {
-      observers.current.forEach(observer => observer.disconnect());
+      observers.current.forEach((observer) => observer.disconnect());
     };
-  }, [items, animatedValues]); // Dependency on animatedValues to re-run for new items
+  }, [items]); // Dependencies: only items, as pieChartShouldAnimate is updated inside the observer callback
 
- const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length > 0) {
-    const data = payload[0].payload;
-    const borderColor = data.color || "#4CAF50";
+  // Custom Tooltip for Recharts Pie Chart
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length > 0) {
+      const data = payload[0].payload;
+      const borderColor = data.color || "#4CAF50";
 
-    return (
-      <div
-        className="bg-white border-l-4 rounded-md shadow-md px-4 py-3"
-        style={{
-          borderColor: borderColor,
-          minWidth: "220px",
-        }}
-      >
-        <p className="text-gray-700 font-semibold text-sm mb-1">
-          {data.year}
-        </p>
-
-        <p className="text-xl font-bold text-gray-900 leading-tight">
-          {data.unit || "$"}
-          {data.value?.toLocaleString()}
-        </p>
-
-        <p className="text-sm text-gray-500 mt-1">
-          {data.label || ""}
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
-
-
+      return (
+        <div
+          className="bg-white border-l-4 rounded-md shadow px-1.5 py-1 sm:px-3 sm:py-2 max-w-[90px] sm:max-w-[200px] z-50 text-left"
+          style={{ borderColor, pointerEvents: "none" }}
+        >
+          <p className="text-[6px] sm:text-[10px] font-semibold text-gray-700 mb-0.5 leading-tight">
+            {data.year}
+          </p>
+          <p className="text-[8px] sm:text-base font-bold text-gray-900 leading-tight">
+            {data.unit || "$"}{data.value?.toLocaleString()}
+          </p>
+          <p className="text-[6px] sm:text-xs text-gray-500 mt-0.5 leading-tight">
+            {data.label || ""}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
 
   return (
     <div
       className="relative w-full"
-      onMouseEnter={() => {
-        setIsHovered(true);
-        scrollRef.current?.focus();
-      }}
+      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <section
@@ -294,10 +299,16 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
             Activities at a Glance
           </h2>
 
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black" onClick={() => scroll("left")}>
+          <div
+            className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black"
+            onClick={() => scroll("left")}
+          >
             &lt;
           </div>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black" onClick={() => scroll("right")}>
+          <div
+            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-gray-400 hover:text-black"
+            onClick={() => scroll("right")}
+          >
             &gt;
           </div>
 
@@ -330,14 +341,20 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                       gap: `${currentSlideGap / 2}px`,
                     }}
                   >
+                    <div
+                      id={`observe-target-${i}`}
+                      style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }}
+                    />
+
                     {item.type === "chart" ? (
                       <div className="relative flex w-full items-center justify-between">
                         <div className="w-1/2 h-full flex items-center justify-center">
                           <div className="w-full" style={{ height: `${180 * slideScaleFactor}px` }}>
-                            <ResponsiveContainer width="100%" height="100%" >
-                              <PieChart>
+                            <ResponsiveContainer width="100%" height="100%">
+                              {/* Set key to force remount and re-animation when `pieChartShouldAnimate` changes */}
+                              <PieChart key={pieChartShouldAnimate[i] || `pie-chart-${i}`}>
                                 {(() => {
-                                  const chartData = item.items?.filter(entry => entry.value > 0) || [];
+                                  const chartData = item.items?.filter((entry) => entry.value > 0) || [];
                                   return (
                                     <Pie
                                       data={chartData}
@@ -347,7 +364,9 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                                       cy="50%"
                                       innerRadius={50 * slideScaleFactor}
                                       outerRadius={90 * slideScaleFactor}
-                                      isAnimationActive={true}
+                                      // isAnimationActive only when `itemActive[i]` is true
+                                      isAnimationActive={itemActive[i]} // Simplified control
+                                      animationDuration={600}
                                       paddingAngle={0}
                                       cornerRadius={0}
                                       startAngle={90}
@@ -363,7 +382,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                                     </Pie>
                                   );
                                 })()}
-<Tooltip content={<CustomTooltip />} />
+                                <Tooltip content={<CustomTooltip />} />
                               </PieChart>
                             </ResponsiveContainer>
                           </div>
@@ -375,7 +394,6 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                           className="absolute top-0 right-4 z-10 overflow-y-auto pr-1 no-scrollbar"
                           style={{
                             maxHeight: `${slideHeight * 0.92}px`,
-                            // minHeight: `${slideHeight * 0.65}px`,
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "flex-start",
@@ -386,6 +404,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                             style={{
                               fontSize: `${22 * slideScaleFactor}px`,
                               fontWeight: "600",
+                              marginTop: `${-10 * slideScaleFactor}px`,
                               marginBottom: `${2 * slideScaleFactor}px`,
                               color: item.topRightTextColor ?? "#374151",
                             }}
@@ -450,19 +469,20 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                                 {item.topRightText}
                               </span>
                             )}
-                            <p
-                              id={`countup-value-${i}`} 
-                              style={{
-                                fontSize: `${38 * slideScaleFactor}px`,
-                                fontWeight: "bold",
-                                color: item.valueColor,
-                                marginBottom: `${10 * slideScaleFactor}px`,
-                                opacity: animatedValues[i] !== undefined ? 1 : 0, // Control visibility
-                                transition: 'opacity 0.5s ease-in-out', // Smooth transition
-                              }}
-                            >
-                              {animatedValues[i] !== undefined ? animatedValues[i] : '0'} {/* Display animated value */}
-                            </p>
+                            {item.value && (
+                              <AnimatedNumber
+                                targetValue={parseFloat(item.value.replace(/[^0-9.-]+/g, ""))}
+                                format={item.value}
+                                isActive={itemActive[i]}
+                                delay={900}
+                                duration={2000}
+                                style={{
+                                  fontSize: `${38 * slideScaleFactor}px`,
+                                  fontWeight: "bold",
+                                  color: item.valueColor,
+                                }}
+                              />
+                            )}
                             <p
                               style={{
                                 fontSize: `${20 * slideScaleFactor}px`,
@@ -498,7 +518,10 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
             </div>
           </div>
 
-          <div className="bg-gray-200 rounded mt-6" style={{ height: `${currentProgressBarHeight}px` }}>
+          <div
+            className="bg-gray-200 rounded mt-6"
+            style={{ height: `${currentProgressBarHeight}px` }}
+          >
             <div className="bg-green-700 rounded" style={{ width: `${progress}%`, height: "100%" }} />
           </div>
         </div>

@@ -17,6 +17,7 @@ export const activitiesAtGlanceSettings = {
 export const activitiesAtGlance = [
   {
   type: "chart",
+   isProgressChart: true,
   bgColor: "#E6F4EA",
   topRightText: "Activity Status",
   topRightDotColor: "#2563EB",

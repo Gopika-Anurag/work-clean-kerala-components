@@ -404,7 +404,7 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                             style={{
                               fontSize: `${22 * slideScaleFactor}px`,
                               fontWeight: "600",
-                              marginTop: `${-10 * slideScaleFactor}px`,
+                              marginTop: `${-8 * slideScaleFactor}px`,
                               marginBottom: `${2 * slideScaleFactor}px`,
                               color: item.topRightTextColor ?? "#374151",
                             }}

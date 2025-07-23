@@ -423,8 +423,8 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                             >
                               <div
                                 style={{
-                                  width: `${12 * yearDotScale * slideScaleFactor}px`,
-                                  height: `${12 * yearDotScale * slideScaleFactor}px`,
+                                  width: `${13 * yearDotScale * slideScaleFactor}px`,
+                                  height: `${13 * yearDotScale * slideScaleFactor}px`,
                                   backgroundColor: entry.color || "#2563EB",
                                   borderRadius: "9999px",
                                   flexShrink: 0,
@@ -432,8 +432,8 @@ const ActivitiesCarousel = ({ items, settings = {} }) => {
                               />
                               <span
                                 style={{
-                                  fontSize: `${12 * yearFontScale * slideScaleFactor}px`,
-                                  fontWeight: 500,
+                                  fontSize: `${13 * yearFontScale * slideScaleFactor}px`,
+                                  fontWeight: 700,
                                   color: item.topRightTextColor ?? "#374151",
                                   whiteSpace: "nowrap",
                                 }}

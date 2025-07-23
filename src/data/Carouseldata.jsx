@@ -73,7 +73,6 @@ export const activitiesAtGlance = [
     { year: "2023–2024", value: 50, color: "#EAB308" },  // Yellow
     { year: "2024–2025", value: 100, color: "#EC4899" }, // Pink
     { year: "2025–2026", value: 20, color: "#14B8A6" },  // Teal
-    { year: "2026–2027", value: 30, color: "#6366F1" },  // Indigo
    
   ]
 },

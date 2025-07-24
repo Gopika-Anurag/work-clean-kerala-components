@@ -21,6 +21,8 @@ import AboutUsSectionmore from "./components/AboutUsSectionmore";
 import AboutUsCarouselBG from "./components/AboutUsCarouselBG";
 import Ourprojectsdescription from "./components/Ourprojectsdescription";
 import {Projectsdescription, ProjectsdescriptionSettings } from "./data/Projectdescriptiondata"
+import { portfolioData } from "./data/portfolioData";
+import PortfolioCardWithCarousel from "./components/PortfolioCardWithCarousel";
 
 function App() {
   
@@ -28,6 +30,11 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <section className="my-12 bg-white py-8">
+  <PortfolioCardWithCarousel data={portfolioData} />
+</section>
+
 
         <section className="my-12">
           <ActivitiesCarousel items={activitiesAtGlance} settings={activitiesAtGlanceSettings} />

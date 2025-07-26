@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import stepByStepProcessDefaults from '../data/stepByStepProcessData'; 
-import '../styles/stepByStepProcess.css'; 
+import '../styles/stepbystepprocess.css'; 
 
 const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style prop
     // Destructure props from 'attributes', applying default values from stepByStepProcessDefaults
@@ -436,7 +436,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         >
             {/* Subtitle */}
             <p
-                className="text-center uppercase tracking-widest font-semibold mb-2"
+                className="text-center uppercase tracking-widest font-semibold mb-2 mr-50"
                 style={{
                     fontSize: `${14 * dimensions.fontScale}px`,
                     color: subtitleColor || "#00AEEE",
@@ -446,7 +446,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
             </p>
             {/* Component title */}
             <h2
-                className="font-medium text-center mb-8"
+                className="font-medium text-center mb-8 mr-50"
                 style={{
                     fontSize: `${56 * dimensions.fontScale}px`,
                     color: titleColor || "#000",

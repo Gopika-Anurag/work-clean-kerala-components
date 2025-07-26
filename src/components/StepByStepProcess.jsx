@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import stepByStepProcessDefaults from '../data/stepByStepProcessData'; 
-import '../styles/stepbystepprocess.css'; 
+import stepByStepProcessDefaults from '../data/stepByStepProcessData';
+import '../styles/stepbystepprocess.css';
 
 const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style prop
     // Destructure props from 'attributes', applying default values from stepByStepProcessDefaults
@@ -23,8 +23,6 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
     // Updated to user's specified dimensions: Width 700px, Height 430px
     const presetSlideHeight = 430;
     const presetSlideWidth = 700;
-    const presetImageWidth = 275; // New: Specific image width
-    const presetContentWidth = presetSlideWidth - presetImageWidth; // New: Specific content width (700 - 275 = 425px)
 
     // Refs to directly access DOM elements for scrolling and other manipulations.
     const scrollRef = useRef(null);
@@ -45,8 +43,6 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         cardWidth: presetSlideWidth,
         cardHeight: presetSlideHeight,
         fontScale: 1,
-        imageWidth: presetImageWidth, // New: Store scaled image width
-        contentWidth: presetContentWidth, // New: Store scaled content width
     });
 
     // State to control the visibility of navigation buttons based on scroll position.
@@ -58,6 +54,17 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         const updateDimensions = () => {
             const containerWidth = scrollRef.current?.offsetWidth || 0;
             const fullSlideWidth = presetSlideWidth;
+
+        //     // --- NEW LOGIC FOR RESPONSIVE minSlidesToShow ---
+        // let effectiveMinSlidesToShow = minSlidesToShow; // Start with default from props
+
+        // if (containerWidth <= 480) { // Example breakpoint for small phones
+        //     effectiveMinSlidesToShow = 1;
+        // } else if (containerWidth <= 768) { // Example breakpoint for tablets or larger phones
+        //     effectiveMinSlidesToShow = Math.min(minSlidesToShow, 2); // Show max 2, or whatever minSlidesToShow is if less than 2
+        // }
+        // // You can add more breakpoints as needed.
+        // // --- END NEW LOGIC ---
 
             // Calculate the minimum required width for the carousel to show 'minSlidesToShow'.
             const baseRequiredWidth =
@@ -76,8 +83,6 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                     cardWidth: adjustedWidth,
                     cardHeight: (adjustedWidth * presetSlideHeight) / presetSlideWidth,
                     fontScale,
-                    imageWidth: presetImageWidth * fontScale, // Scale image width
-                    contentWidth: presetContentWidth * fontScale, // Scale content width
                 });
             } else {
                 // If the container is large enough, use the preset dimensions.
@@ -85,8 +90,6 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                     cardWidth: fullSlideWidth,
                     cardHeight: presetSlideHeight,
                     fontScale: 1,
-                    imageWidth: presetImageWidth,
-                    contentWidth: presetContentWidth,
                 });
             }
         };
@@ -101,7 +104,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         return () => {
             window.removeEventListener("resize", updateDimensions);
         };
-    }, [minSlidesToShow, presetSlideWidth, presetSlideHeight, slideGap, presetImageWidth, presetContentWidth]); // Added new preset dependencies
+    }, [minSlidesToShow, presetSlideWidth, presetSlideHeight, slideGap]); // Added new preset dependencies
 
     // Helper function to calculate the distance to scroll for one slide.
     const getScrollDistance = () =>
@@ -254,7 +257,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
             setCanScrollLeft(scrollContainer.scrollLeft > 0);
             setCanScrollRight(
                 scrollContainer.scrollLeft <
-                    scrollContainer.scrollWidth - scrollContainer.offsetWidth - 1,
+                scrollContainer.scrollWidth - scrollContainer.offsetWidth - 1,
             );
 
             // Update scroll indicator
@@ -419,7 +422,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         // Main container div for the entire component.
         // Accepts external style prop for positioning (e.g., marginLeft)
         <div
-            className="relative font-inter rounded-md sm:rounded-sm md:rounded-xl lg:rounded-2xl overflow-hidden"
+            className="relative font-inter rounded-lg overflow-hidden"
             style={{
                 ...style, // Spread the style prop here to accept external styles like marginLeft and width
                 background: getValidColor(backgroundColor),
@@ -510,165 +513,165 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                 {/* Scrollable container for the individual slide items */}
                 <div style={{ position: "relative" }}>
 
-                <div
-                    ref={scrollRef}
-                    className={`flex overflow-x-auto no-scrollbar ${
-                        isDragging ? "cursor-grabbing" : "cursor-grab"
-                    } p-4`}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        justifyContent: slides.length > minSlidesToShow ? "start" : "center",
-                        overflowY: "hidden",
-                        gap: `${dimensions.fontScale * slideGap}px`,
-                        scrollSnapType: "x mandatory",
-                        WebkitOverflowScrolling: "touch",
-                    }}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
-                >
-                    
-                    {/* Map through the slides array to render each slide item */}
-                    {slides.map((item, index) => (
-                        <div
-                            key={index}
-                            className="relative flex flex-shrink-0 overflow-hidden  transition-transform duration-300 hover:scale-[1.01] select-none"
-                            style={{
-                                width: `${dimensions.cardWidth}px`,
-                                minWidth: `${dimensions.cardWidth}px`,
-                                height: `${dimensions.cardHeight}px`,
-                                scrollSnapAlign: "center",
-                                borderRadius: `20px`,
-                                marginBottom: `${50 * dimensions.fontScale}px`,
-                                marginTop: `${30 * dimensions.fontScale}px`,
-                            }}
-                        >
-                            {/* Left Image Column */}
+                    <div
+                        ref={scrollRef}
+                        className={`flex overflow-x-auto no-scrollbar ${isDragging ? "cursor-grabbing" : "cursor-grab"
+                            } p-4`}
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            justifyContent: slides.length > minSlidesToShow ? "start" : "center",
+                            overflowY: "hidden",
+                            gap: `${dimensions.fontScale * slideGap}px`,
+                            scrollSnapType: "x mandatory",
+                            WebkitOverflowScrolling: "touch",
+                        }}
+                        onMouseDown={handleMouseDown}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                    >
+
+                        {/* Map through the slides array to render each slide item */}
+                        {slides.map((item, index) => (
                             <div
-                                className="flex-shrink-0"
+                                key={index}
+                                className="relative flex flex-shrink-0 overflow-hidden transition-transform duration-300 hover:scale-[1.01] select-none"
                                 style={{
-                                    width: `${dimensions.imageWidth}px`,
-                                    height: '100%',
-                                    borderTopLeftRadius: `20px`,
-                                    borderBottomLeftRadius: `20px`,
-                                    overflow: 'hidden',
+                                    width: `${dimensions.cardWidth}px`,
+                                    minWidth: `${dimensions.cardWidth}px`,
+                                    height: `${dimensions.cardHeight}px`,
+                                    scrollSnapAlign: "center",
+                                    borderRadius: `20px`,
+                                    marginBottom: `${50 * dimensions.fontScale}px`,
+                                    marginTop: `${30 * dimensions.fontScale}px`,
+                                    backgroundColor: `#FFFFFF`
                                 }}
                             >
-                                {item.image && (
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                )}
-                            </div>
-
-                           <div
-                                className="flex flex-col justify-start flex-grow"
-                                style={{
-                                    width: `${dimensions.contentWidth}px`,
-                                    backgroundColor: getValidColor(item.backgroundColor),
-                                    color: item.textColor || "#4B5563",
-                                    paddingTop: `${Math.max(16, 31.5 * dimensions.fontScale)}px`, // Responsive padding with minimum
-                                    paddingBottom: `${30 * dimensions.fontScale}px`,
-                                    paddingLeft: `${31.5 * dimensions.fontScale}px`,
-                                    paddingRight: `${31.5 * dimensions.fontScale}px`,
-                                }}
-                            >
-                                {/* Icon for the slide, positioned absolutely */}
-                                {item.icon && (
-                                    <img
-                                        src={item.icon}
-                                        alt="Step Icon"
-                                        className="absolute"
-                                        style={{
-                                            top: `${60 * dimensions.fontScale}px`, // Adjusted top position
-                                            right: `${dimensions.contentWidth - (31.5 + 61.8) * dimensions.fontScale}px`, // Adjusted right to align with content's left padding
-                                            width: `${61.8 * dimensions.fontScale}px`, // Set exact width, scaled
-                                            height: `${70 * dimensions.fontScale}px`, // Set exact height, scaled
-                                            zIndex: 5,
-                                            objectFit: 'contain', // Ensure image scales correctly without distortion
-                                        }}
-                                    />
-                                )}
-
-                                {/* Step Number */}
-                                <p
-                                    className="font-regular text-right w-full" // Align to right
+                                {/* Left Image Column */}
+                                <div
+                                    className="flex-shrink-0"
                                     style={{
-                                        fontSize: `${18 * dimensions.fontScale}px`, // Original font size for "STEP"
-                                        color: "#6A6E8D", // Gray color for step number
-                                        marginBottom: `${90 * dimensions.fontScale}px`,
+                                        width: `${0.4 * dimensions.cardWidth}px`,
+                                        height: '100%',
+                                        borderTopLeftRadius: `20px`,
+                                        borderBottomLeftRadius: `20px`,
+                                        overflow: 'hidden',
                                     }}
                                 >
-                                    STEP <span style={{ fontSize: `${28 * dimensions.fontScale}px`, fontWeight:"bold" }}>{item.stepNumber}</span>
-                                </p>
-                                {/* Content area for title, description, and checklist */}
-                                <div className="flex flex-col w-full overflow-visible break-words">
-                                    {/* Slide title */}
-                                    <h3
-                                        className="font-bold text-left mb-2"
-                                        style={{
-                                            color: item.titleColor || "#000",
-                                            fontSize: `${24 * dimensions.fontScale}px`,
-                                            lineHeight: 1.2,
-                                            wordBreak: "break-word",
-                                        }}
-                                    >
-                                        {item.title}
-                                    </h3>
-
-                                    {/* Slide description */}
-                                    <p
-                                        className="text-left mb-4"
-                                        style={{
-                                            color: item.textColor || "#4B5563",
-                                            fontSize: `${18 * dimensions.fontScale}px`,
-                                            lineHeight: 1.5,
-                                        }}
-                                    >
-                                        {item.description}
-                                    </p>
-
-                                    {/* Checklist items */}
-                                    <ul className="list-none p-0 m-0">
-                                        {item.checklistItems && item.checklistItems.map((checkItem, checkIndex) => (
-                                            <li
-                                                key={checkIndex}
-                                                className="flex items-center text-left mb-2"
-                                                style={{
-                                                    fontSize: `${16 * dimensions.fontScale}px`,
-                                                    color: item.textColor || "#4B5563",
-                                                }}
-                                            >
-                                                {/* Checkmark SVG icon */}
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="w-4 h-4 mr-2"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                    strokeWidth="3"
-                                                    style={{
-                                                        color: "#00AEEE",
-                                                        width: `${35 * dimensions.fontScale}px`, // Set width to 15px
-                                                        height: `${25 * dimensions.fontScale}px`, // Set height to 10.31px
-                                                        marginRight: `${8 * dimensions.fontScale}px`, // Kept mr-2 equivalent
-                                                    }}
-                                                >
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                                </svg>
-                                                {checkItem}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    {item.image && (
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    )}
                                 </div>
 
+                                <div
+                                    className="flex flex-col justify-start flex-grow"
+                                    style={{
+                                        width: `${0.6 * dimensions.cardWidth}px`,
+                                        backgroundColor: getValidColor(item.backgroundColor),
+                                        color: item.textColor || "#4B5563",
+                                        paddingTop: `${Math.max(16, 31.5 * dimensions.fontScale)}px`, // Responsive padding with minimum
+                                        paddingBottom: `${30 * dimensions.fontScale}px`,
+                                        paddingLeft: `${31.5 * dimensions.fontScale}px`,
+                                        paddingRight: `${31.5 * dimensions.fontScale}px`,
+                                    }}
+                                >
+                                    {/* Icon for the slide, positioned absolutely */}
+                                    {item.icon && (
+                                        <img
+                                            src={item.icon}
+                                            alt="Step Icon"
+                                            className="absolute"
+                                            style={{
+                                                top: `${60 * dimensions.fontScale}px`, // Adjusted top position
+                                                // right: `${dimensions.contentWidth - (31.5 + 61.8) * dimensions.fontScale}px`, // Adjusted right to align with content's left padding
+                                                width: `${61.8 * dimensions.fontScale}px`, // Set exact width, scaled
+                                                height: `${70 * dimensions.fontScale}px`, // Set exact height, scaled
+                                                zIndex: 5,
+                                                objectFit: 'contain', // Ensure image scales correctly without distortion
+                                            }}
+                                        />
+                                    )}
+
+                                    {/* Step Number */}
+                                    <p
+                                        className="font-regular text-right w-full" // Align to right
+                                        style={{
+                                            fontSize: `${18 * dimensions.fontScale}px`, // Original font size for "STEP"
+                                            color: "#6A6E8D", // Gray color for step number
+                                            marginBottom: `${90 * dimensions.fontScale}px`,
+                                        }}
+                                    >
+                                        STEP <span style={{ fontSize: `${28 * dimensions.fontScale}px`, fontWeight: "bold" }}>{item.stepNumber}</span>
+                                    </p>
+                                    {/* Content area for title, description, and checklist */}
+                                    <div className="flex flex-col w-full overflow-visible break-words">
+                                        {/* Slide title */}
+                                        <h3
+                                            className="font-bold text-left mb-2"
+                                            style={{
+                                                color: item.titleColor || "#000",
+                                                fontSize: `${24 * dimensions.fontScale}px`,
+                                                lineHeight: 1.2,
+                                                wordBreak: "break-word",
+                                            }}
+                                        >
+                                            {item.title}
+                                        </h3>
+
+                                        {/* Slide description */}
+                                        <p
+                                            className="text-left mb-4"
+                                            style={{
+                                                color: item.textColor || "#4B5563",
+                                                fontSize: `${18 * dimensions.fontScale}px`,
+                                                lineHeight: 1.5,
+                                            }}
+                                        >
+                                            {item.description}
+                                        </p>
+
+                                        {/* Checklist items */}
+                                        <ul className="list-none p-0 m-0">
+                                            {item.checklistItems && item.checklistItems.map((checkItem, checkIndex) => (
+                                                <li
+                                                    key={checkIndex}
+                                                    className="flex items-center text-left mb-2"
+                                                    style={{
+                                                        fontSize: `${16 * dimensions.fontScale}px`,
+                                                        color: item.textColor || "#4B5563",
+                                                    }}
+                                                >
+                                                    {/* Checkmark SVG icon */}
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className="w-4 h-4 mr-2"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                        strokeWidth="3"
+                                                        style={{
+                                                            color: "#00AEEE",
+                                                            width: `${35 * dimensions.fontScale}px`, // Set width to 15px
+                                                            height: `${25 * dimensions.fontScale}px`, // Set height to 10.31px
+                                                            marginRight: `${8 * dimensions.fontScale}px`, // Kept mr-2 equivalent
+                                                        }}
+                                                    >
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    {checkItem}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
                 </div>
                 {/* Right navigation button */}
                 {canScrollRight && (
@@ -717,7 +720,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
             </div>
 
             {/* Custom Scroll Indicator */}
-            <div ref={scrollIndicatorRef} className="relative w-full h-2 bg-gray-300 rounded-full mt-8 mx-auto" style={{ maxWidth: '300px' }}>
+            <div ref={scrollIndicatorRef} className="relative w-full h-2 bg-gray-300 rounded-full mt-8 mx-auto" style={{ maxWidth: '380px' }}>
                 <div
                     className="absolute h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
                     style={{

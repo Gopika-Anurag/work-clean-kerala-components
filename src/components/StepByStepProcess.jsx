@@ -419,7 +419,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         // Main container div for the entire component.
         // Accepts external style prop for positioning (e.g., marginLeft)
         <div
-            className="relative font-inter rounded-lg overflow-hidden"
+            className="relative font-inter rounded-md sm:rounded-sm md:rounded-xl lg:rounded-2xl overflow-hidden"
             style={{
                 ...style, // Spread the style prop here to accept external styles like marginLeft and width
                 background: getValidColor(backgroundColor),
@@ -436,7 +436,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         >
             {/* Subtitle */}
             <p
-                className="text-center uppercase tracking-widest font-semibold mb-2 mr-50"
+                className="text-center uppercase tracking-widest font-semibold mb-2 mr-0 sm:mr-4 md:mr-8 lg:mr-16 xl:mr-50"
                 style={{
                     fontSize: `${14 * dimensions.fontScale}px`,
                     color: subtitleColor || "#00AEEE",
@@ -446,7 +446,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
             </p>
             {/* Component title */}
             <h2
-                className="font-medium text-center mb-8 mr-50"
+                className="font-medium text-center mb-8 mr-0 sm:mr-4 md:mr-8 lg:mr-16 xl:mr-50"
                 style={{
                     fontSize: `${56 * dimensions.fontScale}px`,
                     color: titleColor || "#000",
@@ -533,7 +533,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                     {slides.map((item, index) => (
                         <div
                             key={index}
-                            className="relative flex flex-shrink-0 overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.01] select-none"
+                            className="relative flex flex-shrink-0 overflow-hidden  transition-transform duration-300 hover:scale-[1.01] select-none"
                             style={{
                                 width: `${dimensions.cardWidth}px`,
                                 minWidth: `${dimensions.cardWidth}px`,

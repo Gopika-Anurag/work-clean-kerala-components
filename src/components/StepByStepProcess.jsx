@@ -368,8 +368,6 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         return "#ffffff"; // Fallback
     };
 
-    // Helper function to extract a single color from various CSS color formats and apply transparency.
-    // This function's usage for `filterColor` is now removed from the content area,
     // as the content area will have a solid background.
     const getValidColorForFade = (color) => {
         if (!color || typeof color !== "string") return "rgba(255, 255, 255, 0.8)";

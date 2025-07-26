@@ -23,6 +23,8 @@ import Ourprojectsdescription from "./components/Ourprojectsdescription";
 import {Projectsdescription, ProjectsdescriptionSettings } from "./data/Projectdescriptiondata"
 import { portfolioData } from "./data/portfolioData";
 import PortfolioCardWithCarousel from "./components/PortfolioCardWithCarousel";
+import StepByStepProcess from "./components/StepByStepProcess";
+import stepByStepProcessDefaults from './data/stepByStepProcessData';
 
 function App() {
   
@@ -30,6 +32,11 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <div>
+            <StepByStepProcess attributes={stepByStepProcessDefaults} />
+        </div>
+
 
         <section className="my-12 bg-white py-8">
   <PortfolioCardWithCarousel data={portfolioData} />

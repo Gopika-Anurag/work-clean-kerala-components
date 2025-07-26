@@ -1,4 +1,6 @@
 /* stepByStepProcess.css */
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 
 /* General styling for the entire body to ensure full height and consistent font */
 body {
@@ -8,8 +10,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Import Google Fonts */
-/* @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"); */
 
 /* Hide scrollbar for all browsers */
 /* For Webkit browsers (Chrome, Safari) */

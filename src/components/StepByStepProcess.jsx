@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import stepByStepProcessDefaults from '../data/stepByStepProcessData'; 
-import '../styles/stepByStepProcess.scss'; 
+import '../styles/stepByStepProcess.css'; 
 
 const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style prop
     // Destructure props from 'attributes', applying default values from stepByStepProcessDefaults

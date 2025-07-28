@@ -451,7 +451,11 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
 
             {/* Carousel display area, including navigation buttons and scrollable slides */}
             <div
-                className="relative w-full"
+                className="relative w-full ml-[100px]
+               sm:ml-[150px]  // From small breakpoint, apply 20px
+               md:ml-[200px]  // From medium breakpoint, apply 50px
+               lg:ml-[250px] // From large breakpoint, apply 100px
+               xl:ml-[300px]"
                 style={{
                     minHeight: `${dimensions.cardHeight + 40 * dimensions.fontScale}px`,
                     overflow: "visible",

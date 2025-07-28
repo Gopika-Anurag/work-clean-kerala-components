@@ -16,515 +16,407 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         minSlidesToShow = stepByStepProcessDefaults.minSlidesToShow,
         autoScrolling = stepByStepProcessDefaults.autoScrolling, // Corrected typo here
         buttonSize = stepByStepProcessDefaults.buttonSize,
-        // leftPadding = stepByStepProcessDefaults.leftPadding,
+        progressbarColor = stepByStepProcessDefaults.progressbarColor,
     } = attributes;
 
-    // Preset dimensions for individual slides, used as a base for responsive scaling.
-    // Updated to user's specified dimensions: Width 700px, Height 430px
     const presetSlideHeight = 430;
     const presetSlideWidth = 700;
 
-    // Refs to directly access DOM elements for scrolling and other manipulations.
+	const [progress, setProgress] = useState(0);
     const scrollRef = useRef(null);
-    const autoScrollInterval = useRef(null);
-    const scrollIndicatorRef = useRef(null); // Ref for the scroll indicator
+	const [isDragging, setIsDragging] = useState(false);
+	const [startX, setStartX] = useState(0);
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const [isHovered, setIsHovered] = useState(false);
+	const autoScrollInterval = useRef(null);
 
-    // State variables to manage user interaction (dragging, hovering) and UI layout.
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const [isHovered, setIsHovered] = useState(false);
-    const [indicatorWidth, setIndicatorWidth] = useState(0); // State for scroll indicator width
-    const [indicatorLeft, setIndicatorLeft] = useState(0); // State for scroll indicator position
+	const [dimensions, setDimensions] = useState({
+		cardWidth: presetSlideWidth,
+		cardHeight: presetSlideHeight,
+		fontScale: 1,
+	});
 
-    // State for dynamically calculated dimensions of cards and font scaling,
-    // ensuring responsiveness across different screen sizes.
-    const [dimensions, setDimensions] = useState({
-        cardWidth: presetSlideWidth,
-        cardHeight: presetSlideHeight,
-        fontScale: 1,
-    });
+	const [canScrollLeft, setCanScrollLeft] = useState(false);
+	const [canScrollRight, setCanScrollRight] = useState(true);
 
-    // State to control the visibility of navigation buttons based on scroll position.
-    const [canScrollLeft, setCanScrollLeft] = useState(false);
-    const [canScrollRight, setCanScrollRight] = useState(true);
+	// Update slide dimensions dynamically
+	useEffect(() => {
+		const updateDimensions = () => {
+			const containerWidth = scrollRef.current?.offsetWidth || 0;
+			const fullSlideWidth = presetSlideWidth;
 
-    // Effect hook to update slide dimensions dynamically on component mount and window resize.
+			const baseRequiredWidth =
+				fullSlideWidth * minSlidesToShow + (minSlidesToShow - 1) * slideGap;
+
+			if (containerWidth < baseRequiredWidth) {
+				// Estimate unscaled card width
+				const roughAdjustedWidth = containerWidth / minSlidesToShow;
+				const fontScale = roughAdjustedWidth / presetSlideWidth;
+
+				// Scale the gap now
+				const scaledGap = slideGap * fontScale;
+				const totalGap = (minSlidesToShow - 1) * scaledGap;
+				const adjustedWidth = (containerWidth - totalGap) / minSlidesToShow;
+
+				setDimensions({
+					cardWidth: adjustedWidth,
+					cardHeight: (adjustedWidth * presetSlideHeight) / presetSlideWidth,
+					fontScale,
+				});
+			} else {
+				setDimensions({
+					cardWidth: fullSlideWidth,
+					cardHeight: presetSlideHeight,
+					fontScale: 1,
+				});
+			}
+		};
+
+		// 🛠 Run once layout is ready
+		requestAnimationFrame(updateDimensions);
+
+		// 🔁 Update on resize
+		window.addEventListener("resize", updateDimensions);
+
+		return () => {
+			window.removeEventListener("resize", updateDimensions);
+		};
+	}, [minSlidesToShow, presetSlideWidth, presetSlideHeight, slideGap]);
+
+	const getScrollDistance = () =>
+		dimensions.cardWidth + dimensions.fontScale * slideGap;
+
+	// Scroll Left
+	const scrollLeft = useCallback(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollBy({
+				left: -getScrollDistance(),
+				behavior: "smooth",
+			});
+		}
+	}, [dimensions, slideGap]);
+
+	// Scroll Right
+	const scrollRight = useCallback(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollBy({
+				left: getScrollDistance(),
+				behavior: "smooth",
+			});
+		}
+	}, [dimensions, slideGap]);
+
+	// Start Dragging
+	const handleMouseDown = (e) => {
+		setIsDragging(true);
+		setStartX(e.pageX - scrollRef.current.offsetLeft);
+		setScrollPosition(scrollRef.current.scrollLeft);
+	};
     useEffect(() => {
-        const updateDimensions = () => {
-            const containerWidth = scrollRef.current?.offsetWidth || 0;
-            const fullSlideWidth = presetSlideWidth;
+		const slider = scrollRef.current;
+		if (!slider) return;
+		const handleScroll = () => {
+			const maxScroll = slider.scrollWidth - slider.clientWidth;
+			setProgress(maxScroll > 0 ? (slider.scrollLeft / maxScroll) * 100 : 0);
+		};
+		slider.addEventListener("scroll", handleScroll);
+		return () => slider.removeEventListener("scroll", handleScroll);
+	}, []);
 
-        
+	// Drag Move with smooth animation
+	useEffect(() => {
+		let animationFrameId = null;
 
-            // Calculate the minimum required width for the carousel to show 'minSlidesToShow'.
-            const baseRequiredWidth =
-                fullSlideWidth * minSlidesToShow + (minSlidesToShow - 1) * slideGap;
+		const smoothScroll = (target) => {
+			if (!scrollRef.current) return;
+			const start = scrollRef.current.scrollLeft;
+			const change = target - start;
+			let startTime = null;
 
-            if (containerWidth < baseRequiredWidth) {
-                // If the container is too small, scale down the cards and font.
-                const roughAdjustedWidth = containerWidth / minSlidesToShow;
-                const fontScale = roughAdjustedWidth / presetSlideWidth;
+			const animate = (currentTime) => {
+				if (!startTime) startTime = currentTime;
+				const progress = Math.min((currentTime - startTime) / 200, 1);
+				scrollRef.current.scrollLeft = start + change * easeInOutQuad(progress);
+				if (progress < 1) {
+					animationFrameId = requestAnimationFrame(animate);
+				} else {
+					setScrollPosition(target);
+				}
+			};
 
-                const scaledGap = slideGap * fontScale;
-                const totalGap = (minSlidesToShow - 1) * scaledGap;
-                const adjustedWidth = (containerWidth - totalGap) / minSlidesToShow;
+			animationFrameId = requestAnimationFrame(animate);
+		};
 
-                setDimensions({
-                    cardWidth: adjustedWidth,
-                    cardHeight: (adjustedWidth * presetSlideHeight) / presetSlideWidth,
-                    fontScale,
-                });
-            } else {
-                // If the container is large enough, use the preset dimensions.
-                setDimensions({
-                    cardWidth: fullSlideWidth,
-                    cardHeight: presetSlideHeight,
-                    fontScale: 1,
-                });
-            }
-        };
+		const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
-        // Use requestAnimationFrame for initial layout calculation to ensure DOM is ready.
-        requestAnimationFrame(updateDimensions);
+		const handleMouseMove = (e) => {
+			if (!isDragging || !scrollRef.current) return;
+			e.preventDefault();
+			const x = e.pageX - scrollRef.current.offsetLeft;
 
-        // Add event listener for window resize to maintain responsiveness.
-        window.addEventListener("resize", updateDimensions);
+			// Dynamically scaled drag scroll
+			const baseCardWidth = 400; // match your base slide width
+			const scale = dimensions.cardWidth / baseCardWidth;
+			const scrollDistance = (x - startX) * scale;
+			const target = scrollPosition - scrollDistance;
+			smoothScroll(target);
+		};
 
-        // Cleanup function: remove event listener when component unmounts.
-        return () => {
-            window.removeEventListener("resize", updateDimensions);
-        };
-    }, [minSlidesToShow, presetSlideWidth, presetSlideHeight, slideGap]); // Added new preset dependencies
+		if (isDragging) {
+			window.addEventListener("mousemove", handleMouseMove);
+		} else {
+			if (animationFrameId) cancelAnimationFrame(animationFrameId);
+		}
 
-    // Helper function to calculate the distance to scroll for one slide.
-    const getScrollDistance = () =>
-        dimensions.cardWidth + dimensions.fontScale * slideGap;
+		return () => {
+			window.removeEventListener("mousemove", handleMouseMove);
+			if (animationFrameId) cancelAnimationFrame(animationFrameId);
+		};
+	}, [isDragging, startX, scrollPosition, dimensions.cardWidth]);
 
-    // Callback for scrolling the carousel to the left.
-    const scrollLeft = useCallback(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({
-                left: -getScrollDistance(),
-                behavior: "smooth",
-            });
-        }
-    }, [dimensions, slideGap]);
+	// Stop Dragging
+	const handleMouseUp = () => {
+		setIsDragging(false);
+	};
 
-    // Callback for scrolling the carousel to the right.
-    const scrollRight = useCallback(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({
-                left: getScrollDistance(),
-                behavior: "smooth",
-            });
-        }
-    }, [dimensions, slideGap]);
+	// Enable Smooth Scrolling with Mouse Wheel & Trackpad
+	useEffect(() => {
+		const scrollContainer = scrollRef.current;
+		if (!scrollContainer) return;
 
-    // Event handler to start dragging the carousel with the mouse.
-    const handleMouseDown = (e) => {
-        setIsDragging(true);
-        setStartX(e.pageX - scrollRef.current.offsetLeft);
-        setScrollPosition(scrollRef.current.scrollLeft);
-    };
+		const handleWheelScroll = (e) => {
+			if (!isHovered) return;
 
-    // Effect hook to handle mouse movement during a drag, enabling smooth scrolling.
-    useEffect(() => {
-        let animationFrameId = null;
+			// Dynamically calculate scroll amount
+			const scrollDistance = getScrollDistance();
+			const scrollAmount = (e.deltaX || e.deltaY) * (scrollDistance / 100);
 
-        // Function to smoothly animate scrolling to a target position.
-        const smoothScroll = (target) => {
-            if (!scrollRef.current) return;
-            const start = scrollRef.current.scrollLeft;
-            const change = target - start;
-            let startTime = null;
+			scrollRef.current.scrollBy({
+				left: scrollAmount,
+				behavior: "smooth",
+			});
 
-            const animate = (currentTime) => {
-                if (!startTime) startTime = currentTime;
-                const progress = Math.min((currentTime - startTime) / 200, 1); // Animation duration: 200ms
-                scrollRef.current.scrollLeft = start + change * easeInOutQuad(progress);
-                if (progress < 1) {
-                    animationFrameId = requestAnimationFrame(animate);
-                } else {
-                    setScrollPosition(target); // Update final scroll position after animation.
-                }
-            };
+			if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+				e.preventDefault();
+			}
+		};
 
-            animationFrameId = requestAnimationFrame(animate);
-        };
+		scrollContainer.addEventListener("wheel", handleWheelScroll, {
+			passive: false,
+		});
+		return () => {
+			scrollContainer.removeEventListener("wheel", handleWheelScroll);
+		};
+	}, [isHovered, dimensions, slideGap]);
 
-        // Easing function for smooth animation (quadrilateral ease-in-out).
-        const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+	// Enable Keyboard Arrow Scrolling
+	useEffect(() => {
+		const handleKeyDown = (e) => {
+			if (!isHovered) return;
+			if (e.key === "ArrowLeft") {
+				scrollLeft();
+			} else if (e.key === "ArrowRight") {
+				scrollRight();
+			}
+		};
 
-        // Event handler for mouse movement when dragging.
-        const handleMouseMove = (e) => {
-            if (!isDragging || !scrollRef.current) return;
-            e.preventDefault(); // Prevent default browser drag behavior (e.g., text selection).
-            const x = e.pageX - scrollRef.current.offsetLeft;
+		document.addEventListener("keydown", handleKeyDown);
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [isHovered, scrollLeft, scrollRight]);
 
-            // Calculate scroll distance based on mouse movement and current card scale.
-            const baseCardWidth = presetSlideWidth; // Use the updated presetSlideWidth
-            const scale = dimensions.cardWidth / baseCardWidth;
-            const scrollDistance = (x - startX) * scale;
-            const target = scrollPosition - scrollDistance;
-            smoothScroll(target);
-        };
+	// Check Scrollability
+	useEffect(() => {
+		const scrollContainer = scrollRef.current;
 
-        // Add or remove mousemove listener based on the 'isDragging' state.
-        if (isDragging) {
-            window.addEventListener("mousemove", handleMouseMove);
-        } else {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId); // Cancel any ongoing animation.
-        }
+		const updateScrollability = () => {
+			if (!scrollContainer) return;
 
-        // Cleanup function: remove the mousemove listener.
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        };
-    }, [isDragging, startX, scrollPosition, dimensions.cardWidth, presetSlideWidth]); // Added presetSlideWidth to dependencies
+			setCanScrollLeft(scrollContainer.scrollLeft > 0);
 
-    // Event handler to stop dragging the carousel.
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
+			setCanScrollRight(
+				scrollContainer.scrollLeft <
+					scrollContainer.scrollWidth - scrollContainer.offsetWidth - 1,
+			);
+		};
 
-    // Enable Smooth Scrolling with Mouse Wheel & Trackpad
-    useEffect(() => {
-        const scrollContainer = scrollRef.current;
-        if (!scrollContainer) return;
+		if (scrollContainer) {
+			scrollContainer.addEventListener("scroll", updateScrollability);
+		}
 
-        const handleWheelScroll = (e) => {
-            if (!isHovered) return;
+		updateScrollability();
 
-            // Dynamically calculate scroll amount
-            const scrollDistance = getScrollDistance();
-            const scrollAmount = (e.deltaX || e.deltaY) * (scrollDistance / 100);
+		return () => {
+			if (scrollContainer) {
+				scrollContainer.removeEventListener("scroll", updateScrollability);
+			}
+		};
+	}, [dimensions, slides]);
 
-            scrollRef.current.scrollBy({
-                left: scrollAmount,
-                behavior: "smooth",
-            });
+	// Auto-scrolling
+	useEffect(() => {
+		if (!autoScrolling || slides.length <= 3) return;
 
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                e.preventDefault();
-            }
-        };
+		const startAutoScroll = () => {
+			if (autoScrollInterval.current) return;
+			autoScrollInterval.current = setInterval(() => {
+				if (!isHovered && !isDragging) {
+					if (scrollRef.current) {
+						scrollRef.current.scrollBy({
+							left: getScrollDistance(),
+							behavior: "smooth",
+						});
+					}
+				}
+			}, 3000);
+		};
 
-        scrollContainer.addEventListener("wheel", handleWheelScroll, {
-            passive: false,
-        });
-        return () => {
-            scrollContainer.removeEventListener("wheel", handleWheelScroll);
-        };
-    }, [isHovered, dimensions, slideGap]);
+		const stopAutoScroll = () => {
+			if (autoScrollInterval.current) {
+				clearInterval(autoScrollInterval.current);
+				autoScrollInterval.current = null;
+			}
+		};
 
-    // Enable Keyboard Arrow Scrolling
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (!isHovered) return;
-            if (e.key === "ArrowLeft") {
-                scrollLeft();
-            } else if (e.key === "ArrowRight") {
-                scrollRight();
-            }
-        };
+		startAutoScroll();
+		return stopAutoScroll;
+	}, [
+		autoScrolling,
+		isHovered,
+		isDragging,
+		dimensions.cardWidth,
+		dimensions.fontScale, 
+		slideGap,
+		slides.length,
+	]);
 
-        document.addEventListener("keydown", handleKeyDown);
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [isHovered, scrollLeft, scrollRight]);
+	// Validate backgroundColor to prevent invalid CSS
+	const getValidColor = (color) => {
+		if (!color || typeof color !== "string") return "#ffffff";
 
-    // Check Scrollability and update indicator
-    useEffect(() => {
-        const scrollContainer = scrollRef.current;
-        const indicatorContainer = scrollIndicatorRef.current;
+		const isHex = /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(color); // #fff or #ffffff
+		const isRGB = /^rgb(a)?\([\d\s.,%]+\)$/.test(color); // rgb() or rgba()
+		const isGradient = /gradient\((.|\s)*\)/.test(color); // linear or radial
+		const isNamed = /^[a-zA-Z]+$/.test(color); // red, blue, etc.
 
-        const updateScrollabilityAndIndicator = () => {
-            if (!scrollContainer || !indicatorContainer) return;
+		if (color === "transparent" || isHex || isRGB || isGradient || isNamed) {
+			return color;
+		}
 
-            // Update scroll button visibility
-            setCanScrollLeft(scrollContainer.scrollLeft > 0);
-            setCanScrollRight(
-                scrollContainer.scrollLeft <
-                scrollContainer.scrollWidth - scrollContainer.offsetWidth - 1,
-            );
+		return "#ffffff"; // Fallback
+	};
 
-            // Update scroll indicator
-            const scrollPercentage =
-                scrollContainer.scrollLeft /
-                (scrollContainer.scrollWidth - scrollContainer.offsetWidth);
-
-            const totalIndicatorWidth = indicatorContainer.offsetWidth;
-            const numSlides = slides.length;
-            const visibleSlidesCount = scrollContainer.offsetWidth / (dimensions.cardWidth + dimensions.fontScale * slideGap);
-            const scrollableSlides = numSlides - visibleSlidesCount;
-
-            // Calculate width of each segment of the indicator
-            const segmentWidth = totalIndicatorWidth / numSlides; // Each slide gets an equal share of the indicator bar
-
-            // Calculate the width of the active indicator based on visible portion
-            // The active indicator should span across the number of visible slides
-            const activeIndicatorVisualWidth = totalIndicatorWidth * (scrollContainer.offsetWidth / scrollContainer.scrollWidth);
-            setIndicatorWidth(activeIndicatorVisualWidth);
-
-            // Calculate the left position of the active indicator
-            const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.offsetWidth;
-            const scrollRatio = scrollContainer.scrollLeft / maxScrollLeft;
-            const indicatorLeftPosition = scrollRatio * (totalIndicatorWidth - activeIndicatorVisualWidth);
-            setIndicatorLeft(indicatorLeftPosition);
-        };
-
-        // Add a scroll event listener to the carousel container.
-        if (scrollContainer) {
-            scrollContainer.addEventListener("scroll", updateScrollabilityAndIndicator);
-        }
-
-        // Add a resize observer to update indicator when container size changes
-        const resizeObserver = new ResizeObserver(() => {
-            updateScrollabilityAndIndicator();
-        });
-        if (scrollContainer) {
-            resizeObserver.observe(scrollContainer);
-        }
-        if (indicatorContainer) {
-            resizeObserver.observe(indicatorContainer);
-        }
-
-
-        // Perform an initial check on component mount.
-        updateScrollabilityAndIndicator();
-
-        // Cleanup function: remove the scroll event listener and resize observer.
-        return () => {
-            if (scrollContainer) {
-                scrollContainer.removeEventListener("scroll", updateScrollabilityAndIndicator);
-            }
-            resizeObserver.disconnect();
-        };
-    }, [dimensions, slides]); // Dependencies: Recalculate if dimensions or slides data change.
-
-    // Auto-scrolling
-    useEffect(() => {
-        if (!autoScrolling || slides.length <= 3) return;
-
-        const startAutoScroll = () => {
-            if (autoScrollInterval.current) return;
-            autoScrollInterval.current = setInterval(() => {
-                if (!isHovered && !isDragging) {
-                    if (scrollRef.current) {
-                        if (scrollRef.current.scrollLeft >= scrollRef.current.scrollWidth - scrollRef.current.offsetWidth - 1) {
-                            scrollRef.current.scrollTo({ left: 0, behavior: "auto" });
-                        } else {
-                            scrollRef.current.scrollBy({
-                                left: getScrollDistance(),
-                                behavior: "smooth",
-                            });
-                        }
-                    }
-                }
-            }, 3000);
-        };
-
-        const stopAutoScroll = () => {
-            if (autoScrollInterval.current) {
-                clearInterval(autoScrollInterval.current);
-                autoScrollInterval.current = null;
-            }
-        };
-
-        startAutoScroll();
-        return stopAutoScroll;
-    }, [
-        autoScrolling,
-        isHovered,
-        isDragging,
-        dimensions.cardWidth,
-        dimensions.fontScale,
-        slideGap,
-        slides.length,
-    ]);
-
-    // Validate backgroundColor to prevent invalid CSS
-    const getValidColor = (color) => {
-        if (!color || typeof color !== "string") return "#ffffff";
-
-        const isHex = /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(color);
-        const isRGB = /^rgb(a)?\([\d\s.,%]+\)$/.test(color);
-        const isGradient = /gradient\((.|\s)*\)/.test(color);
-        const isNamed = /^[a-zA-Z]+$/.test(color);
-
-        if (color === "transparent" || isHex || isRGB || isGradient || isNamed) {
-            return color;
-        }
-
-        return "#ffffff"; // Fallback
-    };
-
-    // as the content area will have a solid background.
-    const getValidColorForFade = (color) => {
-        if (!color || typeof color !== "string") return "rgba(255, 255, 255, 0.8)";
-        color = color.trim().toLowerCase();
-
-        if (color === "transparent") return "rgba(0, 0, 0, 0)";
-
-        const isNamedColor = (c) => ["red", "blue", "green", "white", "black", "transparent"].includes(c);
-        if (isNamedColor(color)) return color;
-
-        const hexToRgba = (hex, alpha) => {
-            const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16);
-            const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16);
-            const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16);
-            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        };
-
-        if (color.startsWith("#")) {
-            return hexToRgba(color.replace("#", ""), 0.8);
-        }
-
-        if (color.startsWith("rgb")) {
-            const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-            if (match) {
-                const [, r, g, b, a] = match;
-                return `rgba(${r}, ${g}, ${b}, ${a ? parseFloat(a) * 0.8 : 0.8})`;
-            }
-        }
-
-        if (color.includes("gradient")) {
-            const hexMatch = color.match(/(#[0-9a-fA-F]{3,6})/);
-            if (hexMatch) return hexToRgba(hexMatch[1].replace("#", ""), 0.7);
-
-            const rgbMatch = color.match(/(rgb\((\d+,\s*\d+,\s*\d+)\))/);
-            if (rgbMatch) return `rgba(${rgbMatch[2]}, 0.7)`;
-
-            const rgbaMatch = color.match(/(rgba\((\d+,\s*\d+,\s*\d+,\s*[\d.]+)\))/);
-            if (rgbaMatch) {
-                const parts = rgbaMatch[2].split(',');
-                return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${parseFloat(parts[3]) * 0.7})`;
-            }
-            return "rgba(255, 255, 255, 0.7)"; // Fallback for unparseable gradients.
-        }
-
-        return "rgba(255, 255, 255, 0.7)"; // Final fallback for any other case.
-    };
 
     return (
         // Main container div for the entire component.
         // Accepts external style prop for positioning (e.g., marginLeft)
         <div
-            className="relative font-inter rounded-lg overflow-hidden"
-            style={{
-                ...style, // Spread the style prop here to accept external styles like marginLeft and width
-                background: getValidColor(backgroundColor),
-                paddingTop: `${30 * dimensions.fontScale}px`,
-                paddingBottom: `${50 * dimensions.fontScale}px`,
-                // paddingLeft: `${leftPadding * dimensions.fontScale}px`, // Apply responsive left padding
-                paddingRight: `${20 * dimensions.fontScale}px`, // Apply a smaller, responsive right padding
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => {
-                handleMouseUp();
-                setIsHovered(false);
-            }}
-        >
-            {/* Subtitle */}
+			className="relative select-none"
+			style={{
+				background: getValidColor(backgroundColor),
+				paddingTop: `${100 * dimensions.fontScale}px`,
+				paddingBottom: `${80 * dimensions.fontScale}px`,
+			}}
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => {
+				handleMouseUp();
+				setIsHovered(false);
+			}}
+		>
+
             <p
-                className="text-center uppercase tracking-widest font-semibold mb-2 "
-                style={{
-                    fontSize: `${14 * dimensions.fontScale}px`,
-                    color: subtitleColor || "#00AEEE",
-                }}
-            >
-                {subtitle}
-            </p>
-            {/* Component title */}
-            <h2
-                className="font-medium text-center mb-8 "
-                style={{
-                    fontSize: `${56 * dimensions.fontScale}px`,
-                    color: titleColor || "#000",
-                }}
-            >
-                {title}
-            </h2>
+				className="font-bold text-center"
+				style={{
+					fontSize: `${16 * dimensions.fontScale}px`,
+					marginBottom: `${10 * dimensions.fontScale}px`,
+					color: getValidColor(subtitleColor),
+				}}
+			>
+				{subtitle}
+			</p>
+			<h2
+				className="font-bold text-center"
+				style={{
+					fontSize: `${60 * dimensions.fontScale}px`,
+					marginBottom: `${30 * dimensions.fontScale}px`,
+					color: getValidColor(titleColor),
+				}}
+			>
+				{title}
+			</h2>
 
-            {/* Carousel display area, including navigation buttons and scrollable slides */}
-            <div
-                className="relative w-full "
-                style={{
-                    minHeight: `${dimensions.cardHeight + 40 * dimensions.fontScale}px`,
-                    overflow: "visible",
-                }}
-            >
-                {/* Left navigation button */}
-                {canScrollLeft && (
-                    <button
-                        onClick={scrollLeft}
-                        className="text-white carousel-button carousel-button-left hover:scale-110 active:scale-90 transition-transform duration-200 ease-in-out focus:outline-none"
-                        aria-label="Scroll left"
-                        style={{
-                            position: "absolute",
-                            left: 0,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            backgroundColor: "rgba(0,0,0,0.5)",
-                            borderRadius: "50%",
-                            width: `${buttonSize * dimensions.fontScale}px`,
-                            height: `${buttonSize * dimensions.fontScale}px`,
-                            padding: 0,
-                            border: "none",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            zIndex: 10,
-                            boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                            cursor: "pointer",
-                        }}
-                    >
-                        {/* SVG for left arrow */}
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            style={{
-                                width: `${0.6 * (buttonSize * dimensions.fontScale)}px`,
-                                height: `${0.6 * (buttonSize * dimensions.fontScale)}px`,
-                                transform: "translateX(1px) rotate(180deg)",
-                                color: "white",
-                            }}
-                        >
-                            <polygon points="4,2 20,12 4,22" />
-                        </svg>
-                    </button>
-                )}
+            
 
-                {/* Scrollable container for the individual slide items */}
-                <div className="ml-[100px]
-               sm:ml-[150px]  // From small breakpoint, apply 20px
-               md:ml-[200px]  // From medium breakpoint, apply 50px
-               lg:ml-[250px] // From large breakpoint, apply 100px
-               xl:ml-[300px]" style={{ position: "relative" }}>
-
-                    <div
-                        ref={scrollRef}
-                        className={`flex overflow-x-auto no-scrollbar ${isDragging ? "cursor-grabbing" : "cursor-grab"
-                            } p-4`}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            justifyContent: slides.length > minSlidesToShow ? "start" : "center",
-                            overflowY: "hidden",
-                            gap: `${dimensions.fontScale * slideGap}px`,
-                            scrollSnapType: "x mandatory",
-                            WebkitOverflowScrolling: "touch",
-                        }}
-                        onMouseDown={handleMouseDown}
-                        onMouseUp={handleMouseUp}
-                        onMouseLeave={handleMouseUp}
-                    >
+			<div
+				className="relative w-full"
+				style={{
+					minHeight: `${dimensions.cardHeight + 40 * dimensions.fontScale}px`, // add space for shadow
+					overflow: "visible",
+				}}
+			>
+				{canScrollLeft && (
+					<button
+						onClick={scrollLeft}
+						className="text-white carousel-button carousel-button-left hover:scale-150 blink-effect focus:outline-none"
+						aria-label="Scroll left"
+						style={{
+							position: "absolute",
+							left: 0,
+							top: "50%",
+							transform: "translateY(-50%)",
+							backgroundColor: "transparent",
+							width: `${buttonSize * dimensions.fontScale}px`,
+							height: `${buttonSize * dimensions.fontScale}px`,
+							padding: 0,
+							border: "none",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							zIndex: 10,
+						}}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="currentColor"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							strokeWidth="2"
+							style={{
+								width: `${0.8 * (buttonSize * dimensions.fontScale)}px`,
+								height: `${0.8 * (buttonSize * dimensions.fontScale)}px`,
+								transform: "translateX(1px) rotate(180deg)",
+								transition: "transform 0.2s ease-in-out",
+							}}
+							onMouseEnter={(e) =>
+								(e.currentTarget.style.transform =
+									"translateX(1px) rotate(180deg) scale(1.2)")
+							}
+							onMouseLeave={(e) =>
+								(e.currentTarget.style.transform =
+									"translateX(1px) rotate(180deg)")
+							}
+						>
+							<polygon points="4,2 20,12 4,22" />
+						</svg>
+					</button>
+				)}
+				<div
+					ref={scrollRef}
+					className={`flex overflow-x-auto no-scrollbar ${
+						isDragging ? "cursor-grabbing" : "cursor-grab"
+					}`}
+					style={{
+						width: "100%",
+						height: "100%",
+						justifyContent: slides.length > 3 ? "start" : "center",
+						overflowY: "visible",
+						gap: `${dimensions.fontScale * slideGap}px`, // Padding to accommodate arrows
+                        paddingLeft: "15%"
+					}}
+					onMouseDown={handleMouseDown}
+					onMouseUp={handleMouseUp}
+				>
 
                         {/* Map through the slides array to render each slide item */}
                         {slides.map((item, index) => (
@@ -532,15 +424,18 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                                 key={index}
                                 className="relative flex flex-shrink-0 overflow-hidden transition-transform duration-300 hover:scale-[1.01] select-none "
                                 style={{
-                                    width: `${dimensions.cardWidth}px`,
-                                    minWidth: `${dimensions.cardWidth}px`,
-                                    height: `${dimensions.cardHeight}px`,
-                                    scrollSnapAlign: "center",
-                                    borderRadius: `20px`,
-                                    marginBottom: `${50 * dimensions.fontScale}px`,
-                                    marginTop: `${30 * dimensions.fontScale}px`,
-                                    backgroundColor: `#FFFFFF`
-                                }}
+								width: `${dimensions.cardWidth}px`,
+								minWidth: `${dimensions.cardWidth}px`,
+								height: `${dimensions.cardHeight}px`,
+								borderTopLeftRadius: `20px`,
+                                borderBottomLeftRadius: `20px`,
+								marginBottom: `${50 * dimensions.fontScale}px`,
+								marginTop: `${30 * dimensions.fontScale}px`,
+								marginLeft: index === 0 ? `${20 * dimensions.fontScale}px` : "0px",
+								background: getValidColor(item.backgroundColor),
+								boxShadow: "0 5px 10px rgba(0, 0, 0, 0.2)",
+								overflowY: "hidden",
+							}}
                             >
                                 {/* Left Image Column */}
                                 <div
@@ -600,7 +495,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                                             marginBottom: `${90 * dimensions.fontScale}px`,
                                         }}
                                     >
-                                        STEP <span style={{ fontSize: `${28 * dimensions.fontScale}px`, fontWeight: "bold" }}>{item.stepNumber}</span>
+                                        STEP <span style={{ fontSize: `${25 * dimensions.fontScale}px`, fontWeight: "bold" }}>{item.stepNumber}</span>
                                     </p>
                                     {/* Content area for title, description, and checklist */}
                                     <div className="flex flex-col w-full overflow-visible break-words">
@@ -610,7 +505,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                                             style={{
                                                 color: item.titleColor || "#000",
                                                 fontSize: `${24 * dimensions.fontScale}px`,
-                                                lineHeight: 1.2,
+                                                lineHeight: 1.2 *dimensions.fontScale,
                                                 wordBreak: "break-word",
                                             }}
                                         >
@@ -623,7 +518,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                                             style={{
                                                 color: item.textColor || "#4B5563",
                                                 fontSize: `${18 * dimensions.fontScale}px`,
-                                                lineHeight: 1.5,
+                                                lineHeight: 1.5 *dimensions.fontScale,
                                             }}
                                         >
                                             {item.description}
@@ -634,7 +529,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                                             {item.checklistItems && item.checklistItems.map((checkItem, checkIndex) => (
                                                 <li
                                                     key={checkIndex}
-                                                    className="flex items-center text-left mb-2"
+                                                    className="flex items-center text-left"
                                                     style={{
                                                         fontSize: `${16 * dimensions.fontScale}px`,
                                                         color: item.textColor || "#4B5563",
@@ -667,65 +562,71 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                             </div>
                         ))}
                     </div>
-                </div>
-                {/* Right navigation button */}
-                {canScrollRight && (
-                    <button
-                        onClick={scrollRight}
-                        className="text-white carousel-button carousel-button-right hover:scale-110 active:scale-90 transition-transform duration-200 ease-in-out focus:outline-none"
-                        aria-label="Scroll right"
-                        style={{
-                            position: "absolute",
-                            right: 0,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            backgroundColor: "rgba(0,0,0,0.5)",
-                            borderRadius: "50%",
-                            width: `${buttonSize * dimensions.fontScale}px`,
-                            height: `${buttonSize * dimensions.fontScale}px`,
-                            padding: 0,
-                            border: "none",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            zIndex: 10,
-                            boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                            cursor: "pointer",
-                        }}
-                    >
-                        {/* SVG for right arrow */}
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-full h-full"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            style={{
-                                width: `${0.6 * (buttonSize * dimensions.fontScale)}px`,
-                                height: `${0.6 * (buttonSize * dimensions.fontScale)}px`,
-                                transform: "translateX(1px)",
-                                color: "white",
-                            }}
-                        >
-                            <polygon points="4,2 20,12 4,22" />
-                        </svg>
-                    </button>
-                )}
-            </div>
-
-            {/* Custom Scroll Indicator */}
-            <div ref={scrollIndicatorRef} className="relative w-full h-2 bg-gray-300 rounded-full mt-8 mx-auto " style={{ maxWidth: '380px' }}>
-                <div
-                    className="absolute h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
-                    style={{
-                        width: `${indicatorWidth}px`,
-                        left: `${indicatorLeft}px`,
+				{canScrollRight && (
+					<button
+						onClick={scrollRight}
+						className="text-white carousel-button carousel-button-right hover:scale-150 blink-effect focus:outline-none"
+						aria-label="Scroll right"
+						style={{
+							position: "absolute",
+							right: 0,
+							top: "50%",
+							transform: "translateY(-50%)",
+							backgroundColor: "transparent",
+							width: `${buttonSize * dimensions.fontScale}px`,
+							height: `${buttonSize * dimensions.fontScale}px`,
+							padding: 0,
+							border: "none",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							zIndex: 10,
+						}}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="w-full h-full"
+							fill="currentColor"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							strokeWidth="2"
+							style={{
+								width: `${0.8 * (buttonSize * dimensions.fontScale)}px`,
+								height: `${0.8 * (buttonSize * dimensions.fontScale)}px`,
+								transform: "translateX(1px)",
+								transition: "transform 0.2s ease-in-out",
+							}}
+							onMouseEnter={(e) =>
+								(e.currentTarget.style.transform = "translateX(1px) scale(1.2)")
+							}
+							onMouseLeave={(e) =>
+								(e.currentTarget.style.transform = "translateX(1px)")
+							}
+						>
+							<polygon points="4,2 20,12 4,22" />
+						</svg>
+					</button>
+				)}
+			</div>
+            <div
+						className="bg-gray-200 rounded"
+						style={{ height: `${8 * dimensions.fontScale}px`,
+                            marginLeft: `${25 * dimensions.fontScale}px`,
+                            marginRight: `${25 * dimensions.fontScale}px`,
+                            marginTop: `${8 * dimensions.fontScale}px`
                     }}
-                ></div>
-            </div>
-        </div>
-    );
+					>
+						<div
+							className="rounded"
+							style={{
+								width: `${progress}%`,
+								height: "100%",
+								background: getValidColor(progressbarColor) || "#000000",
+							}}
+						/>
+					</div>
+		</div>
+	);
 }
 
 export default StepByStepProcess;

@@ -451,11 +451,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
 
             {/* Carousel display area, including navigation buttons and scrollable slides */}
             <div
-                className="relative w-full ml-[100px]
-               sm:ml-[150px]  // From small breakpoint, apply 20px
-               md:ml-[200px]  // From medium breakpoint, apply 50px
-               lg:ml-[250px] // From large breakpoint, apply 100px
-               xl:ml-[300px]"
+                className="relative w-full "
                 style={{
                     minHeight: `${dimensions.cardHeight + 40 * dimensions.fontScale}px`,
                     overflow: "visible",
@@ -506,7 +502,11 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                 )}
 
                 {/* Scrollable container for the individual slide items */}
-                <div style={{ position: "relative" }}>
+                <div className="ml-[100px]
+               sm:ml-[150px]  // From small breakpoint, apply 20px
+               md:ml-[200px]  // From medium breakpoint, apply 50px
+               lg:ml-[250px] // From large breakpoint, apply 100px
+               xl:ml-[300px]" style={{ position: "relative" }}>
 
                     <div
                         ref={scrollRef}
@@ -530,7 +530,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                         {slides.map((item, index) => (
                             <div
                                 key={index}
-                                className="relative flex flex-shrink-0 overflow-hidden transition-transform duration-300 hover:scale-[1.01] select-none"
+                                className="relative flex flex-shrink-0 overflow-hidden transition-transform duration-300 hover:scale-[1.01] select-none "
                                 style={{
                                     width: `${dimensions.cardWidth}px`,
                                     minWidth: `${dimensions.cardWidth}px`,
@@ -715,7 +715,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
             </div>
 
             {/* Custom Scroll Indicator */}
-            <div ref={scrollIndicatorRef} className="relative w-full h-2 bg-gray-300 rounded-full mt-8 mx-auto" style={{ maxWidth: '380px' }}>
+            <div ref={scrollIndicatorRef} className="relative w-full h-2 bg-gray-300 rounded-full mt-8 mx-auto " style={{ maxWidth: '380px' }}>
                 <div
                     className="absolute h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
                     style={{

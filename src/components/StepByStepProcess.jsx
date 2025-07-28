@@ -16,7 +16,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         minSlidesToShow = stepByStepProcessDefaults.minSlidesToShow,
         autoScrolling = stepByStepProcessDefaults.autoScrolling, // Corrected typo here
         buttonSize = stepByStepProcessDefaults.buttonSize,
-        leftPadding = stepByStepProcessDefaults.leftPadding,
+        // leftPadding = stepByStepProcessDefaults.leftPadding,
     } = attributes;
 
     // Preset dimensions for individual slides, used as a base for responsive scaling.
@@ -55,16 +55,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
             const containerWidth = scrollRef.current?.offsetWidth || 0;
             const fullSlideWidth = presetSlideWidth;
 
-        //     // --- NEW LOGIC FOR RESPONSIVE minSlidesToShow ---
-        // let effectiveMinSlidesToShow = minSlidesToShow; // Start with default from props
-
-        // if (containerWidth <= 480) { // Example breakpoint for small phones
-        //     effectiveMinSlidesToShow = 1;
-        // } else if (containerWidth <= 768) { // Example breakpoint for tablets or larger phones
-        //     effectiveMinSlidesToShow = Math.min(minSlidesToShow, 2); // Show max 2, or whatever minSlidesToShow is if less than 2
-        // }
-        // // You can add more breakpoints as needed.
-        // // --- END NEW LOGIC ---
+        
 
             // Calculate the minimum required width for the carousel to show 'minSlidesToShow'.
             const baseRequiredWidth =
@@ -428,7 +419,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
                 background: getValidColor(backgroundColor),
                 paddingTop: `${30 * dimensions.fontScale}px`,
                 paddingBottom: `${50 * dimensions.fontScale}px`,
-                paddingLeft: `${leftPadding * dimensions.fontScale}px`, // Apply responsive left padding
+                // paddingLeft: `${leftPadding * dimensions.fontScale}px`, // Apply responsive left padding
                 paddingRight: `${20 * dimensions.fontScale}px`, // Apply a smaller, responsive right padding
             }}
             onMouseEnter={() => setIsHovered(true)}
@@ -439,7 +430,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
         >
             {/* Subtitle */}
             <p
-                className="text-center uppercase tracking-widest font-semibold mb-2 mr-0 sm:mr-4 md:mr-8 lg:mr-16 xl:mr-50"
+                className="text-center uppercase tracking-widest font-semibold mb-2 "
                 style={{
                     fontSize: `${14 * dimensions.fontScale}px`,
                     color: subtitleColor || "#00AEEE",
@@ -449,7 +440,7 @@ const StepByStepProcess = ({ attributes = {}, style = {} }) => { // Added style 
             </p>
             {/* Component title */}
             <h2
-                className="font-medium text-center mb-8 mr-0 sm:mr-4 md:mr-8 lg:mr-16 xl:mr-50"
+                className="font-medium text-center mb-8 "
                 style={{
                     fontSize: `${56 * dimensions.fontScale}px`,
                     color: titleColor || "#000",

@@ -88,7 +88,7 @@ const stepByStepProcessDefaults = {
     "subtitleColor": "#00AEEE",
     "minSlidesToShow": 1.3,
     "autoScrolling": false,
-    "leftPadding": 300
+    // "leftPadding": 300
 };
 
 export default stepByStepProcessDefaults;

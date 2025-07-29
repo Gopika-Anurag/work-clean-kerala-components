@@ -1,0 +1,97 @@
+/* stepByStepProcess.css */
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+/* General styling for the entire body to ensure full height and consistent font */
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Hide scrollbar for all browsers */
+/* For Webkit browsers (Chrome, Safari) */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* For Firefox */
+.no-scrollbar {
+    scrollbar-width: none;
+}
+
+/* For Internet Explorer 10+ */
+.no-scrollbar {
+    -ms-overflow-style: none;
+}
+
+/* Carousel Button Styling */
+.carousel-button {
+  all: unset; /* Reset all button styles to ensure consistency */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transform-origin: center;
+  /* Apply transitions for smooth visual feedback on hover/active states */
+  transition: transform 0.3s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  /* Explicitly remove background and box-shadow to prevent conflicts with inline styles */
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Prevent default focus outline and ensure background/shadow remain unset on focus/active */
+.carousel-button:focus,
+.carousel-button:active {
+  outline: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Prevent hover from changing background, allowing only the transform scale effect */
+.carousel-button:hover {
+  transform: scale(1.2); /* Scale effect remains */
+  background: none !important; /* Ensure no background change on hover */
+  box-shadow: none !important; /* Ensure no shadow change on hover */
+}
+
+/* Positioning for the left carousel button */
+.carousel-button-left {
+  position: absolute;
+  left: 4px; /* Small offset from the left edge */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+}
+
+/* Positioning for the right carousel button */
+.carousel-button-right {
+  position: absolute;
+  right: 4px; /* Small offset from the right edge */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+}
+
+/* Hover Effect: Scale and Blink */
+.carousel-button:hover {
+  transform: scale(1.2); /* Scale slightly larger */
+}
+
+/* Blink effect animation definition */
+.blink-effect:hover {
+  animation: blink 2s infinite; /* Apply blink animation on hover */
+}
+
+@keyframes blink {
+  0% {
+    color: white; /* Start with white text */
+  }
+  50% {
+    color: black; /* Transition to black text in the middle of the animation */
+  }
+  100% {
+    color: white; /* Return to white text at the end, completing the blink cycle */
+  }
+}

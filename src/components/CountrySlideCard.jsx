@@ -314,12 +314,12 @@ const CountrySlideCard = ({ attributes = {} }) => {
 
 return (
     <div className="w-full " style={{
-        paddingLeft:"15%",
-        paddingRight:"15%"
+        paddingLeft:"12%",
+        paddingRight:"12%"
     }}>
     {/* Header & Paragraph at top */}
     <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-end md:gap-4 mb-6 pl-8">
-      <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-[#0E1E45] leading-snug">
+<h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-[#0E1E45] leading-tight sm:leading-snug break-words">
         {header?.includes(':') ? (
           <>
             <span className="block">{header.split(':')[0]}:</span>
@@ -338,111 +338,128 @@ return (
     
   <div
     ref={scrollRef}
-    className="flex overflow-x-auto gap-4 p-4"
+    className="flex overflow-x-auto gap-4 p-4 no-scrollbar"
     onMouseEnter={() => setIsHovered(true)}
     onMouseLeave={() => setIsHovered(false)}
     onMouseDown={handleMouseDown}
     onMouseUp={handleMouseUp}
+    style={{ paddingBottom: `${80 * dimensions.fontScale}px` }} // Add bottom padding to make space for tooltips
+
   >
     {slides.map((item, index) => (
-      <div
-        key={index}
-        className="group relative flex flex-shrink-0 overflow-hidden transition-transform duration-300 hover:scale-[1.01] select-none "
-        style={{
-          width: `${dimensions.cardWidth}px`,
-          minWidth: `${dimensions.cardWidth}px`,
-          height: `${dimensions.cardHeight}px`,
-          borderTopLeftRadius: `20px`,
-          borderBottomLeftRadius: `20px`,
-          marginBottom: `${50 * dimensions.fontScale}px`,
-          marginTop: `${30 * dimensions.fontScale}px`,
-          marginLeft: index === 0 ? `${20 * dimensions.fontScale}px` : "0px",
-          background: getValidColor(item.backgroundColor),
-          boxShadow: "0 5px 10px rgba(0, 0, 0, 0.2)",
-          overflowY: "hidden",
-        }}
-      >
-
-        {/* Background Image */}
-        {item.image && (
-          <img
-            src={item.image}
-            alt={item.title}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              pointerEvents: "none",
-              zIndex: 1,
-            }}
-          />
-        )}
-
-        {/* Overlay */}
-        <div
-          style={{
-            zIndex: 2,
-            background: "rgba(0, 0, 0, 0.4)",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: `${20 * dimensions.fontScale}px`,
-          }}
-        >
-          <h3
-            style={{
-              color: item.titleColor || "#fff",
-              fontSize: `${22 * dimensions.fontScale}px`,
-              fontWeight: "bold",
-            }}
-          >
-            {item.title}
-          </h3>
-          {item.flag && (
-            <img
-              src={item.flag}
-              alt="flag"
-              style={{
-                width: `${28 * dimensions.fontScale}px`,
-                height: `${28 * dimensions.fontScale}px`,
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
-          )}
-        </div>
-
-        {/* Tooltip */}
-        {item.tooltipMessage && (
   <div
-    className="absolute left-0 bottom-0 w-full transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10"
+    key={index}
+    className="group relative flex flex-col items-center flex-shrink-0 transition-transform duration-300 hover:scale-[1.01] select-none"
     style={{
-      backgroundColor: "#ffffff",
-      padding: `${15 * dimensions.fontScale}px`,
-      fontSize: `${14 * dimensions.fontScale}px`,
-      textAlign: "left",
-      boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.15)",
-      borderRadius: `0 0 ${20 * dimensions.fontScale}px ${20 * dimensions.fontScale}px`,
+      width: `${dimensions.cardWidth}px`,
+      minWidth: `${dimensions.cardWidth}px`,
+      height: `${dimensions.cardHeight}px`,
+      marginBottom: `${70 * dimensions.fontScale}px`, // Extra space for tooltip below
+      marginTop: `${30 * dimensions.fontScale}px`,
+      marginLeft: index === 0 ? `${20 * dimensions.fontScale}px` : "0px",
     }}
   >
-    <p style={{ marginBottom: "10px", color: "#000" }}>{item.tooltipMessage}</p>
-    <a
-      href={item.buttonLink || "#"}
-      className="inline-block bg-sky-600 text-white rounded-md"
-      style={{
-        fontSize: `${14 * dimensions.fontScale}px`,
-        padding: `${8 * dimensions.fontScale}px ${20 * dimensions.fontScale}px`,
+    {/* Card Container */}
+    <div
+className="relative overflow-visible w-full rounded-tl-[10px] rounded-bl-[10px] rounded-tr-[10px] rounded-br-[10px] shadow-md"
+        style={{
+        height: "100%",
+        background: getValidColor(item.backgroundColor),
+        boxShadow: "0 5px 10px rgba(0, 0, 0, 0.2)",
       }}
     >
-      {item.buttonText || "Contact"}
-    </a>
+      {/* Background Image */}
+{item.image && (
+  <>
+    <img
+      src={item.image}
+      alt={item.title}
+      className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-0"
+    />
+
+    {/* Bottom Blur Overlay */}
+    <div
+      className="absolute bottom-0 left-0 w-full z-10"
+      style={{
+        height: "25%",
+        background: "linear-gradient(to top, rgba(255,255,255,0.8), rgba(255,255,255,0))",
+        backdropFilter: "blur(2px)",
+      }}
+    />
+
+    {/* 🔥 Dark Hover Gradient Overlay */}
+    <div className="absolute top-0 left-0 w-full h-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-black/40 rounded-[10px]" />
+  </>
+)}
+
+
+    </div>
+{/* Flag - Top Right Corner */}
+{item.flag && (
+  <div
+  className="absolute top-2 right-2 z-10 bg-white/70 rounded-full p-1"
+  style={{
+    width: `${Math.max(30 * dimensions.fontScale, 20)}px`,
+    height: `${Math.max(30 * dimensions.fontScale, 20)}px`,
+  }}
+>
+    <img
+      src={item.flag}
+      alt={`${item.title} flag`}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    />
   </div>
 )}
+
+{/* Country Name - Bottom Left Corner */}
+<div
+  className="absolute bottom-2 left-3 z-10  py-1 rounded-md"
+  style={{
+  fontSize: `${Math.max(15 * dimensions.fontScale)}px`,
+    fontWeight: 600,
+    color: item.titleColor || "#fff",
+  }}
+>
+  {item.title}
+</div>
+
+
+    {/* Tooltip BELOW Card */}
+    {item.tooltipMessage && (
+      <div className="absolute top-full mt-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="relative bg-white border border-blue-300 rounded-lg shadow-lg p-4 w-[260px] text-center">
+          {/* Arrow */}
+          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-blue-300 rotate-45" />
+          
+          {/* Content */}
+          <p
+            className="text-gray-800 mb-3 leading-snug"
+            style={{
+              fontSize: `${14 * dimensions.fontScale}px`,
+            }}
+          >
+            {item.tooltipMessage}
+          </p>
+          <a
+            href={item.buttonLink || "#"}
+            className="inline-block bg-sky-600 hover:bg-sky-700 text-white rounded-md font-medium"
+            style={{
+              fontSize: `${14 * dimensions.fontScale}px`,
+              padding: `${8 * dimensions.fontScale}px ${20 * dimensions.fontScale}px`,
+            }}
+          >
+            {item.buttonText || "Contact"}
+          </a>
+        </div>
       </div>
-    ))} {/* <-- THIS closes the map function */}
+    )}
+  </div>
+))}
+
   </div>
   </div> // <-- Close outer container
 ); // <-- Final closing of return

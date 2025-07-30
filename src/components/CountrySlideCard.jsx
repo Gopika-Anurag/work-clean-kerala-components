@@ -374,12 +374,12 @@ className="relative overflow-visible w-full rounded-tl-[10px] rounded-bl-[10px] 
     <img
       src={item.image}
       alt={item.title}
-      className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-0"
+      className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-0 rounded-tl-[10px] rounded-bl-[10px] rounded-tr-[10px] rounded-br-[10px]"
     />
 
     {/* Bottom Blur Overlay */}
     <div
-      className="absolute bottom-0 left-0 w-full z-10"
+      className="absolute bottom-0 left-0 w-full z-10 rounded-tl-[10px] rounded-bl-[10px] rounded-tr-[10px] rounded-br-[10px]"
       style={{
         height: "25%",
         background: "linear-gradient(to top, rgba(255,255,255,0.8), rgba(255,255,255,0))",
@@ -388,7 +388,8 @@ className="relative overflow-visible w-full rounded-tl-[10px] rounded-bl-[10px] 
     />
 
     {/* 🔥 Dark Hover Gradient Overlay */}
-    <div className="absolute top-0 left-0 w-full h-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-black/40 rounded-[10px]" />
+    <div className="absolute top-0 left-0 w-full h-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-black/40 rounded-[10px]
+    " />
   </>
 )}
 

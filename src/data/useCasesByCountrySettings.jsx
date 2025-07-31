@@ -133,14 +133,14 @@ const useCasesByCountrySettings = {
       titleColor: "#ffffff",
     },
   ],
-  slideGap: 30,
+  slideGap: 20,
   buttonSize: 40,
   backgroundColor: "#f4f4f4",
   title: "Saudi PCC: Use Cases by Country",
   titleColor: "#000000",
   header: "Saudi PCC: Use Cases by Country",
   paragraph: "Find your destination country below to understand the specific attestation and submission processes required.",
-  minSlidesToShow: 3,
+  minSlidesToShow: 4,
   autoScrolling: false,
 };
 

@@ -84,6 +84,20 @@ body {
   animation: blink 2s infinite; /* Apply blink animation on hover */
 }
 
+.tooltip-left-edge {
+  position: absolute;
+  top: 50%;
+  left: 100%; /* Pushes to right of clipped card */
+  transform: translateY(-50%);
+}
+
+.tooltip-right-edge {
+  position: absolute;
+  top: 50%;
+  right: 100%; /* Pushes to left of clipped card */
+  transform: translateY(-50%);
+}
+
 @keyframes blink {
   0% {
     color: white; /* Start with white text */

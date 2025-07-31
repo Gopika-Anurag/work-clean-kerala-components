@@ -356,7 +356,8 @@ const CountrySlideCard = ({ attributes = {} }) => {
         <div className="w-full " style={{
             paddingLeft: "12%",
             paddingRight: "12%",
-            paddingTop: "60px"
+            paddingTop: "60px",
+            paddingBottom: "40px"
         }}>
             {/* Header & Paragraph at top */}
             <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-end md:gap-4 mb-6 pl-8">
@@ -380,7 +381,7 @@ const CountrySlideCard = ({ attributes = {} }) => {
             <div
                 className="relative w-full"
                 style={{
-                    minHeight: `${dimensions.cardHeight + 40 * dimensions.fontScale}px`, // add space for shadow
+                    minHeight: `${dimensions.cardHeight + 60 * dimensions.fontScale}px`, // add space for shadow
                     overflow: "visible",
                 }}
             >
@@ -493,8 +494,9 @@ const CountrySlideCard = ({ attributes = {} }) => {
                             {/* Flag - Top Right Corner */}
                             {item.flag && (
                                 <div
-                                    className="absolute top-2 right-2 z-10 bg-white/70 rounded-full p-1"
+                                    className="absolute top-2 right-2 z-10 bg-white/70 rounded-full overflow-hidden"
                                     style={{
+                                        padding: `${3 * dimensions.fontScale}px`, // replaces Tailwind's p-1 (~4px)
                                         width: `${Math.max(30 * dimensions.fontScale, 20)}px`,
                                         height: `${Math.max(30 * dimensions.fontScale, 20)}px`,
                                     }}
@@ -502,13 +504,10 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                     <img
                                         src={item.flag}
                                         alt={`${item.title} flag`}
-                                        style={{
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",
-                                        }}
+                                        className="w-full h-full object-cover "
                                     />
                                 </div>
+
                             )}
 
                             {/* Country Name - Bottom Left Corner */}

@@ -42,6 +42,9 @@ const CountrySlideCard = ({ attributes = {} }) => {
 
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+    const [activeTooltip, setActiveTooltip] = useState(null);
+    const [touchedCardIndex, setTouchedCardIndex] = useState(null);
+
 
     // Update slide dimensions dynamically
     useEffect(() => {
@@ -435,6 +438,9 @@ const CountrySlideCard = ({ attributes = {} }) => {
                     {slides.map((item, index) => (
                         <div
                             key={index}
+                            onClick={() => setActiveTooltip(prev => (prev === index ? null : index))}
+                            onTouchStart={() => setTouchedCardIndex(index)}
+onTouchEnd={() => setTouchedCardIndex(index)}
                             className="group relative flex flex-col items-center flex-shrink-0 transition-transform duration-300 hover:scale-[1.01] select-none"
                             style={{
                                 width: `${dimensions.cardWidth}px`,
@@ -474,8 +480,9 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                         />
 
                                         {/* 🔥 Dark Hover Gradient Overlay */}
-                                        <div className="absolute top-0 left-0 w-full h-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-black/40 rounded-[10px]
-    " />
+<div
+  className={`absolute top-0 left-0 w-full h-full z-10 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-black/40 rounded-[10px] ${touchedCardIndex === index ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+/>
                                     </>
                                 )}
 
@@ -517,9 +524,18 @@ const CountrySlideCard = ({ attributes = {} }) => {
                             
                             {/* Tooltip BELOW Card */}
                             {item.tooltipMessage && (
-                                <div className="absolute top-full mt-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ">
-                                    <div className="relative bg-white border border-blue-300 rounded-lg shadow-lg p-2 w-[270px] text-center">
-                                        {/* Arrow */}
+  <div
+    className={`absolute top-full mt-3 z-20 transition-opacity duration-300 
+      ${
+        activeTooltip === index
+          ? "opacity-100 pointer-events-auto"
+          : "opacity-0 pointer-events-none"
+      }
+      sm:group-hover:opacity-100 sm:pointer-events-auto
+    `}
+  >
+
+<div className="relative bg-white border border-blue-300 rounded-lg shadow-lg p-2 text-center w-[90px] max-w-xs sm:w-[270px]">                                        {/* Arrow */}
                                         <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-blue-300 rotate-45" />
 
                                         {/* Content */}

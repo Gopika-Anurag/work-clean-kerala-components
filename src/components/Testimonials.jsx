@@ -91,12 +91,17 @@ const TestimonialScroller = () => {
                 {[ref1, ref2].map((ref, sectionIndex) => (
                     <div key={sectionIndex} className="relative overflow-hidden w-full">
                         {/* Left gradient */}
-                        <div className="absolute left-0 top-0 h-full w-10 z-10 pointer-events-none"
-                            style={{ background: 'linear-gradient(to right, white/10, transparent)' }}></div>
+    <div
+        className="absolute left-0 top-0 h-full w-10 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.8), transparent)' }}
+    ></div>
 
-                        {/* Right gradient */}
-                        <div className="absolute right-0 top-0 h-full w-10 z-10 pointer-events-none"
-                            style={{ background: 'linear-gradient(to left, white/10, transparent)' }}></div>
+    {/* Right gradient */}
+    <div
+        className="absolute right-0 top-0 h-full w-10 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to left, rgba(255,255,255,0.8), transparent)' }}
+    ></div>
+
                         <div
                             ref={ref}
                             className="flex overflow-x-auto pb-4 px-2 sm:px-4 hide-scrollbar"

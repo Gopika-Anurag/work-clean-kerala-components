@@ -60,7 +60,7 @@ const TestimonialScroller = () => {
         };
 
         autoScroll(ref1, "left");
-        autoScroll(ref2, "right");
+    setTimeout(() => autoScroll(ref2, "right"), 90); // delay second scroll slightly
     }, []);
 
     const loopedItems = [...testimonials, ...testimonials];

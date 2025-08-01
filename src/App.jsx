@@ -28,6 +28,7 @@ import stepByStepProcessDefaults from './data/stepByStepProcessData';
 import CountrySlideCard from "./components/CountrySlideCard";
 import useCasesByCountrySettings from './data/useCasesByCountrySettings'; 
 import Testimonials from "./components/Testimonials";
+import PccFeatures from "./components/PccFeatures";
 
 function App() {
   
@@ -35,6 +36,11 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <div>
+      <PccFeatures />
+    </div>
+
         <div>
       <Testimonials />
     </div>

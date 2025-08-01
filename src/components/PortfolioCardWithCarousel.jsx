@@ -43,7 +43,7 @@ const PortfolioCardWithCarousel = ({ data }) => {
             <div className="flex flex-col gap-6">
 
               {/* Row 1 - animates right on hover of main card */}
-              <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-500 group-hover:translate-x-6">
+              <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-1000 group-hover:translate-x-6">
                 {data.images.map((item) => (
                   <img
                     key={item.id}
@@ -55,7 +55,7 @@ const PortfolioCardWithCarousel = ({ data }) => {
               </div>
 
               {/* Row 2 - animates left on hover of main card */}
-              <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-500 group-hover:-translate-x-6">
+              <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-1000 group-hover:-translate-x-6">
                 {data.images.map((item) => (
                   <img
                     key={`2-${item.id}`}

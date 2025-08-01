@@ -2,12 +2,12 @@ import React, { useState } from "react";
 
 const PortfolioCardWithCarousel = ({ data }) => {
   const [isButtonHovered, setIsButtonHovered] = useState(false);
-  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
 
   return (
     <section className="w-full py-7 px-4 bg-white">
+      {/* MAIN CARD WRAPPER WITH GROUP */}
       <div
-        className="mx-auto w-full max-w-[500px] rounded-2xl p-6 relative overflow-hidden"
+        className="group mx-auto w-full max-w-[500px] rounded-2xl p-6 relative overflow-hidden"
         style={{ backgroundColor: data.bgColor, color: data.textColor }}
       >
         {/* Content */}
@@ -37,41 +37,38 @@ const PortfolioCardWithCarousel = ({ data }) => {
           </button>
         </div>
 
-      <div className="absolute bottom-[-40px] right-[-120px] rotate-[-40deg] z-0 cursor-pointer">
-  {/* Group hover wrapper */}
-  <div className="group w-fit h-fit ">
-    
-    {/* Carousel rows wrapper */}
-    <div className="flex flex-col gap-6">
+        {/* Carousel */}
+        <div className="absolute bottom-[-40px] right-[-120px] rotate-[-40deg] z-0 cursor-pointer">
+          <div className="w-fit h-fit">
+            <div className="flex flex-col gap-6">
 
-      {/* Row 1 - animates right */}
-      <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-500 group-hover:translate-x-6">
-        {data.images.map((item) => (
-          <img
-            key={item.id}
-            src={item.src}
-            alt=""
-            className="w-[140px] h-[80px] rounded-[16px] object-cover shrink-0"
-          />
-        ))}
-      </div>
+              {/* Row 1 - animates right on hover of main card */}
+              <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-500 group-hover:translate-x-6">
+                {data.images.map((item) => (
+                  <img
+                    key={item.id}
+                    src={item.src}
+                    alt=""
+                    className="w-[140px] h-[80px] rounded-[16px] object-cover shrink-0"
+                  />
+                ))}
+              </div>
 
-      {/* Row 2 - animates left */}
-      <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-500 group-hover:-translate-x-6">
-        {data.images.map((item) => (
-          <img
-            key={`2-${item.id}`}
-            src={item.src}
-            alt=""
-            className="w-[140px] h-[80px] rounded-[16px] object-cover shrink-0"
-          />
-        ))}
-      </div>
+              {/* Row 2 - animates left on hover of main card */}
+              <div className="flex gap-4 overflow-x-auto no-scrollbar px-2 transition-transform duration-500 group-hover:-translate-x-6">
+                {data.images.map((item) => (
+                  <img
+                    key={`2-${item.id}`}
+                    src={item.src}
+                    alt=""
+                    className="w-[140px] h-[80px] rounded-[16px] object-cover shrink-0"
+                  />
+                ))}
+              </div>
 
-    </div>
-  </div>
-</div>
-
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

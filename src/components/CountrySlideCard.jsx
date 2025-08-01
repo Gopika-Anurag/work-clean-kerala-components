@@ -548,9 +548,8 @@ const CountrySlideCard = ({ attributes = {} }) => {
 
 
                                     <div className="relative bg-white border border-blue-300 rounded-lg shadow-lg p-1 sm:p-2 text-center w-[90px] max-w-xs sm:w-[270px]">                                        {/* Arrow */}
-                                        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 
-  w-2 h-2 sm:w-4 sm:h-4 
-  bg-white border-l border-t border-blue-300 rotate-45" />
+                                        <div className="absolute -top-1 sm:-top-2 left-1/2 transform -translate-x-1/2 
+                                                      w-2 h-2 sm:w-4 sm:h-4 bg-white border-l border-t border-blue-300 rotate-45" />
 
                                         {/* Content */}
                                         <p

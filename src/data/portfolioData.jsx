@@ -7,10 +7,10 @@ export const portfolioData = {
   textColor: "#FFFFFF",
   accentColor: "#cf44cf",
   images: [
-    { id: 1, src: "https://www.ireddead.com/bigimage/1691/" },
-    { id: 2, src: "https://www.ireddead.com/bigimage/1691/" },
-    { id: 3, src: "https://www.ireddead.com/bigimage/1691/" },
-    { id: 4, src: "https://www.ireddead.com/bigimage/1691/" },
+    { id: 1, src: "https://images.unsplash.com/photo-1587387119725-9d6bac0f22fb?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9yaXpvbnRhbHxlbnwwfHwwfHx8MA%3D%3D" },
+    { id: 2, src: "https://images.unsplash.com/photo-1587387119725-9d6bac0f22fb?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9yaXpvbnRhbHxlbnwwfHwwfHx8MA%3D%3D" },
+    { id: 3, src: "https://images.unsplash.com/photo-1587387119725-9d6bac0f22fb?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9yaXpvbnRhbHxlbnwwfHwwfHx8MA%3D%3D" },
+    { id: 4, src: "https://images.unsplash.com/photo-1587387119725-9d6bac0f22fb?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9yaXpvbnRhbHxlbnwwfHwwfHx8MA%3D%3D" },
 
   ],
 };

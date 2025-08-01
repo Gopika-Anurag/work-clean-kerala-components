@@ -44,6 +44,8 @@ const CountrySlideCard = ({ attributes = {} }) => {
     const [canScrollRight, setCanScrollRight] = useState(true);
     const [activeTooltip, setActiveTooltip] = useState(null);
     const [touchedCardIndex, setTouchedCardIndex] = useState(null);
+    const [isTooltipClicked, setIsTooltipClicked] = useState(false);
+
 
 
     // Update slide dimensions dynamically
@@ -441,7 +443,15 @@ const CountrySlideCard = ({ attributes = {} }) => {
                     {slides.map((item, index) => (
                         <div
                             key={index}
-                            onClick={() => setActiveTooltip(prev => (prev === index ? null : index))}
+                            onClick={() => {
+                                if (activeTooltip === index) {
+                                    setActiveTooltip(null);
+                                    setIsTooltipClicked(false);
+                                } else {
+                                    setActiveTooltip(index);
+                                    setIsTooltipClicked(true);
+                                }
+                            }}
                             onTouchStart={() => setTouchedCardIndex(index)}
                             onTouchEnd={() => setTouchedCardIndex(index)}
                             className="group relative flex flex-col items-center flex-shrink-0 transition-transform duration-300 hover:scale-[1.01] select-none"
@@ -529,11 +539,13 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                     className={`absolute top-full mt-1 md:mt-2 z-20 transition-opacity duration-300 
       ${activeTooltip === index
                                             ? "opacity-100 pointer-events-auto"
-                                            : "opacity-0 pointer-events-none"
+                                            : isTooltipClicked
+                                                ? "opacity-0 pointer-events-none"
+                                                : "sm:group-hover:opacity-100 sm:pointer-events-auto opacity-0 pointer-events-none"
                                         }
-      sm:group-hover:opacity-100 sm:pointer-events-auto
     `}
                                 >
+
 
                                     <div className="relative bg-white border border-blue-300 rounded-lg shadow-lg p-1 sm:p-2 text-center w-[90px] max-w-xs sm:w-[270px]">                                        {/* Arrow */}
                                         <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 

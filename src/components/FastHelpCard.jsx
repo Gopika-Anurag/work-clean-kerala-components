@@ -23,17 +23,20 @@ const FastHelpCard = () => {
     items,
     buttonText,
     width,
-    height,
+    height, // optional
   } = fastHelpData;
 
   return (
-    <div className="flex items-center justify-center py-24 px-4 bg-gray-100">
+    <div className="flex items-center justify-center py-16 px-4 bg-gray-100">
       <div
         className="bg-blue-50 border border-blue-100 shadow-sm rounded-2xl p-6 flex flex-col w-full max-w-[600px] sm:max-w-[500px] md:max-w-[650px]"
-  style={{ maxWidth: `${width}px`, height: `${height}px` }}
+        style={{
+          maxWidth: width ? `${width}px` : undefined,
+          minHeight: height ? `${height}px` : undefined,
+        }}
       >
         {/* Grouped content */}
-        <div className="flex flex-col md:ml-6 mt-3">
+        <div className="flex flex-col mt-3">
           {/* Icon + Headings */}
           <div className="flex flex-col items-start text-left mb-4">
             <img
@@ -41,7 +44,7 @@ const FastHelpCard = () => {
               alt="Help Icon"
               className="w-14 h-14 mb-3 object-contain sm:w-16 sm:h-16"
             />
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 leading-snug">
               {heading}
             </h3>
             <p className="text-gray-700 text-base sm:text-lg font-semibold mt-1">
@@ -50,21 +53,21 @@ const FastHelpCard = () => {
           </div>
 
           {/* Description */}
-          <p className="text-sm sm:text-base font-semibold text-gray-700 mb-4">
+          <p className="text-sm sm:text-base font-semibold text-gray-700 mb-4 leading-relaxed">
             {description}
           </p>
 
           {/* Checklist */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 mb-4">
             {items.map((item, idx) => (
               <div
                 key={idx}
                 className={`flex items-start gap-2 text-sm text-gray-800 ${
-                  idx === 2 ? "col-start-2 row-start-1 self-start" : ""
+                  idx === 2 ? "sm:col-start-2 sm:row-start-1 self-start" : ""
                 }`}
               >
                 <CheckIcon />
-                {item}
+                <span>{item}</span>
               </div>
             ))}
           </div>

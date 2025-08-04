@@ -1,5 +1,13 @@
-const teamData = [
-  {
+export const teamData = {
+    slideGap: 30,
+    buttonSize: 40,
+    backgroundColor: "#000000",
+    title: "Our Team",
+    titleColor: "#ffffff",
+    minSlidesToShow: 2,
+    autoScrolling: false,
+    slides : [
+        {
     name: "David Kieran",
     image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
   },
@@ -35,6 +43,5 @@ const teamData = [
     name: "Fiona Kieran",
     image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
   },
-];
-
-export default teamData;
+    ]
+}

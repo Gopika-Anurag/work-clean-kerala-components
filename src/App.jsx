@@ -34,6 +34,7 @@ import DeliveryOptionsCard from "./components/DeliveryOptionsCard";
 import deliveryOptionsData from "./data/deliveryOptionsData";
 import MicroConversionCTA from "./components/MicroConversionCTA";
 import TeamSection from "./components/TeamSection";
+import { teamData } from "./data/teamData";
 
 function App() {
   
@@ -43,7 +44,7 @@ function App() {
       <div className="w-full">
 
         <div>
-      <TeamSection />
+      <TeamSection attributes={teamData} />
     </div>
 
          <div>

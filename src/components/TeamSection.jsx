@@ -14,8 +14,8 @@ const TeamSection = (attributes) => {
     slides= teamData.slides
   } = attributes
   
-  const presetSlideHeight = 550;
-	const presetSlideWidth = 400;
+  const presetSlideHeight = 590;
+	const presetSlideWidth = 320;
 	const scrollRef = useRef(null);
 	const [isDragging, setIsDragging] = useState(false);
 	const [startX, setStartX] = useState(0);

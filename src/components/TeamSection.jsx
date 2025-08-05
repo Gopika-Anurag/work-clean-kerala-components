@@ -421,7 +421,7 @@ const TeamSection = (attributes) => {
 					{slides.map((item, index) => (
 							<div
 								key={index}
-								className="group relative flex-shrink-0 overflow-hidden transition duration-300 transform select-none hover:scale-105"
+								className="group relative flex-shrink-0 overflow-hidden transition duration-300 transform select-none"
 								style={{
 									width: `${dimensions.cardWidth}px`,
 									minWidth: `${dimensions.cardWidth}px`,

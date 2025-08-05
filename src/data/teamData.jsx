@@ -9,39 +9,39 @@ export const teamData = {
     slides : [
         {
     name: "David Kieran",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Chris Brennan",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Richard Naylor",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Euan Matthews",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Niall Rowland",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Fiona Kieran",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Euan Matthews",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Niall Rowland",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
   {
     name: "Fiona Kieran",
-    image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/2.png",
+    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
   },
     ]
 }

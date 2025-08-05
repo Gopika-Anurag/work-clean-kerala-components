@@ -340,7 +340,7 @@ const TeamSection = (attributes) => {
 			}}
 		>
 			<h2
-				className="font-bold text-start"
+				className="font-bold text-start ml-6"
 				style={{
 					fontSize: `${60 * dimensions.fontScale}px`,
 					marginBottom: `${30 * dimensions.fontScale}px`,

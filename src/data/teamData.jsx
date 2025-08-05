@@ -9,39 +9,49 @@ export const teamData = {
     slides : [
         {
     name: "David Kieran",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
   {
     name: "Chris Brennan",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
+
   },
   {
     name: "Richard Naylor",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
   {
     name: "Euan Matthews",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
   {
     name: "Niall Rowland",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
   {
     name: "Fiona Kieran",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
   {
     name: "Euan Matthews",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
   {
     name: "Niall Rowland",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
   {
     name: "Fiona Kieran",
-    image: "https://nationaltoday.com/wp-content/uploads/2022/09/Virat-Kohli.jpg",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/virat.png",
+    backgroundColor:"rgb(75, 0, 130)"
   },
     ]
 }

@@ -35,6 +35,7 @@ import deliveryOptionsData from "./data/deliveryOptionsData";
 import MicroConversionCTA from "./components/MicroConversionCTA";
 import TeamSection from "./components/TeamSection";
 import { teamData } from "./data/teamData";
+import CircularList from "./components/CircularList";
 
 function App() {
   
@@ -42,6 +43,10 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <div>
+      <CircularList/>
+    </div>
 
         <div>
       <TeamSection attributes={teamData} />

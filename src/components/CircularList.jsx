@@ -40,10 +40,9 @@ const CircularList = () => {
         setFormData({ name: '', email: '', phone: '' });
 
         // Optionally: Trigger download automatically or email it from server
-        setTimeout(() => {
-    setSuccessMessage('');
-    setShowPopup(false); // Optional: also close the popup
-  }, 3000);
+       setTimeout(() => {
+  setSuccessMessage('');
+}, 3000);
     };
 
     return (
@@ -55,7 +54,7 @@ const CircularList = () => {
                         <button
                             key={tab.title}
                             onClick={() => setActiveTab(tab.title)}
-                            className="pb-2 text-sm sm:text-base font-medium border-b-2"
+className="pb-2 text-sm sm:text-base md:text-lg font-medium border-b-2"
                             style={{
                                 color: activeTab === tab.title ? themeTextColor : "#6B7280",
                                 borderColor: activeTab === tab.title ? themeColor : "transparent",
@@ -87,25 +86,25 @@ const CircularList = () => {
                                             NEW
                                         </span>
                                     )}
-                                    <h3 className="text-xl font-semibold" style={{ color: item.titleColor }}>
+<h3 className="text-lg sm:text-xl md:text-2xl font-semibold" style={{ color: item.titleColor }}>
                                         {item.title}
                                     </h3>
                                 </div>
 
                                 {/* Description */}
-                                <p className="text-base mb-9" style={{ color: item.descriptionColor }}>
+<p className="text-sm sm:text-base md:text-lg mb-9" style={{ color: item.descriptionColor }}>
                                     {item.description}
                                 </p>
 
                                 {/* Date and Download */}
                                 <div className="flex justify-between items-center">
-                                    <p className="text-sm" style={{ color: item.dateTimeColor }}>
+<p className="text-xs sm:text-sm md:text-base" style={{ color: item.dateTimeColor }}>
                                         {item.date} – {item.time}
                                     </p>
                                     {item.downlaodLink && (
                                         <button
                                             onClick={() => handleDownloadClick(item.downlaodLink)}
-                                            className="text-sm flex items-center gap-1 hover:underline"
+className="text-xs sm:text-sm md:text-base flex items-center gap-1 hover:underline"
                                             style={{ color: themeTextColor }}
                                         >
                                             <span className="text-lg">⬇</span> Download
@@ -120,17 +119,18 @@ const CircularList = () => {
                 </div>
 
                 {/* Success Message */}
-                {successMessage && (
-                    <div className="mt-6 text-green-600 font-semibold text-center">
-                        {successMessage}
-                    </div>
-                )}
+               {successMessage && (
+<div className="fixed top-6 right-6 bg-green-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md shadow-lg z-50">
+    {successMessage}
+  </div>
+)}
+
 
                 {/* Modal */}
                 {showModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+<div className="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-sm bg-black/30">
                         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                            <h2 className="text-xl font-semibold mb-4">Enter your details</h2>
+                            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4">Enter your details</h2>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <input
                                     type="text"
@@ -139,7 +139,7 @@ const CircularList = () => {
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full p-2 border border-gray-300 rounded"
+className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded"
                                 />
                                 <input
                                     type="email"
@@ -151,14 +151,17 @@ const CircularList = () => {
                                     className="w-full p-2 border border-gray-300 rounded"
                                 />
                                 <input
-                                    type="tel"
-                                    name="phone"
-                                    placeholder="Phone Number"
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                />
+  type="tel"
+  name="phone"
+  placeholder="Phone Number"
+  value={formData.phone}
+  onChange={handleInputChange}
+  required
+  pattern="[0-9]{10}"
+  maxLength={10}
+  className="w-full p-2 border border-gray-300 rounded"
+/>
+
                                 <div className="flex justify-end space-x-3">
                                     <button
                                         type="button"
@@ -169,7 +172,7 @@ const CircularList = () => {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+className="bg-green-600 text-white px-3 sm:px-4 py-2 rounded hover:bg-green-700"
                                     >
                                         Submit
                                     </button>

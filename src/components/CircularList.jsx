@@ -120,7 +120,7 @@ className="text-xs sm:text-sm md:text-base flex items-center gap-1 hover:underli
 
                 {/* Success Message */}
                {successMessage && (
-<div className="fixed top-6 right-6 bg-green-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md shadow-lg z-50">
+<div className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-100 text-green-800 px-4 sm:px-6 py-2 sm:py-3 rounded-md shadow-lg z-50 text-xs sm:text-sm md:text-base font-medium text-center max-w-[90%] sm:max-w-[500px] break-words">
     {successMessage}
   </div>
 )}

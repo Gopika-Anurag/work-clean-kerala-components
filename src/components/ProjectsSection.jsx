@@ -154,64 +154,86 @@ const ProjectsSection = () => {
                 }}
             >
                 {slidesToRender.map((project, index) => {
-                    const hoverState = hoverStates[index] || { isHovered: false, hoverIndex: 0 };
+  const hoverState = hoverStates[index] || { isHovered: false, hoverIndex: 0 };
 
-                    // Determine hover images array (normalize to array)
-                    const hoverImages = Array.isArray(project.hoverImage)
-                        ? project.hoverImage
-                        : [project.hoverImage];
+  // Determine hover images array (normalize to array)
+  const hoverImages = Array.isArray(project.hoverImage)
+      ? project.hoverImage
+      : [project.hoverImage];
 
-                    const currentHoverImage = hoverImages[hoverState.hoverIndex] || hoverImages[0];
+  const currentHoverImage = hoverImages[hoverState.hoverIndex] || hoverImages[0];
 
-                    return (
-                        <div
-                            key={index}
-                            className="relative rounded-lg overflow-hidden cursor-pointer group flex-shrink-0"
-                            style={{
-                                width: dimensions.cardWidth,
-                                height: dimensions.cardHeight,
-                                backgroundColor: project.color || undefined,
-                            }}
-                            onMouseEnter={() => handleMouseEnter(index)}
-                            onMouseLeave={() => handleMouseLeave(index)}
-                            onFocus={() => handleMouseEnter(index)}
-                            onBlur={() => handleMouseLeave(index)}
-                            tabIndex={0} // make div focusable for accessibility
-                        >
-                            {/* Base image */}
-                            <img
-                                src={project.image}
-                                alt={project.title}
-                                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hoverState.isHovered ? "opacity-0" : "opacity-100"
-                                    }`}
-                            />
+  return (
+      <div
+          key={index}
+          className="relative rounded-lg overflow-hidden cursor-pointer group flex-shrink-0"
+          style={{
+              width: dimensions.cardWidth,
+              height: dimensions.cardHeight,
+              backgroundColor: project.color || undefined,
+          }}
+          onMouseEnter={() => handleMouseEnter(index)}
+          onMouseLeave={() => handleMouseLeave(index)}
+          onFocus={() => handleMouseEnter(index)}
+          onBlur={() => handleMouseLeave(index)}
+          tabIndex={0} // make div focusable for accessibility
+      >
+          {/* Base image */}
+          <img
+              src={project.image}
+              alt={project.title}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hoverState.isHovered ? "opacity-0" : "opacity-100"
+                  }`}
+          />
 
-                            {/* Hover image with glitch animation */}
-                            <img
-                                src={currentHoverImage}
-                                alt={`${project.title} hover`}
-                                className={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ${hoverState.isHovered ? "opacity-90 hover-image-glitch" : ""
-                                    }`}
-                            />
+          {/* Hover image with glitch animation */}
+          <img
+              src={currentHoverImage}
+              alt={`${project.title} hover`}
+              className={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ${hoverState.isHovered ? "opacity-90 hover-image-glitch" : ""
+                  }`}
+          />
+
+          {/* Title */}
+          <div
+              className={`absolute font-bold leading-tight transition-colors duration-300 text-white group-hover:text-pink-400`}
+              style={{
+                  bottom: `${1 * dimensions.fontScale}rem`,
+                  left: `${1 * dimensions.fontScale}rem`,
+                  fontSize: `${1.9 * dimensions.fontScale}rem`,
+                  maxWidth: "85%",
+                  wordWrap: "break-word",
+              }}
+          >
+              {project.title}
+          </div>
+
+         {/* Arrow inside pink circle */}
+<div
+  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full w-10 h-10 flex items-center justify-center bg-pink-500 text-white cursor-pointer"
+  tabIndex={0}
+  aria-label="Arrow action"
+>
+  <span
+    className="text-2xl font-bold transition-transform duration-300 select-none"
+    onMouseEnter={(e) => {
+      e.currentTarget.textContent = '←';   // left arrow on hover
+      e.currentTarget.parentElement.style.backgroundColor = '#0e0d0dff'; // darker pink on hover
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.textContent = '↗';  // back to top-right arrow on leave
+      e.currentTarget.parentElement.style.backgroundColor = '#ec4899'; // original pink bg
+    }}
+  >
+    ↗  {/* initial arrow is top-right */}
+  </span>
+</div>
 
 
-                            {/* Title */}
-                            <div
-                                className={`absolute font-bold leading-tight transition-colors duration-300 text-white group-hover:text-pink-400`}
-                                style={{
-                                    bottom: `${1 * dimensions.fontScale}rem`,
-                                    left: `${1 * dimensions.fontScale}rem`,
-                                    fontSize: `${1.9 * dimensions.fontScale}rem`,
-                                    maxWidth: "85%",
-                                    wordWrap: "break-word",
-                                }}
-                            >
-                                {project.title}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+      </div>
+  );
+})}
+</div>
         </section>
     );
 };

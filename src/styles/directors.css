@@ -1,0 +1,80 @@
+.directors-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.directors-carousel-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.directors-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0 50px; /* helps to center half slides */
+}
+
+.directors-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.director-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.director-image {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+}
+
+.director-info {
+  padding: 12px;
+  text-align: center;
+}
+
+.director-info h3 {
+  font-size: 1rem;
+  margin: 4px 0;
+}
+
+.director-info p {
+  font-size: 0.85rem;
+  color: gray;
+}
+
+.fade-left,
+.fade-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fade-left {
+  left: 0;
+  background: linear-gradient(to right, white, transparent);
+}
+
+.fade-right {
+  right: 0;
+  background: linear-gradient(to left, white, transparent);
+}
+
+@media (max-width: 767px) {
+  .directors-carousel {
+    /* Padding to center a single card and show half of the adjacent cards */
+    padding-left: calc(50% - (var(--slide-width) / 2));
+    padding-right: calc(50% - (var(--slide-width) / 2));
+  }
+}

@@ -16,6 +16,14 @@ const ProjectsSection = () => {
         fontScale: 1,
     });
 
+    // Dragging states
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeftPos, setScrollLeftPos] = useState(0);
+
+    // Track hover for arrow key support
+    const [isHovered, setIsHovered] = useState(false);
+
     // New state: track hover + current hover image index per card
     const [hoverStates, setHoverStates] = useState({}); // { [index]: { isHovered: bool, hoverIndex: number } }
 
@@ -115,11 +123,67 @@ const ProjectsSection = () => {
         }));
     };
 
+    // Drag Handlers
+    const handleMouseDown = (e) => {
+        if (!scrollRef.current) return;
+        setIsDragging(true);
+        setStartX(e.pageX - scrollRef.current.offsetLeft);
+        setScrollLeftPos(scrollRef.current.scrollLeft);
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDragging || !scrollRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - scrollRef.current.offsetLeft;
+        const walk = (startX - x); // distance dragged
+        scrollRef.current.scrollLeft = scrollLeftPos + walk;
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseLeaveContainer = () => {
+        setIsDragging(false);
+    };
+
+    // Arrow Key Scroll functions
+    const scrollLeft = () => {
+        if (!scrollRef.current) return;
+        const scrollDistance = dimensions.cardWidth + slideGap * dimensions.fontScale;
+        scrollRef.current.scrollBy({ left: -scrollDistance, behavior: "smooth" });
+    };
+
+    const scrollRight = () => {
+        if (!scrollRef.current) return;
+        const scrollDistance = dimensions.cardWidth + slideGap * dimensions.fontScale;
+        scrollRef.current.scrollBy({ left: scrollDistance, behavior: "smooth" });
+    };
+
+    // Arrow key listener only when hovered
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (!isHovered) return;
+            if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                scrollLeft();
+            } else if (e.key === "ArrowRight") {
+                e.preventDefault();
+                scrollRight();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isHovered, dimensions, slideGap]);
+
     return (
         <section
             className={`${projectCardConfig.background} ${projectCardConfig.textColor}`}
             style={{
                 padding: `${5 * dimensions.fontScale}rem ${1.5 * dimensions.fontScale}rem`,
+                userSelect: isDragging ? "none" : "auto",
+                cursor: isDragging ? "grabbing" : "grab",
             }}
         >
             <div
@@ -152,88 +216,99 @@ const ProjectsSection = () => {
                     paddingLeft: `${1 * dimensions.fontScale}rem`,
                     paddingRight: `${1 * dimensions.fontScale}rem`,
                 }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={() => {
+  handleMouseLeaveContainer();
+  setIsHovered(false);
+}}
+onMouseEnter={() => setIsHovered(true)}
+
             >
                 {slidesToRender.map((project, index) => {
-  const hoverState = hoverStates[index] || { isHovered: false, hoverIndex: 0 };
+                    const hoverState = hoverStates[index] || { isHovered: false, hoverIndex: 0 };
 
-  // Determine hover images array (normalize to array)
-  const hoverImages = Array.isArray(project.hoverImage)
-      ? project.hoverImage
-      : [project.hoverImage];
+                    // Determine hover images array (normalize to array)
+                    const hoverImages = Array.isArray(project.hoverImage)
+                        ? project.hoverImage
+                        : [project.hoverImage];
 
-  const currentHoverImage = hoverImages[hoverState.hoverIndex] || hoverImages[0];
+                    const currentHoverImage = hoverImages[hoverState.hoverIndex] || hoverImages[0];
 
-  return (
-      <div
-          key={index}
-          className="relative rounded-lg overflow-hidden cursor-pointer group flex-shrink-0"
-          style={{
-              width: dimensions.cardWidth,
-              height: dimensions.cardHeight,
-              backgroundColor: project.color || undefined,
-          }}
-          onMouseEnter={() => handleMouseEnter(index)}
-          onMouseLeave={() => handleMouseLeave(index)}
-          onFocus={() => handleMouseEnter(index)}
-          onBlur={() => handleMouseLeave(index)}
-          tabIndex={0} // make div focusable for accessibility
-      >
-          {/* Base image */}
-          <img
-              src={project.image}
-              alt={project.title}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hoverState.isHovered ? "opacity-0" : "opacity-100"
-                  }`}
-          />
+                    return (
+                        <div
+                            key={index}
+                            className="relative rounded-lg overflow-hidden cursor-pointer group flex-shrink-0"
+                            style={{
+                                width: dimensions.cardWidth,
+                                height: dimensions.cardHeight,
+                                backgroundColor: project.color || undefined,
+                            }}
+                            onMouseEnter={() => handleMouseEnter(index)}
+                            onMouseLeave={() => handleMouseLeave(index)}
+                            onFocus={() => handleMouseEnter(index)}
+                            onBlur={() => handleMouseLeave(index)}
+                            tabIndex={0} // make div focusable for accessibility
+                        >
+                            {/* Base image */}
+                            <img
+                                src={project.image}
+                                alt={project.title}
+                                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                                    hoverState.isHovered ? "opacity-0" : "opacity-100"
+                                }`}
+                            />
 
-          {/* Hover image with glitch animation */}
-          <img
-              src={currentHoverImage}
-              alt={`${project.title} hover`}
-              className={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ${hoverState.isHovered ? "opacity-90 hover-image-glitch" : ""
-                  }`}
-          />
+                            {/* Hover image with glitch animation */}
+                            <img
+                                src={currentHoverImage}
+                                alt={`${project.title} hover`}
+                                className={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ${
+                                    hoverState.isHovered ? "opacity-90 hover-image-glitch" : ""
+                                }`}
+                            />
 
-          {/* Title */}
-          <div
-              className={`absolute font-bold leading-tight transition-colors duration-300 text-white group-hover:text-pink-400`}
-              style={{
-                  bottom: `${1 * dimensions.fontScale}rem`,
-                  left: `${1 * dimensions.fontScale}rem`,
-                  fontSize: `${1.9 * dimensions.fontScale}rem`,
-                  maxWidth: "85%",
-                  wordWrap: "break-word",
-              }}
-          >
-              {project.title}
-          </div>
+                            {/* Title */}
+                            <div
+                                className={`absolute font-bold leading-tight transition-colors duration-300 text-white group-hover:text-pink-400`}
+                                style={{
+                                    bottom: `${1 * dimensions.fontScale}rem`,
+                                    left: `${1 * dimensions.fontScale}rem`,
+                                    fontSize: `${1.9 * dimensions.fontScale}rem`,
+                                    maxWidth: "85%",
+                                    wordWrap: "break-word",
+                                }}
+                            >
+                                {project.title}
+                            </div>
 
-         {/* Arrow inside pink circle */}
-<div
-  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full w-10 h-10 flex items-center justify-center bg-pink-500 text-white cursor-pointer"
-  tabIndex={0}
-  aria-label="Arrow action"
->
-  <span
-    className="text-2xl font-bold transition-transform duration-300 select-none"
-    onMouseEnter={(e) => {
-      e.currentTarget.textContent = '←';   // left arrow on hover
-      e.currentTarget.parentElement.style.backgroundColor = '#0e0d0dff'; // darker pink on hover
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.textContent = '↗';  // back to top-right arrow on leave
-      e.currentTarget.parentElement.style.backgroundColor = '#ec4899'; // original pink bg
-    }}
-  >
-    ↗  {/* initial arrow is top-right */}
-  </span>
-</div>
-
-
-      </div>
-  );
-})}
-</div>
+                            {/* Arrow inside pink circle */}
+                            <div
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full w-10 h-10 flex items-center justify-center bg-pink-500 text-white cursor-pointer"
+                                tabIndex={0}
+                                aria-label="Arrow action"
+                            >
+                                <span
+                                    className="text-2xl font-bold transition-transform duration-300 select-none"
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.textContent = "⬅"; // left arrow on hover
+                                        e.currentTarget.parentElement.style.backgroundColor =
+                                            "#ec4899"; // darker pink on hover
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.textContent = "↗"; // back to top-right arrow on leave
+                                        e.currentTarget.parentElement.style.backgroundColor =
+                                            "#ec4899"; // original pink bg
+                                    }}
+                                >
+                                    ↗ {/* initial arrow is top-right */}
+                                </span>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
         </section>
     );
 };

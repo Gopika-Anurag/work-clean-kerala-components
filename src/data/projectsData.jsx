@@ -64,6 +64,26 @@ hoverImage:[ "https://project251.hrstride.academy/wp-content/uploads/2025/08/3d-
         "https://project251.hrstride.academy/wp-content/uploads/2025/08/7681590_stock-photo-colourful-cartoon-background-of-city-street.jpg",
         "https://project251.hrstride.academy/wp-content/uploads/2025/08/3346.jpg_wh860.jpg",
         "https://project251.hrstride.academy/wp-content/uploads/2025/08/1452db30ffe069eaf8347be066b8513b.jpg"
+    ]  },
+    {
+    title: "Visit Louth",
+    color: "#a40d33",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/pngtree-cartoon-background-picture-image_1132693.png",
+hoverImage:[ "https://project251.hrstride.academy/wp-content/uploads/2025/08/3d-cartoon-background-children_23-2150473340.avif",
+         "https://project251.hrstride.academy/wp-content/uploads/2025/08/cute-cartoon-penguin-with-vibrant-glowing-gradient-body-against-dark-background_1261393-23097.jpg",
+        "https://project251.hrstride.academy/wp-content/uploads/2025/08/7681590_stock-photo-colourful-cartoon-background-of-city-street.jpg",
+        "https://project251.hrstride.academy/wp-content/uploads/2025/08/3346.jpg_wh860.jpg",
+        "https://project251.hrstride.academy/wp-content/uploads/2025/08/1452db30ffe069eaf8347be066b8513b.jpg"
+    ]  },
+  {
+    title: "Gift & Art Gallery",
+    color: "#2d2d2d",
+    image: "https://project251.hrstride.academy/wp-content/uploads/2025/08/pngtree-cartoon-background-picture-image_1132693.png",
+hoverImage:[ "https://project251.hrstride.academy/wp-content/uploads/2025/08/3d-cartoon-background-children_23-2150473340.avif",
+         "https://project251.hrstride.academy/wp-content/uploads/2025/08/cute-cartoon-penguin-with-vibrant-glowing-gradient-body-against-dark-background_1261393-23097.jpg",
+        "https://project251.hrstride.academy/wp-content/uploads/2025/08/7681590_stock-photo-colourful-cartoon-background-of-city-street.jpg",
+        "https://project251.hrstride.academy/wp-content/uploads/2025/08/3346.jpg_wh860.jpg",
+        "https://project251.hrstride.academy/wp-content/uploads/2025/08/1452db30ffe069eaf8347be066b8513b.jpg"
     ]  }
 ];
 

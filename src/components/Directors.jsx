@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 const Directors = ({ attributes }) => {
   const {
@@ -9,125 +9,215 @@ const Directors = ({ attributes }) => {
     titleColor,
     slideWidth,
     slideHeight,
+    buttonSize,
+    autoScrolling,
   } = attributes;
 
-  const [active, setActive] = useState(2);
+  const [active, setActive] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const scrollRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Use a resize event listener to keep track of the window width for responsiveness
+  const isMobile = windowWidth < 768;
+  const gap = isMobile ? 12 : slideGap;
+  const extraCenterGap = 20;
+
+  // Responsive width and height calculation
+  const getSlideDimensions = () => {
+    if (windowWidth < 480) {
+      // small mobile
+      return { width: windowWidth * 0.5, height: slideHeight * 0.7 };
+    } else if (windowWidth < 768) {
+      // larger mobile/tablet
+      return { width: windowWidth * 0.4, height: slideHeight * 0.7 };
+    } else if (windowWidth < 1024) {
+      // small desktop
+      return { width: slideWidth * 0.8, height: slideHeight * 0.8 };
+    }
+    // desktop and above
+    return { width: slideWidth, height: slideHeight };
+  };
+
+  const { width: itemWidth, height: itemHeight } = getSlideDimensions();
+
+  // Track window width for responsiveness
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleNext = () => {
-    setActive((prevActive) => (prevActive + 1) % slides.length);
-  };
-
-  const handlePrev = () => {
-    setActive((prevActive) => (prevActive - 1 + slides.length) % slides.length);
-  };
-
-  // Helper function to determine the width and gap based on the view
-  const isMobile = windowWidth < 768;
-  const itemWidth = isMobile ? windowWidth * 0.5 : slideWidth;
-  const gap = isMobile ? 12 : slideGap;
-
+  // Calculate transform for the card to position it correctly
   const calculateTransform = (index) => {
-  let position = index - active;
+    let position = index - active;
 
-  // Wrap-around fix
-  if (position > slides.length / 2) {
-    position -= slides.length;
-  } else if (position < -slides.length / 2) {
-    position += slides.length;
-  }
-
-  const extraCenterGap = 30; // px
-
-  let transformX = position * (itemWidth + gap);
-
-  if (!isMobile) {
-    // PC view → center two images with gap
-    const centerOffset = -((itemWidth + gap + extraCenterGap) / 2);
-    transformX += centerOffset;
-
-    if (index === (active + 1) % slides.length) {
-      transformX += extraCenterGap / 2;
+    if (position > slides.length / 2) {
+      position -= slides.length;
+    } else if (position < -slides.length / 2) {
+      position += slides.length;
     }
-    if (index === active) {
-      transformX -= extraCenterGap / 2;
-    }
-  } else {
-    // Mobile view → single center image, push side cards apart
-    if (index === (active - 1 + slides.length) % slides.length) {
-      // left neighbor
-      transformX -= extraCenterGap / 2;
-    }
-    if (index === (active + 1) % slides.length) {
-      // right neighbor
-      transformX += extraCenterGap / 2;
-    }
-  }
 
-  return `translateX(${transformX}px)`;
-};
+    let transformX = position * (itemWidth + gap);
+
+    if (!isMobile) {
+      const centerOffset = -((itemWidth + gap + extraCenterGap) / 2);
+      transformX += centerOffset;
+
+      if (index === (active + 1) % slides.length) {
+        transformX += extraCenterGap / 2;
+      }
+      if (index === active) {
+        transformX -= extraCenterGap / 2;
+      }
+    } else {
+      if (index === (active - 1 + slides.length) % slides.length) {
+        transformX -= extraCenterGap / 2;
+      }
+      if (index === (active + 1) % slides.length) {
+        transformX += extraCenterGap / 2;
+      }
+    }
+    return `translateX(${transformX}px)`;
+  };
 
   const calculateScale = (index) => {
-    // This scales the images, making the center ones larger.
-    const isCenterPair = !isMobile && (index === active || index === (active + 1) % slides.length);
-    const isMobileCenter = isMobile && index === active;
-    
-    return isCenterPair || isMobileCenter ? 'scale(1.15)' : 'scale(1)';
+    if (!isMobile) {
+      return index === active || index === (active + 1) % slides.length
+        ? "scale(1.15)"
+        : "scale(1)";
+    } else {
+      return index === active ? "scale(1.15)" : "scale(1)";
+    }
   };
 
+  // Add navigation logic
+  const scrollLeft = useCallback(() => {
+    setActive((prevActive) => (prevActive - 1 + slides.length) % slides.length);
+  }, [slides.length]);
+
+  const scrollRight = useCallback(() => {
+    setActive((prevActive) => (prevActive + 1) % slides.length);
+  }, [slides.length]);
+
+  // Dragging and touch event handlers
+  const handleMouseDown = useCallback((e) => {
+    setIsDragging(true);
+    setStartX(e.pageX);
+    setScrollPosition(scrollRef.current.scrollLeft);
+    e.preventDefault();
+  }, []);
+
+  const handleTouchStart = useCallback((e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX);
+    setScrollPosition(scrollRef.current.scrollLeft);
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const walk = e.pageX - startX;
+      scrollRef.current.scrollLeft = scrollPosition - walk;
+    },
+    [isDragging, startX, scrollPosition]
+  );
+
+  const handleTouchMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
+      const walk = e.touches[0].pageX - startX;
+      scrollRef.current.scrollLeft = scrollPosition - walk;
+    },
+    [isDragging, startX, scrollPosition]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Keyboard arrow scrolling
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowLeft") {
+        scrollLeft();
+      } else if (e.key === "ArrowRight") {
+        scrollRight();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [scrollLeft, scrollRight]);
+
+  // Auto-scrolling
+  useEffect(() => {
+    if (!autoScrolling || slides.length <= 1 || isHovered || isDragging) return;
+
+    const interval = setInterval(() => {
+      scrollRight();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [autoScrolling, slides.length, isHovered, isDragging, scrollRight]);
+
   return (
-    <div className="bg-gray min-h-screen flex items-center justify-center p-4">
-      <div className="relative w-full max-w-7xl mx-auto overflow-hidden rounded-xl  p-4 sm:p-8" style={{ backgroundColor: backgroundColor }}>
-        {/* Title */}
-        <h2 className="text-3xl sm:text-5xl font-extrabold text-center mb-8 sm:mb-12" style={{ color: titleColor }}>
+    <div
+      className="bg-gray min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: backgroundColor }}
+    >
+      <div
+        className="relative w-full max-w-7xl mx-auto rounded-xl p-4 sm:p-8 py-2"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <h2
+          className="text-3xl sm:text-5xl font-extrabold text-center mb-1 sm:mb-6 mt-0 sm:mt-4"
+          style={{ color: titleColor }}
+        >
           {title}
         </h2>
 
-        {/* Carousel Container */}
         <div className="relative h-[490px] sm:h-[600px] flex items-center justify-center">
-          {/* Navigation Buttons */}
-          <button
-            onClick={handlePrev}
-            className="absolute left-4 sm:left-8 z-20 p-3 bg-gray-200 text-gray-800 rounded-full  hover:bg-gray-300 transition-colors duration-300"
-            style={{ width: `${attributes.buttonSize}px`, height: `${attributes.buttonSize}px` }}
+          {/* Slides */}
+          <div
+            ref={scrollRef}
+            className={`flex w-full h-full justify-center items-center overflow-x-hidden no-scrollbar ${
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
+            style={{ gap: `${gap}px` }}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchEnd={handleTouchEnd}
+            onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove}
           >
-            {/* Replaced ChevronLeft with an inline SVG */}
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-              <path d="m15 18-6-6 6-6"/>
-            </svg>
-          </button>
-          <button
-            onClick={handleNext}
-            className="absolute right-4 sm:right-8 z-20 p-3 bg-gray-200 text-gray-800 rounded-full  hover:bg-gray-300 transition-colors duration-300"
-            style={{ width: `${attributes.buttonSize}px`, height: `${attributes.buttonSize}px` }}
-          >
-            {/* Replaced ChevronRight with an inline SVG */}
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-              <path d="m9 18 6-6-6-6"/>
-            </svg>
-          </button>
-
-          {/* The images wrapper */}
-          <div className="flex w-full h-full justify-center items-center">
             {slides.map((director, index) => {
-              const isCenterPair = !isMobile && (index === active || index === (active + 1) % slides.length);
+              const isCenterPair =
+                !isMobile &&
+                (index === active || index === (active + 1) % slides.length);
               const isMobileCenter = isMobile && index === active;
 
-              // Determine opacity based on visibility for both mobile and desktop
               let opacity = 0;
               if (!isMobile) {
                 const prev = (active - 1 + slides.length) % slides.length;
                 const next = (active + 2) % slides.length;
-                if (index === prev || index === active || index === (active + 1) % slides.length || index === next) {
+                if (
+                  index === prev ||
+                  index === active ||
+                  index === (active + 1) % slides.length ||
+                  index === next
+                ) {
                   opacity = 1;
                 }
               } else {
@@ -147,18 +237,62 @@ const Directors = ({ attributes }) => {
                     zIndex: isCenterPair || isMobileCenter ? 10 : 5,
                     opacity: opacity,
                     width: `${itemWidth}px`,
-                    height: `${slideHeight}px`,
+                    height: `${itemHeight}px`,
+                    transitionProperty: "width, height, transform",
+                    transitionDuration: "0.5s",
+                    transitionTimingFunction: "ease-in-out",
                   }}
                 >
-                  <div className={`relative w-full h-full rounded-xl overflow-hidden  transition-all duration-500 `}>
+                  <div className="relative w-full h-full rounded-xl overflow-hidden transition-all duration-500">
                     <img
                       src={director.image}
                       alt={director.name}
                       className="w-full h-full object-cover"
+                      draggable={false}
                     />
-                    {/* Overlay for text */}
-                    <div className={`absolute bottom-0 left-0 right-0 p-4 bg-white transition-opacity duration-500 opacity-100`}>
-                      <h3 className="text-xl sm:text-2xl font-bold text-black">{director.name}</h3>
+
+                    {(() => {
+                      let overlayStyle = null;
+                      if (!isMobile) {
+                        const prev = (active - 1 + slides.length) % slides.length;
+                        const next = (active + 2) % slides.length;
+                        if (index === prev) {
+                          overlayStyle = {
+                            background:
+                              "linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0))",
+                          };
+                        }
+                        if (index === next) {
+                          overlayStyle = {
+                            background:
+                              "linear-gradient(to left, rgba(255,255,255,0.8), rgba(255,255,255,0))",
+                          };
+                        }
+                      } else {
+                        const prev = (active - 1 + slides.length) % slides.length;
+                        const next = (active + 1) % slides.length;
+                        if (index === prev) {
+                          overlayStyle = {
+                            background:
+                              "linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0))",
+                          };
+                        }
+                        if (index === next) {
+                          overlayStyle = {
+                            background:
+                              "linear-gradient(to left, rgba(255,255,255,0.8), rgba(255,255,255,0))",
+                          };
+                        }
+                      }
+                      return overlayStyle ? (
+                        <div className="absolute inset-0" style={overlayStyle}></div>
+                      ) : null;
+                    })()}
+
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-white transition-opacity duration-500 opacity-100">
+                      <h3 className="text-xl sm:text-2xl font-bold text-black">
+                        {director.name}
+                      </h3>
                       <p className="text-sm text-gray-700">{director.position}</p>
                     </div>
                   </div>
@@ -166,11 +300,44 @@ const Directors = ({ attributes }) => {
               );
             })}
           </div>
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 p-4 bg-white/50 rounded-full z-20"
+            aria-label="Previous slide"
+            style={{ marginLeft: '-180px' }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 p-4 bg-white/50 rounded-full z-20"
+            aria-label="Next slide"
+            style={{ marginRight: '-180px' }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-
-export default Directors
+export default Directors;

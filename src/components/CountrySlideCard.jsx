@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import useCasesByCountrySettings from '../data/useCasesByCountrySettings';
 import '../styles/countryslidecard.css'
 
-
 const CountrySlideCard = ({ attributes = {} }) => {
     const {
         slides = useCasesByCountrySettings.slides,
@@ -18,10 +17,7 @@ const CountrySlideCard = ({ attributes = {} }) => {
         progressbarColor = useCasesByCountrySettings.progressbarColor,
         header = useCasesByCountrySettings.header,
         paragraph = useCasesByCountrySettings.paragraph,
-
-
     } = attributes;
-
 
     const presetSlideHeight = 200;
     const presetSlideWidth = 203;
@@ -45,8 +41,6 @@ const CountrySlideCard = ({ attributes = {} }) => {
     const [activeTooltip, setActiveTooltip] = useState(null);
     const [touchedCardIndex, setTouchedCardIndex] = useState(null);
     const [isTooltipClicked, setIsTooltipClicked] = useState(false);
-
-
 
     // Update slide dimensions dynamically
     useEffect(() => {
@@ -81,10 +75,7 @@ const CountrySlideCard = ({ attributes = {} }) => {
             }
         };
 
-        // 🛠 Run once layout is ready
         requestAnimationFrame(updateDimensions);
-
-        // 🔁 Update on resize
         window.addEventListener("resize", updateDimensions);
 
         return () => {
@@ -186,7 +177,6 @@ const CountrySlideCard = ({ attributes = {} }) => {
         const handleWheelScroll = (e) => {
             if (!isHovered) return;
 
-            // Dynamically calculate scroll amount
             const scrollDistance = getScrollDistance();
             const scrollAmount = (e.deltaX || e.deltaY) * (scrollDistance / 100);
 
@@ -352,8 +342,6 @@ const CountrySlideCard = ({ attributes = {} }) => {
         return "rgba(255, 255, 255, 0.7)";
     };
 
-
-
     return (
         <div className="w-full " style={{
             paddingLeft: "12%",
@@ -387,7 +375,6 @@ const CountrySlideCard = ({ attributes = {} }) => {
                     overflow: "visible",
                 }}
             >
-
                 {canScrollLeft && (
                     <button
                         onClick={scrollLeft}
@@ -423,7 +410,6 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                 <polyline points="12 19 5 12 12 5" />
                             </svg>
                         </div>
-
                     </button>
                 )}
 
@@ -439,7 +425,6 @@ const CountrySlideCard = ({ attributes = {} }) => {
                         paddingBottom: `${80 * dimensions.fontScale}px`
                     }}>
 
-
                     {slides.map((item, index) => (
                         <div
                             key={index}
@@ -450,6 +435,12 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                 } else {
                                     setActiveTooltip(index);
                                     setIsTooltipClicked(true);
+                                }
+                            }}
+                            onMouseEnter={() => {
+                                if (isTooltipClicked && activeTooltip !== index) {
+                                    setActiveTooltip(null);
+                                    setIsTooltipClicked(false);
                                 }
                             }}
                             onTouchStart={() => setTouchedCardIndex(index)}
@@ -492,21 +483,21 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                             }}
                                         />
 
-                                        {/* 🔥 Dark Hover Gradient Overlay */}
+                                        {/* Dark Hover Gradient Overlay */}
                                         <div
                                             className={`absolute top-0 left-0 w-full h-full z-10 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-black/40 rounded-[10px] ${touchedCardIndex === index ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
                                         />
                                     </>
                                 )}
 
-
                             </div>
+
                             {/* Flag - Top Right Corner */}
                             {item.flag && (
                                 <div
                                     className="absolute top-2 right-2 z-10 bg-white/70 rounded-full overflow-hidden"
                                     style={{
-                                        padding: `${3 * dimensions.fontScale}px`, // replaces Tailwind's p-1 (~4px)
+                                        padding: `${3 * dimensions.fontScale}px`,
                                         width: `${Math.max(30 * dimensions.fontScale, 20)}px`,
                                         height: `${Math.max(30 * dimensions.fontScale, 20)}px`,
                                     }}
@@ -517,7 +508,6 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                         className="w-full h-full object-cover "
                                     />
                                 </div>
-
                             )}
 
                             {/* Country Name - Bottom Left Corner */}
@@ -532,22 +522,21 @@ const CountrySlideCard = ({ attributes = {} }) => {
                                 {item.title}
                             </div>
 
-
                             {/* Tooltip BELOW Card */}
                             {item.tooltipMessage && (
                                 <div
                                     className={`absolute top-full mt-1 md:mt-2 z-20 transition-opacity duration-300 
-      ${activeTooltip === index
+                                    ${
+                                        activeTooltip === index
                                             ? "opacity-100 pointer-events-auto"
                                             : isTooltipClicked
                                                 ? "opacity-0 pointer-events-none"
                                                 : "sm:group-hover:opacity-100 sm:pointer-events-auto opacity-0 pointer-events-none"
-                                        }
-    `}
+                                    }
+                                    `}
                                 >
-
-
-                                    <div className="relative bg-white border border-blue-300 rounded-lg shadow-lg p-1 sm:p-2 text-center w-[90px] max-w-xs sm:w-[270px]">                                        {/* Arrow */}
+                                    <div className="relative bg-white border border-blue-300 rounded-lg shadow-lg p-1 sm:p-2 text-center w-[90px] max-w-xs sm:w-[270px]">
+                                        {/* Arrow */}
                                         <div className="absolute -top-1 sm:-top-2 left-1/2 transform -translate-x-1/2 
                                                       w-2 h-2 sm:w-4 sm:h-4 bg-white border-l border-t border-blue-300 rotate-45" />
 
@@ -613,11 +602,9 @@ const CountrySlideCard = ({ attributes = {} }) => {
                         </div>
                     </button>
                 )}
-
             </div>
-        </div> // <-- Close outer container
-    ); // <-- Final closing of return
-
+        </div>
+    );
 };
 
 export default CountrySlideCard;

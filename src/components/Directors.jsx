@@ -356,20 +356,26 @@ const { width: itemWidth } = getSlideDimensions();
 }}
 
                 >
-                  <div className="relative w-full h-full rounded-xl overflow-hidden transition-all duration-500">
-                    <img
-                      src={director.image}
-                      alt={director.name}
-                      className="w-full h-full object-cover"
-                      draggable={false}
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-white transition-opacity duration-500 opacity-100">
-                      <h3 className="text-xl sm:text-2xl font-bold text-black">
-                        {director.name}
-                      </h3>
-                      <p className="text-sm text-gray-700">{director.position}</p>
-                    </div>
-                  </div>
+                  <div className="relative w-full h-full overflow-hidden transition-all duration-500 rounded-xl"
+				style={{
+					height: `${itemWidth*1.4*0.8}px`
+				}}>
+                  <img
+                    src={director.image}
+                    alt={director.name}
+                    className="object-cover w-full h-full"
+                    draggable={false}
+                  />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 transition-opacity duration-500 bg-white opacity-100"
+				style={{
+					height: `${itemWidth*1.4*0.2}px`
+				}}>
+                  <h3 className="text-xl font-bold text-black sm:text-2xl">
+                    {director.name}
+                  </h3>
+                  <p className="text-sm text-gray-700">{director.position}</p>
+                </div>
                 </div>
               );
             })}

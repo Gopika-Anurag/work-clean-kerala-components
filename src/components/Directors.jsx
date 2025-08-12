@@ -34,18 +34,20 @@ const Directors = ({ attributes }) => {
   }, []);
 
   // Calculate slide dimensions based on current windowWidth
-  const getSlideDimensions = () => {
-    if (windowWidth < 480) {
-      return { width: windowWidth * 0.6, height: slideHeight * 0.6 };
-    } else if (windowWidth < 768) {
-      return { width: windowWidth * 0.6, height: slideHeight * 0.6 };
-    } else if (windowWidth < 1024) {
-      return { width: slideWidth * 0.8, height: slideHeight * 0.8 };
-    }
-    return { width: slideWidth, height: slideHeight };
-  };
+  // Calculate slide width only
+const getSlideDimensions = () => {
+  if (windowWidth < 480) {
+    return { width: windowWidth * 0.6 };
+  } else if (windowWidth < 768) {
+    return { width: windowWidth * 0.5 };
+  } else if (windowWidth < 1024) {
+    return { width: slideWidth * 0.8 };
+  }
+  return { width: slideWidth };
+};
 
-  const { width: itemWidth, height: itemHeight } = getSlideDimensions();
+const { width: itemWidth } = getSlideDimensions();
+
 
   const calculateTransform = (index) => {
     let position = index - active;
@@ -172,34 +174,68 @@ const Directors = ({ attributes }) => {
 }, [isHovered, scrollLeft, scrollRight]);
 
 
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
+ useEffect(() => {
+  const container = scrollRef.current;
+  if (!container) return;
 
-    let scrollTimeout = null;
+  let scrollTimeout = null;
+  let accumulatedDelta = 0;
+  let isScrolling = false;
 
-    const onWheel = (e) => {
-      e.preventDefault();
+  const onWheel = (e) => {
+    e.preventDefault();
 
-      const threshold = 100;
-      if (e.deltaY < -threshold || e.deltaX < -threshold) {
-        setActive((prev) => (prev - 1 + slides.length) % slides.length);
-        clearTimeout(scrollTimeout);
-      } else if (e.deltaY > threshold || e.deltaX > threshold) {
-        setActive((prev) => (prev + 1) % slides.length);
-        clearTimeout(scrollTimeout);
+    // Simple touchpad detection: small deltaY values
+    const isTouchpad = Math.abs(e.deltaY) < 50;
+
+    if (isTouchpad) {
+      // TOUCHPAD: Direct smooth scrolling
+      container.scrollLeft += e.deltaY * 2;
+      
+      // Update active slide based on scroll position
+      const slideWidth = container.clientWidth;
+      const newActive = Math.round(container.scrollLeft / slideWidth);
+      if (newActive !== active && newActive >= 0 && newActive < slides.length) {
+        setActive(newActive);
       }
+      
+    } else {
+      // MOUSE WHEEL: Your original discrete navigation
+      accumulatedDelta += e.deltaY;
 
-      scrollTimeout = setTimeout(() => {}, 100);
-    };
+      if (!isScrolling) {
+        isScrolling = true;
+        scrollTimeout = setTimeout(() => {
+          if (accumulatedDelta > 0) {
+            setActive((prev) => (prev + 1) % slides.length);
+          } else if (accumulatedDelta < 0) {
+            setActive((prev) => (prev - 1 + slides.length) % slides.length);
+          }
+          accumulatedDelta = 0;
+          isScrolling = false;
+        }, 150);
+      } else {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          if (accumulatedDelta > 0) {
+            setActive((prev) => (prev + 1) % slides.length);
+          } else if (accumulatedDelta < 0) {
+            setActive((prev) => (prev - 1 + slides.length) % slides.length);
+          }
+          accumulatedDelta = 0;
+          isScrolling = false;
+        }, 150);
+      }
+    }
+  };
 
-    container.addEventListener("wheel", onWheel, { passive: false });
+  container.addEventListener("wheel", onWheel, { passive: false });
 
-    return () => {
-      container.removeEventListener("wheel", onWheel);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-    };
-  }, [slides.length]);
+  return () => {
+    container.removeEventListener("wheel", onWheel);
+    if (scrollTimeout) clearTimeout(scrollTimeout);
+  };
+}, [slides.length, active]);
 
   return (
     <div
@@ -220,29 +256,35 @@ const Directors = ({ attributes }) => {
 
         <div className="relative h-[490px] sm:h-[600px] flex items-center justify-center">
           {/* Navigation Buttons */}
-          <div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-20">
-            <button
-              onClick={scrollLeft}
-              className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 disabled:opacity-50"
-              aria-label="Scroll Left"
-              disabled={isDragging}
-              style={{ width: buttonSize || 40, height: buttonSize || 40 }}
-            >
-              &#8592;
-            </button>
-          </div>
+          {/* Navigation Buttons (Only show if not mobile) */}
+{!isMobile && (
+  <>
+    <div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-20">
+      <button
+        onClick={scrollLeft}
+        className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 disabled:opacity-50"
+        aria-label="Scroll Left"
+        disabled={isDragging}
+        style={{ width: buttonSize || 40, height: buttonSize || 40 }}
+      >
+        &#8592;
+      </button>
+    </div>
 
-          <div className="absolute top-1/2 right-4 transform -translate-y-1/2 z-20">
-            <button
-              onClick={scrollRight}
-              className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 disabled:opacity-50"
-              aria-label="Scroll Right"
-              disabled={isDragging}
-              style={{ width: buttonSize || 40, height: buttonSize || 40 }}
-            >
-              &#8594;
-            </button>
-          </div>
+    <div className="absolute top-1/2 right-4 transform -translate-y-1/2 z-20">
+      <button
+        onClick={scrollRight}
+        className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 disabled:opacity-50"
+        aria-label="Scroll Right"
+        disabled={isDragging}
+        style={{ width: buttonSize || 40, height: buttonSize || 40 }}
+      >
+        &#8594;
+      </button>
+    </div>
+  </>
+)}
+
 
           {/* Slides container with gradient overlays */}
           <div
@@ -301,17 +343,18 @@ const Directors = ({ attributes }) => {
                 <div
                   key={index}
                   className="absolute transition-all duration-500 ease-in-out"
-                  style={{
-                    transform: `${calculateTransform(index)} ${calculateScale(index)}`,
-                    zIndex: isCenterPair || isMobileCenter ? 10 : 5,
-                    opacity,
-                    width: `${itemWidth}px`,
-                    height: `${itemHeight}px`,
-                    transitionProperty: "width, height, transform, opacity",
-                    transitionDuration: "0.5s",
-                    transitionTimingFunction: "ease-in-out",
-                    userSelect: isDragging ? "none" : "auto",
-                  }}
+                 style={{
+  transform: `${calculateTransform(index)} ${calculateScale(index)}`,
+  zIndex: isCenterPair || isMobileCenter ? 10 : 5,
+  opacity,
+  width: `${itemWidth}px`,
+  height: `${slideHeight}px`, // fixed height
+  transitionProperty: "width, height, transform, opacity",
+  transitionDuration: "0.5s",
+  transitionTimingFunction: "ease-in-out",
+  userSelect: isDragging ? "none" : "auto",
+}}
+
                 >
                   <div className="relative w-full h-full rounded-xl overflow-hidden transition-all duration-500">
                     <img

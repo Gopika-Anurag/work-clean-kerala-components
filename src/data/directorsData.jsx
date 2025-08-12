@@ -4,7 +4,7 @@ const directorsData = {
   backgroundColor: "bg-gray",
   slideGap: 48,
   slideWidth: 350,
-  slideHeight: 490,
+  slideHeight: 500,
   autoScrolling: false,
   buttonSize: 40,
   slides: [

@@ -348,7 +348,7 @@ const { width: itemWidth } = getSlideDimensions();
   zIndex: isCenterPair || isMobileCenter ? 10 : 5,
   opacity,
   width: `${itemWidth}px`,
-  height: `${slideHeight}px`, // fixed height
+  height: `${itemWidth*1.4}px`, // fixed height
   transitionProperty: "width, height, transform, opacity",
   transitionDuration: "0.5s",
   transitionTimingFunction: "ease-in-out",

@@ -334,26 +334,27 @@ const ProjectsSection = () => {
 
               {/* Arrow inside pink circle */}
               <div
-                className="absolute top-2 right-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 
-                           rounded-full w-10 h-10 flex items-center justify-center bg-pink-500 text-white cursor-pointer
-                           group/arrow"
-                tabIndex={0}
-                aria-label="Arrow action"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6 transform rotate-310 transition-transform duration-300 group-hover/arrow:rotate-[130deg]"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
+  className="absolute top-2 right-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 
+             rounded-full w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 
+             flex items-center justify-center bg-pink-500 text-white cursor-pointer
+             group/arrow"
+  tabIndex={0}
+  aria-label="Arrow action"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 transform rotate-310 transition-transform duration-300 group-hover/arrow:rotate-[130deg]"
+  >
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </svg>
+</div>
+</div>
           );
         })}
       </div>

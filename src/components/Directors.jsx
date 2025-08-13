@@ -342,7 +342,7 @@ const { width: itemWidth } = getSlideDimensions();
               return (
                 <div
                   key={index}
-                  className="absolute transition-all duration-500 ease-in-out"
+                  className="absolute transition-all duration-500 ease-in-out shadow-lg"
                  style={{
   transform: `${calculateTransform(index)} ${calculateScale(index)}`,
   zIndex: isCenterPair || isMobileCenter ? 10 : 5,
@@ -356,7 +356,7 @@ const { width: itemWidth } = getSlideDimensions();
 }}
 
                 >
-                  <div className="relative w-full h-full overflow-hidden transition-all duration-500 rounded-xl"
+                  <div className="relative w-full h-full overflow-hidden transition-all duration-500"
 				style={{
 					height: `${itemWidth*1.4*0.8}px`
 				}}>

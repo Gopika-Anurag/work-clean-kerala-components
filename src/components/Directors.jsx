@@ -342,7 +342,7 @@ const { width: itemWidth } = getSlideDimensions();
               return (
                 <div
                   key={index}
-                  className="absolute transition-all duration-500 ease-in-out shadow-lg"
+                  className="absolute transition-all duration-500 ease-in-out shadow-lg rounded-xl overflow-hidden"
                  style={{
   transform: `${calculateTransform(index)} ${calculateScale(index)}`,
   zIndex: isCenterPair || isMobileCenter ? 10 : 5,
@@ -356,7 +356,7 @@ const { width: itemWidth } = getSlideDimensions();
 }}
 
                 >
-                  <div className="relative w-full h-full overflow-hidden transition-all duration-500"
+                  <div className="relative w-full h-full transition-all duration-500"
 				style={{
 					height: `${itemWidth*1.4*0.8}px`
 				}}>
@@ -367,7 +367,7 @@ const { width: itemWidth } = getSlideDimensions();
                     draggable={false}
                   />
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-4 transition-opacity duration-500 bg-white opacity-100 rounded-b-xl"
+                <div className="absolute bottom-0 left-0 right-0 p-4 transition-opacity duration-500 bg-white opacity-100 "
 				style={{
 					height: `${itemWidth*1.4*0.2}px`
 				}}>

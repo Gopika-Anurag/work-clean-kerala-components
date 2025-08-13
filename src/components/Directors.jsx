@@ -367,7 +367,7 @@ const { width: itemWidth } = getSlideDimensions();
                     draggable={false}
                   />
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-4 transition-opacity duration-500 bg-white opacity-100"
+                <div className="absolute bottom-0 left-0 right-0 p-4 transition-opacity duration-500 bg-white opacity-100 rounded-b-xl"
 				style={{
 					height: `${itemWidth*1.4*0.2}px`
 				}}>

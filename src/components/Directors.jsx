@@ -174,68 +174,87 @@ const { width: itemWidth } = getSlideDimensions();
 }, [isHovered, scrollLeft, scrollRight]);
 
 
- useEffect(() => {
+useEffect(() => {
   const container = scrollRef.current;
   if (!container) return;
 
-  let scrollTimeout = null;
-  let accumulatedDelta = 0;
-  let isScrolling = false;
+  let accumulatedX = 0;
+  const SCROLL_THRESHOLD = 40;
+  let isHovered = false;
 
-  const onWheel = (e) => {
-    e.preventDefault();
+  const handleMouseEnter = () => (isHovered = true);
+  const handleMouseLeave = () => (isHovered = false);
 
-    // Simple touchpad detection: small deltaY values
-    const isTouchpad = Math.abs(e.deltaY) < 50;
-
-    if (isTouchpad) {
-      // TOUCHPAD: Direct smooth scrolling
-      container.scrollLeft += e.deltaY * 2;
-      
-      // Update active slide based on scroll position
-      const slideWidth = container.clientWidth;
-      const newActive = Math.round(container.scrollLeft / slideWidth);
-      if (newActive !== active && newActive >= 0 && newActive < slides.length) {
-        setActive(newActive);
-      }
-      
-    } else {
-      // MOUSE WHEEL: Your original discrete navigation
-      accumulatedDelta += e.deltaY;
-
-      if (!isScrolling) {
-        isScrolling = true;
-        scrollTimeout = setTimeout(() => {
-          if (accumulatedDelta > 0) {
-            setActive((prev) => (prev + 1) % slides.length);
-          } else if (accumulatedDelta < 0) {
-            setActive((prev) => (prev - 1 + slides.length) % slides.length);
-          }
-          accumulatedDelta = 0;
-          isScrolling = false;
-        }, 150);
-      } else {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-          if (accumulatedDelta > 0) {
-            setActive((prev) => (prev + 1) % slides.length);
-          } else if (accumulatedDelta < 0) {
-            setActive((prev) => (prev - 1 + slides.length) % slides.length);
-          }
-          accumulatedDelta = 0;
-          isScrolling = false;
-        }, 150);
-      }
-    }
+  const isTouchpad = (e) => {
+    return Math.abs(e.deltaY) < 50 && e.deltaY % 1 !== 0;
   };
 
+let targetScrollLeft = 0;
+let isAnimating = false;
+
+const smoothScroll = () => {
+  if (!container) return;
+
+  // Ease toward target
+  container.scrollLeft += (targetScrollLeft - container.scrollLeft) * 0.15;
+
+  // Continue until we're close enough
+  if (Math.abs(targetScrollLeft - container.scrollLeft) > 0.5) {
+    requestAnimationFrame(smoothScroll);
+  } else {
+    isAnimating = false;
+  }
+};
+
+const onWheel = (e) => {
+  if (!isHovered) return;
+
+  const absX = Math.abs(e.deltaX);
+  const absY = Math.abs(e.deltaY);
+
+  if (absX > absY) {
+    e.preventDefault();
+
+    if (isTouchpad(e)) {
+      // Trackpad → smooth to target
+      if (!isAnimating) {
+        targetScrollLeft = container.scrollLeft;
+      }
+      targetScrollLeft += e.deltaX * 0.8; // Adjust multiplier for feel
+      if (!isAnimating) {
+        isAnimating = true;
+        requestAnimationFrame(smoothScroll);
+      }
+    } else {
+      // Mouse wheel tilt → step by card
+      accumulatedX += e.deltaX;
+      if (accumulatedX > SCROLL_THRESHOLD) {
+        scrollRight();
+        accumulatedX = 0;
+      } else if (accumulatedX < -SCROLL_THRESHOLD) {
+        scrollLeft();
+        accumulatedX = 0;
+      }
+    }
+  }
+};
+
+
+
+  container.addEventListener("mouseenter", handleMouseEnter);
+  container.addEventListener("mouseleave", handleMouseLeave);
   container.addEventListener("wheel", onWheel, { passive: false });
 
   return () => {
+    container.removeEventListener("mouseenter", handleMouseEnter);
+    container.removeEventListener("mouseleave", handleMouseLeave);
     container.removeEventListener("wheel", onWheel);
-    if (scrollTimeout) clearTimeout(scrollTimeout);
   };
-}, [slides.length, active]);
+}, [scrollLeft, scrollRight]);
+
+
+
+
 
   return (
     <div

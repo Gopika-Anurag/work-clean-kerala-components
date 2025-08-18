@@ -185,61 +185,70 @@ useEffect(() => {
   const handleMouseEnter = () => (isHovered = true);
   const handleMouseLeave = () => (isHovered = false);
 
+  // detect if event is from a touchpad (smooth deltas)
   const isTouchpad = (e) => {
     return Math.abs(e.deltaY) < 50 && e.deltaY % 1 !== 0;
   };
 
-let targetScrollLeft = 0;
-let isAnimating = false;
+  let targetScrollLeft = 0;
+  let isAnimating = false;
 
-const smoothScroll = () => {
-  if (!container) return;
+  const smoothScroll = () => {
+    if (!container) return;
+    container.scrollLeft += (targetScrollLeft - container.scrollLeft) * 0.15;
 
-  // Ease toward target
-  container.scrollLeft += (targetScrollLeft - container.scrollLeft) * 0.15;
-
-  // Continue until we're close enough
-  if (Math.abs(targetScrollLeft - container.scrollLeft) > 0.5) {
-    requestAnimationFrame(smoothScroll);
-  } else {
-    isAnimating = false;
-  }
-};
-
-const onWheel = (e) => {
-  if (!isHovered) return;
-
-  const absX = Math.abs(e.deltaX);
-  const absY = Math.abs(e.deltaY);
-
-  if (absX > absY) {
-    e.preventDefault();
-
-    if (isTouchpad(e)) {
-      // Trackpad → smooth to target
-      if (!isAnimating) {
-        targetScrollLeft = container.scrollLeft;
-      }
-      targetScrollLeft += e.deltaX * 0.8; // Adjust multiplier for feel
-      if (!isAnimating) {
-        isAnimating = true;
-        requestAnimationFrame(smoothScroll);
-      }
+    if (Math.abs(targetScrollLeft - container.scrollLeft) > 0.5) {
+      requestAnimationFrame(smoothScroll);
     } else {
-      // Mouse wheel tilt → step by card
-      accumulatedX += e.deltaX;
-      if (accumulatedX > SCROLL_THRESHOLD) {
-        scrollRight();
-        accumulatedX = 0;
-      } else if (accumulatedX < -SCROLL_THRESHOLD) {
-        scrollLeft();
-        accumulatedX = 0;
+      isAnimating = false;
+    }
+  };
+
+  const onWheel = (e) => {
+    if (!isHovered) return; // ✅ only activate when hovered
+
+    let dx = e.deltaX;
+    let dy = e.deltaY;
+
+    // normalize delta
+    if (e.deltaMode === 1) { // lines
+      dx *= 16;
+      dy *= 16;
+    } else if (e.deltaMode === 2) { // pages
+      dx *= window.innerWidth;
+      dy *= window.innerHeight;
+    }
+
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+
+    // ✅ when hovered: treat vertical wheel as horizontal scroll
+    const horizontalDelta = absX > absY ? dx : dy;
+
+    if (horizontalDelta !== 0) {
+      e.preventDefault(); // block page scroll only inside carousel
+
+      if (isTouchpad(e)) {
+        // smooth scroll for touchpad
+        if (!isAnimating) targetScrollLeft = container.scrollLeft;
+        targetScrollLeft += horizontalDelta * 0.1; // adjust speed here
+        if (!isAnimating) {
+          isAnimating = true;
+          requestAnimationFrame(smoothScroll);
+        }
+      } else {
+        // step scroll for mouse wheel tilt
+        accumulatedX += horizontalDelta * 0.1; // adjust speed here
+        if (accumulatedX > SCROLL_THRESHOLD) {
+          scrollRight();
+          accumulatedX = 0;
+        } else if (accumulatedX < -SCROLL_THRESHOLD) {
+          scrollLeft();
+          accumulatedX = 0;
+        }
       }
     }
-  }
-};
-
-
+  };
 
   container.addEventListener("mouseenter", handleMouseEnter);
   container.addEventListener("mouseleave", handleMouseLeave);
@@ -251,8 +260,6 @@ const onWheel = (e) => {
     container.removeEventListener("wheel", onWheel);
   };
 }, [scrollLeft, scrollRight]);
-
-
 
 
 

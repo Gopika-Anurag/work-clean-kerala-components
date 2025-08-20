@@ -46,68 +46,66 @@ const ServiceCarousel = () => {
   };
 
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-gray-900 p-20">
+    <div className="h-screen w-full flex items-center justify-center bg-gray-900 p-0 lg:p-20">
       {/* Carousel Container with overflow hidden */}
       <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-2xl">
         
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
-            key={activeIndex}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={transition}
-            className="absolute inset-0 w-full h-full flex items-center justify-between"
-            style={{
-              backgroundImage: `url(${currentService.bgImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              clipPath: "polygon(0 4%, 100% 0, 100% 100%, 0 97%)"
+  key={activeIndex}
+  custom={direction}
+  variants={slideVariants}
+  initial="enter"
+  animate="center"
+  exit="exit"
+  transition={transition}
+  className="absolute inset-0 w-full h-full flex flex-col lg:flex-row items-center justify-between"
+  style={{
+    backgroundImage: `url(${currentService.bgImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    clipPath: "polygon(0 4%, 100% 0, 100% 100%, 0 97%)"
+  }}
+>
+  {/* Overlay */}
+  <div className="absolute inset-0 bg-black/30"></div>
 
-            }}
-          >
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/30"></div>
+  {/* Content Left */}
+  <div className="relative z-10 w-full lg:w-1/2 p-6 lg:p-12 flex justify-center">
+    <div className="bg-black/60 backdrop-blur-lg p-8 lg:p-12 rounded-3xl shadow-2xl w-full max-w-3xl text-center lg:text-left">
+      <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 text-white">
+        {currentService.title}
+      </h2>
+      <p className="mb-8 text-base lg:text-xl text-gray-200 leading-relaxed">
+        {currentService.description}
+      </p>
+      <a
+        href={currentService.buttonLink}
+        className="px-6 lg:px-8 py-3 lg:py-4 bg-pink-500 hover:bg-pink-600 
+                   rounded-lg font-semibold text-white text-base lg:text-lg transition"
+      >
+        {currentService.buttonText}
+      </a>
+    </div>
+  </div>
 
-            {/* Content Left */}
-            <div className="bg-black/60 backdrop-blur-lg 
-                p-12 rounded-3xl shadow-2xl 
-                w-[85%] max-w-3xl">
-  <h2 className="text-6xl font-extrabold mb-6 text-white">
-    {currentService.title}
-  </h2>
-  <p className="mb-8 text-xl text-gray-200 leading-relaxed">
-    {currentService.description}
-  </p>
-  <a
-    href={currentService.buttonLink}
-    className="px-8 py-4 bg-pink-500 hover:bg-pink-600 
-               rounded-lg font-semibold text-white text-lg transition"
-  >
-    {currentService.buttonText}
-  </a>
-</div>
+  {/* Right Image */}
+  <div className="relative z-10 w-full lg:w-1/2 flex items-center justify-center lg:justify-end p-6 lg:pr-8 mt-6 lg:mt-0">
+    <motion.img
+      key={activeIndex}
+      src={currentService.rightImage}
+      alt={currentService.title}
+      className="max-h-[400px] sm:max-h-[450px] md:max-h-[500px] lg:max-h-full object-contain drop-shadow-2xl"
+      animate={{ x: [0, 50, 0] }}
+      transition={{
+        duration: 20,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    />
+  </div>
+</motion.div>
 
-
-            {/* Right Image */}
-<div className="relative z-10 w-1/2 flex items-center justify-end pr-8">
-  <motion.img
-    key={activeIndex}
-    src={currentService.rightImage}
-    alt={currentService.title}
-    className="max-h-[100%] max-h-full object-contain drop-shadow-2xl"
-    animate={{ x: [0, 50, 0] }}   // move right 30px then back
-    transition={{
-      duration:20,                // slow (seconds for one full loop)
-      repeat: Infinity,           // keep looping
-      ease: "easeInOut",          // smooth easing
-    }}
-  />
-</div>
-
-          </motion.div>
         </AnimatePresence>
 
         {/* Navigation Arrows */}

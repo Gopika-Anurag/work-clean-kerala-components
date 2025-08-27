@@ -46,63 +46,63 @@ const ServiceCarousel = () => {
     <div className="h-screen w-full flex items-center justify-center bg-gray-900 p-0 lg:p-20">
       <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-2xl">
 
-        <AnimatePresence initial={false} custom={direction} mode="wait">
-          <motion.div
-  key={activeIndex}
-  custom={direction}
-  initial={{ x: "100%" }}
-  animate={{ x: "0%" }}
-  exit={{ x: "-100%" }}
-  transition={{ x: { duration: 0.8, ease: "easeInOut" } }}
-  className="absolute inset-0 w-full h-full flex flex-col lg:flex-row items-center justify-between"
-  style={{
-    backgroundImage: `url(${currentService.bgImage})`,
-    backgroundSize: "200% auto", // Bigger background for visible scroll
-    backgroundPosition: bgPosition,
-    clipPath: "polygon(0 4%, 100% 0, 100% 100%, 0 97%)",
-  }}
->
-  <div className="absolute inset-0 bg-black/30"></div>
-
-  {/* Left Content (slight continuous left motion) */}
+        <AnimatePresence initial={true} custom={direction} mode="wait">
   <motion.div
-    className="relative z-10 w-full lg:w-1/2 p-6 lg:p-12 flex justify-center"
-    animate={{ x: [0, -30, 0] }}
-    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+    key={activeIndex}
+    custom={direction}
+    initial={{ x: direction === 1 ? "100%" : "-100%" }}
+    animate={{ x: "0%" }}
+    exit={{ x: direction === 1 ? "-100%" : "100%" }}
+    transition={{ x: { duration: 0.8, ease: "easeInOut" } }}
+    className="absolute inset-0 w-full h-full flex flex-col lg:flex-row items-center justify-between"
+    style={{
+      backgroundImage: `url(${currentService.bgImage})`,
+      backgroundSize: "200% auto",
+      backgroundPosition: bgPosition,
+      clipPath: "polygon(0 4%, 100% 0, 100% 100%, 0 97%)",
+    }}
   >
-    <div className="bg-black/60 backdrop-blur-lg p-8 lg:p-12 rounded-3xl shadow-2xl w-full max-w-3xl text-center lg:text-left">
-      <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 text-white">
-        {currentService.title}
-      </h2>
-      <p className="mb-8 text-base lg:text-xl text-gray-200 leading-relaxed">
-        {currentService.description}
-      </p>
-      <a
-        href={currentService.buttonLink}
-        className="px-6 lg:px-8 py-3 lg:py-4 bg-pink-500 hover:bg-pink-600 
-                   rounded-lg font-semibold text-white text-base lg:text-lg transition"
-      >
-        {currentService.buttonText}
-      </a>
-    </div>
-  </motion.div>
+    <div className="absolute inset-0 bg-black/30"></div>
 
-  {/* Right Image (continuous right motion) */}
-  <motion.div
-    className="relative z-10 w-full lg:w-1/2 flex items-center justify-center lg:justify-end p-6 lg:pr-8 mt-6 lg:mt-0"
-    animate={{ x: [0, 30, 0] }}
-    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-  >
-    <motion.img
-      key={activeIndex}
-      src={currentService.rightImage}
-      alt={currentService.title}
-      className="max-h-[400px] sm:max-h-[450px] md:max-h-[500px] lg:max-h-full object-contain drop-shadow-2xl"
-    />
-  </motion.div>
-</motion.div>
+    {/* Left Content Animation */}
+    <motion.div
+      className="relative z-10 w-full lg:w-1/2 p-6 lg:p-12 flex justify-center"
+      animate={{ x: [0, -30, 0] }}
+      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <div className="bg-black/60 backdrop-blur-lg p-8 lg:p-12 rounded-3xl shadow-2xl w-full max-w-3xl text-center lg:text-left">
+        <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 text-white">
+          {currentService.title}
+        </h2>
+        <p className="mb-8 text-base lg:text-xl text-gray-200 leading-relaxed">
+          {currentService.description}
+        </p>
+        <a
+          href={currentService.buttonLink}
+          className="px-6 lg:px-8 py-3 lg:py-4 bg-pink-500 hover:bg-pink-600 
+                     rounded-lg font-semibold text-white text-base lg:text-lg transition"
+        >
+          {currentService.buttonText}
+        </a>
+      </div>
+    </motion.div>
 
-        </AnimatePresence>
+    {/* Right Image Animation */}
+    <motion.div
+      className="relative z-10 w-full lg:w-1/2 flex items-center justify-center lg:justify-end p-6 lg:pr-8 mt-6 lg:mt-0"
+      animate={{ x: [0, 30, 0] }}
+      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <motion.img
+        key={activeIndex}
+        src={currentService.rightImage}
+        alt={currentService.title}
+        className="max-h-[400px] sm:max-h-[450px] md:max-h-[500px] lg:max-h-full object-contain drop-shadow-2xl"
+      />
+    </motion.div>
+  </motion.div>
+</AnimatePresence>
+
 
         {/* Navigation */}
         <button

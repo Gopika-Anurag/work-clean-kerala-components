@@ -48,20 +48,26 @@ const ServiceCarousel = () => {
 
         <AnimatePresence initial={true} custom={direction} mode="wait">
   <motion.div
-    key={activeIndex}
-    custom={direction}
-    initial={{ x: direction === 1 ? "100%" : "-100%" }}
-    animate={{ x: "0%" }}
-    exit={{ x: direction === 1 ? "-100%" : "100%" }}
-    transition={{ x: { duration: 0.8, ease: "easeInOut" } }}
-    className="absolute inset-0 w-full h-full flex flex-col lg:flex-row items-center justify-between"
+  key={activeIndex}
+  custom={direction}
+  initial={{ x: direction === 1 ? "100%" : "-100%" }}
+  animate={{ x: "0%" }}
+  exit={{ x: direction === 1 ? "-100%" : "100%" }}
+  transition={{ x: { duration: 0.8, ease: "easeInOut" } }}
+  className="absolute inset-0 w-full h-full flex flex-col lg:flex-row items-center justify-between overflow-hidden"
+  style={{ clipPath: "polygon(0 4%, 100% 0, 100% 100%, 0 97%)" }}
+>
+  <motion.div
+    className="absolute inset-0"
     style={{
       backgroundImage: `url(${currentService.bgImage})`,
-      backgroundSize: "200% auto",
-      backgroundPosition: bgPosition,
-      clipPath: "polygon(0 4%, 100% 0, 100% 100%, 0 97%)",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
     }}
-  >
+    animate={{ scale: [1, 1.1, 1] }}
+    transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+  />
+
     <div className="absolute inset-0 bg-black/30"></div>
 
     {/* Left Content Animation */}

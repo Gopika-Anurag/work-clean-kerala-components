@@ -520,7 +520,7 @@ function ServiceExplainer() {
 									</h3>
 								</div>
 								<div
-    className="absolute top-4 right-4 transition-colors duration-300 ${hoveredCard === item.id ? 'bg-[#FF5733]' : 'bg-[rgba(255,255,255,0.7)]'}`]"
+    className={`absolute top-4 right-4 transition-colors duration-300 ${hoveredCard === item.id ? 'bg-[#6c63ff]' : 'bg-[rgba(255,255,255,0.7)]'}`}
     style={{
         top: `${16 * dimensions.fontScale * 0.8}px`, // Responsive top position
         right: `${16 * dimensions.fontScale * 0.8}px`, // Responsive right position
@@ -545,6 +545,7 @@ function ServiceExplainer() {
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
     </svg>
 </div>
+
 							</a>
 						);
 					})}

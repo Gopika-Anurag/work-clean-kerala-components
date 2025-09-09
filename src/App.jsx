@@ -41,6 +41,8 @@ import Directors from "./components/Directors";
 import directorsData from "./data/directorsData";
 import ServiceCarousel from "./components/ServiceCarousel";
 import { services } from "./data/servicesData";
+import ServiceExplainer from "./components/ServiceExplainer";
+import serviceExplainerData from "./data/serviceExplainerData";
 
 function App() {
   
@@ -48,6 +50,10 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <div>
+          <ServiceExplainer attributes={serviceExplainerData}/>
+        </div>
 
         <div>
       <ServiceCarousel attributes={services}/>

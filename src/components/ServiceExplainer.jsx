@@ -522,9 +522,11 @@ function ServiceExplainer() {
 								<div
     className="absolute top-4 right-4 transition-colors duration-300 ${hoveredCard === item.id ? 'bg-[#FF5733]' : 'bg-[rgba(255,255,255,0.7)]'}`]"
     style={{
-        borderRadius: "10px",
-        width: "40px",
-        height: "40px",
+        top: `${16 * dimensions.fontScale * 0.8}px`, // Responsive top position
+        right: `${16 * dimensions.fontScale * 0.8}px`, // Responsive right position
+        borderRadius: `${10 * dimensions.fontScale * 0.8}px`, // Responsive border radius
+        width: `${40 * dimensions.fontScale * 0.8}px`, // Responsive width
+        height: `${40 * dimensions.fontScale * 0.8}px`, // Responsive height
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

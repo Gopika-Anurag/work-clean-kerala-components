@@ -635,14 +635,16 @@ const [hoveredArrow, setHoveredArrow] = useState(null);
         We have all the services to help your business.
     </p>
 				<button
-					className="text-white font-bold py-4 px-8 rounded-full transition-all duration-300"
-					style={{
-						backgroundColor: '#6c63ff',
-						boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-					}}
-				>
-					EXPLORE MORE
-				</button>
+    className="text-white font-bold transition-all duration-300 rounded-full px-6 py-3 sm:px-8 sm:py-4"
+    style={{
+        backgroundColor: '#6c63ff',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+        fontSize: `${16 * dimensions.fontScale * 0.8}px`,
+    }}
+>
+    EXPLORE MORE
+</button>
+
 			</div>
 		</div>
 	);

@@ -566,7 +566,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
     stroke={hoveredCard === item.id ? 'white' : '#6c63ff'}
     className="w-5 h-5 transition-transform duration-300"
     style={{
-      transform: hoveredCard === item.id ? 'rotate(30deg)' : 'rotate(-135deg)',
+      transform: hoveredCard === item.id ? 'rotate(10deg)' : 'rotate(-135deg)',
       transition: "transform 0.3s ease, stroke 0.3s ease",
     }}
   >

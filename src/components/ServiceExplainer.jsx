@@ -34,7 +34,8 @@ function ServiceExplainer() {
 	const [scrollPosition, setScrollPosition] = useState(0);
 	const [isHovered, setIsHovered] = useState(false);
 	const autoScrollInterval = useRef(null);
-    const [hoveredCard, setHoveredCard] = useState(null);
+const [hoveredArrow, setHoveredArrow] = useState(null);
+
 
 	const [dimensions, setDimensions] = useState({
 		fontScale: 1,
@@ -453,7 +454,7 @@ function ServiceExplainer() {
 								href={item.link}
                                  onMouseEnter={() => setHoveredCard(item.id)} // Set hovered state
           onMouseLeave={() => setHoveredCard(null)} 
-								className="relative flex-shrink-0 overflow-hidden transition duration-300 transform select-none hover:scale-105"
+								className="relative flex-shrink-0 overflow-hidden transition duration-300 transform select-none"
 								style={{
 									width: `${cardWidth}px`,
 									minWidth: `${cardWidth}px`,
@@ -520,31 +521,39 @@ function ServiceExplainer() {
 									</h3>
 								</div>
 								<div
-    className={`absolute top-4 right-4 transition-colors duration-300 ${hoveredCard === item.id ? 'bg-[#6c63ff]' : 'bg-[rgba(255,255,255,0.7)]'}`}
+    className={`absolute top-4 right-4 transition-colors duration-300 ${hoveredArrow === item.id ? 'bg-[#6c63ff]' : 'bg-[rgba(255,255,255,0.7)]'}`}
     style={{
-        top: `${16 * dimensions.fontScale * 0.8}px`, // Responsive top position
-        right: `${16 * dimensions.fontScale * 0.8}px`, // Responsive right position
-        borderRadius: `${10 * dimensions.fontScale * 0.8}px`, // Responsive border radius
-        width: `${40 * dimensions.fontScale * 0.8}px`, // Responsive width
-        height: `${40 * dimensions.fontScale * 0.8}px`, // Responsive height
+        top: `${16 * dimensions.fontScale * 0.8}px`,
+        right: `${16 * dimensions.fontScale * 0.8}px`,
+        width: `${40 * dimensions.fontScale * 0.8}px`,
+        height: `${40 * dimensions.fontScale * 0.8}px`,
+        borderRadius: `${10 * dimensions.fontScale * 0.8}px`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         backdropFilter: 'blur(5px)',
         boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+        cursor: "pointer",
     }}
+    onMouseEnter={() => setHoveredArrow(item.id)}
+    onMouseLeave={() => setHoveredArrow(null)}
 >
     <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth="2.5"
-        stroke={hoveredCard === item.id ? 'white' : '#6c63ff'}
-        className="w-5 h-5 transition-colors duration-300"
+        stroke={hoveredArrow === item.id ? 'white' : '#6c63ff'}
+        className="w-5 h-5 transition-transform duration-300"
+        style={{
+            transform: hoveredArrow === item.id ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: "transform 0.3s ease",
+        }}
     >
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
     </svg>
 </div>
+
 
 							</a>
 						);

@@ -6,7 +6,7 @@ const serviceExplainerData = {
 	backgroundColor: '#f6f5ff',
 	title: 'Elevate Your Business with Our Product & Service Explainer Videos',
 	subtitle: 'Lorem ipsum dolor sit amet consectetur adipiscing elit proin feugiat ex non arcu',
-	minSlidesToShow: 3,
+	minSlidesToShow: 1.3,
 	slideGap: 30,
 	autoScrolling: true,
 	buttonSize: 50,

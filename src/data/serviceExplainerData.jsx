@@ -76,7 +76,7 @@ const serviceExplainerData = {
 			backgroundColor: 'rgba(255, 255, 255, 0.8)',
 			titleColor: '#ffffffff',
 			filterColor: 'rgba(255, 255, 255, 0.8)',
-			textPosition: 'bottom',
+			textPosition: 'top',
             aspectRatio: 'landscape'
 		},
 		{
@@ -87,7 +87,7 @@ const serviceExplainerData = {
 			backgroundColor: 'rgba(255, 255, 255, 0.8)',
 			titleColor: '#ffffffff',
 			filterColor: 'rgba(255, 255, 255, 0.8)',
-			textPosition: 'top',
+			textPosition: 'bottom',
              aspectRatio: 'portrait'
 		},
 	],

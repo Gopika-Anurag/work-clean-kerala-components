@@ -493,32 +493,48 @@ const [hoveredArrow, setHoveredArrow] = useState(null);
                     }}
                 />
             )}
-            <div
-                className="absolute inset-0 flex"
-                style={{
-                    backgroundImage:
-                        item.textPosition === "top"
-                            ? `linear-gradient(to bottom, ${getValidColorForFade(item.filterColor)}, transparent)`
-                            : `linear-gradient(to top, ${getValidColorForFade(item.filterColor)}, transparent)`,
-                    alignItems:
-                        item.textPosition === "top" ? "flex-start" : "flex-end",
-                    padding: `${30 * 0.3 * dimensions.fontScale * 0.8}px`,
-                }}
-            >
-                <h3
-                    className="font-medium"
-                    style={{
-                        color: item.titleColor || "#000",
-                        width: "100%",
-                        fontSize: `${25 * dimensions.fontScale * 0.8}px`,
-                        lineHeight: 1.2,
-                        wordBreak: "break-word",
-                        textAlign: "left",
-                    }}
-                >
-                    {item.title}
-                </h3>
-            </div>
+           <div
+    className="relative w-full h-full rounded-md overflow-hidden"
+    style={{
+        borderRadius: `${20 * dimensions.fontScale}px`, // use fontScale instead
+    }}
+>
+    <img
+        src={item.image}
+        alt={item.title}
+        className="w-full h-full object-cover"
+    />
+
+    {/* Gradient Overlay */}
+    <div
+    className="absolute left-0 right-0"
+    style={{
+        height: `${100 * dimensions.fontScale}px`, // adjust this value to reduce gradient height
+        top: item.textPosition === "top" ? 0 : "auto",
+        bottom: item.textPosition === "bottom" ? 0 : "auto",
+        backgroundImage: item.textPosition === "top"
+            ? "linear-gradient(to bottom, rgba(16,18,97,0.8), rgba(16,18,97,0))"
+            : "linear-gradient(to top, rgba(16,18,97,0.8), rgba(16,18,97,0))",
+    }}
+></div>
+
+
+    {/* Title */}
+    <div
+        className={`absolute left-0 right-0 px-4 py-2 ${
+            item.textPosition === "top" ? "top-0" : "bottom-0"
+        }`}
+    >
+        <h3
+            className="text-white font-medium"
+            style={{
+                fontSize: `${25 * dimensions.fontScale * 0.8}px`,
+            }}
+        >
+            {item.title}
+        </h3>
+    </div>
+</div>
 
             {/* Arrow Container — opposite corner depending on textPosition */}
             <div

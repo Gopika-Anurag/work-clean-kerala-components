@@ -447,117 +447,116 @@ const [hoveredArrow, setHoveredArrow] = useState(null);
 					onMouseUp={handleMouseUp}
 				>
 					{cards.map((item, index) => {
-						const { width: cardWidth, height: cardHeight } = getScaledCardDimensions(item.aspectRatio, dimensions.fontScale);
-						return (
-							<a
-								key={item.id}
-								href={item.link}
-                                 onMouseEnter={() => setHoveredCard(item.id)} // Set hovered state
-          onMouseLeave={() => setHoveredCard(null)} 
-								className="relative flex-shrink-0 overflow-hidden transition duration-300 transform select-none"
-								style={{
-									width: `${cardWidth}px`,
-									minWidth: `${cardWidth}px`,
-									height: `${cardHeight}px`,
-									scrollSnapAlign: "start",
-									borderRadius: `${20 * dimensions.fontScale * 0.8}px`,
-									marginBottom: `${50 * dimensions.fontScale * 0.8}px`,
-									marginTop: `${30 * dimensions.fontScale * 0.8}px`,
-									background: getValidColor(item.backgroundColor),
-									marginLeft:
-										index === 0 && (canScrollLeft || canScrollRight) ?
-											`${20 * dimensions.fontScale * 0.8}px` :
-											"0px",
-									boxShadow: "0 5px 10px rgba(0, 0, 0, 0.2)",
-									overflowY: "hidden",
-									position: "relative",
-									display: "block",
-								}}
-							>
-								{item.image && (
-									<img
-										src={item.image}
-										alt={item.title}
-										style={{
-											position: "absolute",
-											top: 0,
-											left: 0,
-											width: "100%",
-											height: "100%",
-											objectFit: "cover",
-											transition: "opacity 0.3s ease",
-											pointerEvents: "none",
-										}}
-									/>
-								)}
-								<div
-									className="absolute inset-0 flex"
-									style={{
-										backgroundImage:
-											item.textPosition === "top"
-												? `linear-gradient(to bottom, ${getValidColorForFade(
-														item.filterColor,
-												  )}, transparent)`
-												: `linear-gradient(to top, ${getValidColorForFade(
-														item.filterColor,
-												  )}, transparent)`,
-										alignItems:
-											item.textPosition === "top" ? "flex-start" : "flex-end",
-										padding: `${30 * 0.3 * dimensions.fontScale * 0.8}px`,
-									}}
-								>
-									<h3
-										className="font-medium"
-										style={{
-											color: item.titleColor || "#000",
-											width: "100%",
-											fontSize: `${25 * dimensions.fontScale * 0.8}px`,
-											lineHeight: 1.2,
-											wordBreak: "break-word",
-											textAlign: "left",
-										}}
-									>
-										{item.title}
-									</h3>
-								</div>
-								<div
-    className={`absolute top-4 right-4 transition-colors duration-300 ${hoveredArrow === item.id ? 'bg-[#6c63ff]' : 'bg-[rgba(255,255,255,0.7)]'}`}
-    style={{
-        top: `${16 * dimensions.fontScale * 0.8}px`,
-        right: `${16 * dimensions.fontScale * 0.8}px`,
-        width: `${40 * dimensions.fontScale * 0.8}px`,
-        height: `${40 * dimensions.fontScale * 0.8}px`,
-        borderRadius: `${10 * dimensions.fontScale * 0.8}px`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backdropFilter: 'blur(5px)',
-        boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-        cursor: "pointer",
-    }}
-    onMouseEnter={() => setHoveredArrow(item.id)}
-    onMouseLeave={() => setHoveredArrow(null)}
->
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="2.5"
-        stroke={hoveredArrow === item.id ? 'white' : '#6c63ff'}
-        className="w-5 h-5 transition-transform duration-300"
-        style={{
-            transform: hoveredArrow === item.id ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: "transform 0.3s ease",
-        }}
-    >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-    </svg>
-</div>
+    const { width: cardWidth, height: cardHeight } = getScaledCardDimensions(item.aspectRatio, dimensions.fontScale);
+    return (
+        <a
+            key={item.id}
+            href={item.link}
+            onMouseEnter={() => setHoveredCard(item.id)}
+            onMouseLeave={() => setHoveredCard(null)}
+            className="relative flex-shrink-0 overflow-hidden transition duration-300 transform select-none"
+            style={{
+                width: `${cardWidth}px`,
+                minWidth: `${cardWidth}px`,
+                height: `${cardHeight}px`,
+                scrollSnapAlign: "start",
+                borderRadius: `${20 * dimensions.fontScale * 0.8}px`,
+                marginBottom: `${50 * dimensions.fontScale * 0.8}px`,
+                marginTop: `${30 * dimensions.fontScale * 0.8}px`,
+                background: getValidColor(item.backgroundColor),
+                marginLeft:
+                    index === 0 && (canScrollLeft || canScrollRight) ?
+                        `${20 * dimensions.fontScale * 0.8}px` :
+                        "0px",
+                boxShadow: "0 5px 10px rgba(0, 0, 0, 0.2)",
+                overflowY: "hidden",
+                position: "relative",
+                display: "block",
+            }}
+        >
+            {item.image && (
+                <img
+                    src={item.image}
+                    alt={item.title}
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "opacity 0.3s ease",
+                        pointerEvents: "none",
+                    }}
+                />
+            )}
+            <div
+                className="absolute inset-0 flex"
+                style={{
+                    backgroundImage:
+                        item.textPosition === "top"
+                            ? `linear-gradient(to bottom, ${getValidColorForFade(item.filterColor)}, transparent)`
+                            : `linear-gradient(to top, ${getValidColorForFade(item.filterColor)}, transparent)`,
+                    alignItems:
+                        item.textPosition === "top" ? "flex-start" : "flex-end",
+                    padding: `${30 * 0.3 * dimensions.fontScale * 0.8}px`,
+                }}
+            >
+                <h3
+                    className="font-medium"
+                    style={{
+                        color: item.titleColor || "#000",
+                        width: "100%",
+                        fontSize: `${25 * dimensions.fontScale * 0.8}px`,
+                        lineHeight: 1.2,
+                        wordBreak: "break-word",
+                        textAlign: "left",
+                    }}
+                >
+                    {item.title}
+                </h3>
+            </div>
 
+            {/* Arrow Container — opposite corner depending on textPosition */}
+            <div
+                className="absolute right-4 transition-colors duration-300"
+                style={{
+                    top: item.textPosition === "bottom" ? `${16 * dimensions.fontScale * 0.8}px` : "auto",
+                    bottom: item.textPosition === "top" ? `${16 * dimensions.fontScale * 0.8}px` : "auto",
+                    width: `${50 * dimensions.fontScale * 0.8}px`,
+                    height: `${50 * dimensions.fontScale * 0.8}px`,
+                    borderRadius: `${10 * dimensions.fontScale * 0.8}px`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backdropFilter: 'blur(5px)',
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                    backgroundColor: hoveredArrow === item.id ? '#6c63ff' : 'rgba(255,255,255,0.7)',
+                    border: `1px solid #6c63ff`, // <-- Border always visible with hover color
+                    cursor: "pointer",
+                }}
+                onMouseEnter={() => setHoveredArrow(item.id)}
+                onMouseLeave={() => setHoveredArrow(null)}
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2.5"
+                    stroke={hoveredArrow === item.id ? 'white' : '#6c63ff'}
+                    className="w-5 h-5 transition-transform duration-300"
+                    style={{
+                        transform: hoveredArrow === item.id ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: "transform 0.3s ease",
+                    }}
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                </svg>
+            </div>
+        </a>
+    );
+})}
 
-							</a>
-						);
-					})}
 				</div>
 				{canScrollRight && (
 					<button

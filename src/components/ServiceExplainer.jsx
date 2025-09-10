@@ -359,15 +359,18 @@ const [hoveredArrow, setHoveredArrow] = useState(null);
 	WHAT WE DO
 </p>
 			<h2
-				className="font-bold text-center"
-				style={{
-					fontSize: `${60 * dimensions.fontScale * 0.8}px`,
-					marginBottom: `${10 * dimensions.fontScale * 0.8}px`,
-					color: "#000",
-				}}
-			>
-                Elevate Your Business with <br/> Our Product & Service Explainer Videos
-			</h2>
+    className="font-bold text-center px-4 sm:px-6"
+    style={{
+        fontSize: `${40 * dimensions.fontScale * 0.8}px`, // default size
+        lineHeight: 1.3,
+        color: "#000",
+        marginBottom: `${10 * dimensions.fontScale * 0.8}px`,
+    }}
+>
+    Elevate Your Business with <br className="hidden sm:block" /> Our Product & Service Explainer Videos
+</h2>
+
+
 			<p
 				className="text-center"
 				style={{
@@ -519,40 +522,41 @@ const [hoveredArrow, setHoveredArrow] = useState(null);
 
             {/* Arrow Container — opposite corner depending on textPosition */}
             <div
-                className="absolute right-4 transition-colors duration-300"
-                style={{
-                    top: item.textPosition === "bottom" ? `${16 * dimensions.fontScale * 0.8}px` : "auto",
-                    bottom: item.textPosition === "top" ? `${16 * dimensions.fontScale * 0.8}px` : "auto",
-                    width: `${50 * dimensions.fontScale * 0.8}px`,
-                    height: `${50 * dimensions.fontScale * 0.8}px`,
-                    borderRadius: `${10 * dimensions.fontScale * 0.8}px`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backdropFilter: 'blur(5px)',
-                    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                    backgroundColor: hoveredArrow === item.id ? '#6c63ff' : 'rgba(255,255,255,0.7)',
-                    border: `1px solid #6c63ff`, // <-- Border always visible with hover color
-                    cursor: "pointer",
-                }}
-                onMouseEnter={() => setHoveredArrow(item.id)}
-                onMouseLeave={() => setHoveredArrow(null)}
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2.5"
-                    stroke={hoveredArrow === item.id ? 'white' : '#6c63ff'}
-                    className="w-5 h-5 transition-transform duration-300"
-                    style={{
-                        transform: hoveredArrow === item.id ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: "transform 0.3s ease",
-                    }}
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                </svg>
-            </div>
+    className="absolute right-4 transition-colors duration-300"
+    style={{
+        top: item.textPosition === "bottom" ? `${16 * dimensions.fontScale * 0.8}px` : "auto",
+        bottom: item.textPosition === "top" ? `${16 * dimensions.fontScale * 0.8}px` : "auto",
+        width: `${50 * dimensions.fontScale * 0.8}px`,
+        height: `${50 * dimensions.fontScale * 0.8}px`,
+        borderRadius: `${10 * dimensions.fontScale * 0.8}px`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backdropFilter: 'blur(5px)',
+        boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+        backgroundColor: hoveredArrow === item.id ? '#6c63ff' : 'rgba(255,255,255,0.7)',
+        border: `1px solid #6c63ff`,  // Border always visible with hover color
+        cursor: "pointer",
+    }}
+    onMouseEnter={() => setHoveredArrow(item.id)}
+    onMouseLeave={() => setHoveredArrow(null)}
+>
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="2.5"
+        stroke={hoveredArrow === item.id ? 'white' : '#6c63ff'}
+        className="w-5 h-5 transition-transform duration-300"
+        style={{
+            transform: hoveredArrow === item.id ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: "transform 0.3s ease, stroke 0.3s ease",
+        }}
+    >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+    </svg>
+</div>
+
         </a>
     );
 })}

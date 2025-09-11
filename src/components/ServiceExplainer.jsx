@@ -91,40 +91,45 @@ const [hoveredCard, setHoveredCard] = useState(null);
 	}, [minSlidesToShow, slideGap, cards, getScaledCardDimensions, baseCardDimensions]);
 	
 	// Get scroll distance for varied-width cards
-	const getScrollDistance = useCallback((direction) => {
-  if (!scrollRef.current) return 0;
+	const getScrollDistance = useCallback(
+  (direction) => {
+    if (!scrollRef.current || cards.length === 0) return 0;
 
-  const currentScrollLeft = scrollRef.current.scrollLeft;
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const containerWidth = scrollRef.current.offsetWidth;
 
-  if (direction === 'right') {
-    let accumulatedWidth = 0;
-    for (let i = 0; i < cards.length; i++) {
-      const cardWidth = getScaledCardDimensions(cards[i].aspectRatio, dimensions.fontScale).width;
-      const cardStart = accumulatedWidth;
-      accumulatedWidth += cardWidth + slideGap * dimensions.fontScale;
+    if (direction === "right") {
+      let accumulatedWidth = 0;
+      for (let i = 0; i < cards.length; i++) {
+        const cardWidth = getScaledCardDimensions(cards[i].aspectRatio, dimensions.fontScale).width;
+        const cardEnd = accumulatedWidth + cardWidth;
 
-      if (cardStart > currentScrollLeft) {
-        return cardStart - currentScrollLeft;
+        if (cardEnd > scrollLeft + 1) {
+          return cardEnd - scrollLeft + slideGap * dimensions.fontScale;
+        }
+
+        accumulatedWidth += cardWidth + slideGap * dimensions.fontScale;
       }
-    }
-    return accumulatedWidth - currentScrollLeft;
-  } else {
-    // LEFT
-    let accumulatedWidth = 0;
-    let lastStart = 0;
-    for (let i = 0; i < cards.length; i++) {
-      const cardWidth = getScaledCardDimensions(cards[i].aspectRatio, dimensions.fontScale).width;
-      const cardStart = accumulatedWidth;
-      accumulatedWidth += cardWidth + slideGap * dimensions.fontScale;
+      return 0;
+    } else {
+      // LEFT scroll
+      let accumulatedWidth = 0;
+      for (let i = 0; i < cards.length; i++) {
+        const cardWidth = getScaledCardDimensions(cards[i].aspectRatio, dimensions.fontScale).width;
+        const cardStart = accumulatedWidth;
 
-      if (cardStart >= currentScrollLeft) {
-        return currentScrollLeft - lastStart;
+        if (cardStart + cardWidth >= scrollLeft - 1) {
+          // scroll to previous card start or 0 if first card
+          return scrollLeft - Math.max(0, cardStart - slideGap * dimensions.fontScale);
+        }
+
+        accumulatedWidth += cardWidth + slideGap * dimensions.fontScale;
       }
-      lastStart = cardStart;
+      return scrollLeft; // fallback: scroll to start
     }
-    return currentScrollLeft; // fallback
-  }
-}, [cards, dimensions.fontScale, slideGap, getScaledCardDimensions]);
+  },
+  [cards, dimensions.fontScale, slideGap, getScaledCardDimensions]
+);
 
 
 	const scrollLeft = useCallback(() => {

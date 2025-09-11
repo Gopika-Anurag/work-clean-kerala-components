@@ -6,6 +6,12 @@ function HealthServices() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [hovered, setHovered] = useState(false);
+
+  // Drag state
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftStart, setScrollLeftStart] = useState(0);
 
   const checkScroll = () => {
     if (!carouselRef.current) return;
@@ -18,17 +24,47 @@ function HealthServices() {
 
   const scrollLeft = () => {
     if (carouselRef.current) {
-      const cardWidth = carouselRef.current.querySelector(".snap-center").offsetWidth;
+      const card = carouselRef.current.querySelector(".snap-center");
+      if (!card) return;
+      const cardWidth = card.offsetWidth;
       carouselRef.current.scrollBy({ left: -cardWidth, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (carouselRef.current) {
-      const cardWidth = carouselRef.current.querySelector(".snap-center").offsetWidth;
+      const card = carouselRef.current.querySelector(".snap-center");
+      if (!card) return;
+      const cardWidth = card.offsetWidth;
       carouselRef.current.scrollBy({ left: cardWidth, behavior: "smooth" });
     }
   };
+
+  // Arrow key navigation on hover
+  const handleKeyDown = (event) => {
+    if (event.key === "ArrowLeft") scrollLeft();
+    else if (event.key === "ArrowRight") scrollRight();
+  };
+
+  // Drag start
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - carouselRef.current.offsetLeft);
+    setScrollLeftStart(carouselRef.current.scrollLeft);
+  };
+
+  // Drag move
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault(); // Prevent text/image selection
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = x - startX;
+    carouselRef.current.scrollLeft = scrollLeftStart - walk;
+  };
+
+  // Drag end
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseLeave = () => setIsDragging(false);
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -42,14 +78,20 @@ function HealthServices() {
     };
   }, []);
 
+  useEffect(() => {
+    if (hovered) window.addEventListener("keydown", handleKeyDown);
+    else window.removeEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [hovered]);
+
   return (
-<div className="relative flex flex-col items-center py-20 px-6 md:px-60 bg-gray-100">      {/* Navigation Buttons */}
+    <div className="relative flex flex-col items-center py-20 px-6 md:px-60 bg-gray-100">
+      {/* Navigation Buttons */}
       {canScrollLeft && (
         <button
           onClick={scrollLeft}
           className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-lg hover:bg-indigo-500 hover:text-white transition"
         >
-          {/* Left Arrow SVG (Triangle shape) */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -67,7 +109,6 @@ function HealthServices() {
           onClick={scrollRight}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-lg hover:bg-indigo-500 hover:text-white transition"
         >
-          {/* Right Arrow SVG (Triangle shape) */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -81,20 +122,24 @@ function HealthServices() {
         </button>
       )}
 
-      {/* Carousel Container */}
+      {/* Carousel */}
       <div
         ref={carouselRef}
-        className="flex overflow-x-auto w-full scroll-smooth snap-x snap-mandatory scrollbar-hide"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        className="flex overflow-x-auto w-full scroll-smooth snap-x snap-mandatory scrollbar-hide cursor-grab"
       >
-        {/* Map over the slides array */}
         {healthServicesData.map((slide, index) => (
           <div
             key={index}
-    className="flex-shrink-0 w-full md:w-1/3 snap-center px-2"
+            className="flex-shrink-0 w-full md:w-1/3 snap-center px-2"
             style={{ height: "600px" }}
           >
-            {slide.type === 'dualCard' ? (
-              // Dual Card Layout: 2-row grid
+            {slide.type === "dualCard" ? (
               <div className="grid grid-rows-2 gap-4 w-full h-full">
                 {slide.cards.map((card, cardIndex) => (
                   <div
@@ -114,19 +159,20 @@ function HealthServices() {
                       <img
                         src={card.imageUrl}
                         alt={`Image for ${card.title || "service"}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover select-none"
+                        draggable={false} // Prevent default image drag
                       />
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              // Full Image Layout
               <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
                 <img
                   src={slide.cards[0].imageUrl}
                   alt="Full service image"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover select-none"
+                  draggable={false} // Prevent default image drag
                 />
               </div>
             )}
@@ -134,7 +180,7 @@ function HealthServices() {
         ))}
       </div>
 
-      {/* Progress Bar (unchanged) */}
+      {/* Progress Bar */}
       <div className="w-full max-w-7xl h-2 bg-gray-300 rounded-full mt-4 overflow-hidden">
         <div
           className="h-full bg-indigo-500 rounded-full transition-all duration-300"

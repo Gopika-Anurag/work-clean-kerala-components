@@ -43,8 +43,8 @@ import ServiceCarousel from "./components/ServiceCarousel";
 import { services } from "./data/servicesData";
 import ServiceExplainer from "./components/ServiceExplainer";
 import serviceExplainerData from "./data/serviceExplainerData";
-import HealthServices from "./components/healthServices";
 import healthServicesData from "./data/healthServicesData";
+import HealthServices from "./components/healthServices";
 
 function App() {
   

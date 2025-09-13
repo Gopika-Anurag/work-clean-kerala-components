@@ -10,11 +10,25 @@ function HealthServices() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [slideWidthPercent, setSlideWidthPercent] = useState(100 / minSlidesToShow.desktop);
+  const [slideHeight, setSlideHeight] = useState(600);
+
 
   // Drag state
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeftStart, setScrollLeftStart] = useState(0);
+
+const updateSlideHeight = () => {
+  if (window.innerWidth >= 1024) setSlideHeight(600);
+  else if (window.innerWidth >= 768) setSlideHeight(400);
+  else setSlideHeight(300);
+};
+
+useEffect(() => {
+  updateSlideHeight();
+  window.addEventListener("resize", updateSlideHeight);
+  return () => window.removeEventListener("resize", updateSlideHeight);
+}, []);
 
   // Update slide width on resize
   const updateSlideWidth = () => {
@@ -160,7 +174,7 @@ function HealthServices() {
           <div
             key={index}
             className="flex-shrink-0 snap-center px-2"
-            style={{ width: `${slideWidthPercent}%`, height: "600px" }}
+            style={{ width: `${slideWidthPercent}%`, height: `${slideHeight}px` }}
           >
             {slide.type === "dualCard" ? (
               <div className="grid grid-rows-2 gap-4 w-full h-full">
@@ -171,13 +185,14 @@ function HealthServices() {
                     style={{ backgroundColor: card.type === "text" ? card.backgroundColor : undefined }}
                   >
                     {card.type === "text" ? (
-                      <div className="p-6 h-full flex flex-col justify-between text-white">
-                        <h3 className="text-xl font-bold mb-2">{card.title}</h3>
-                        <p className="text-sm">{card.description}</p>
-                        <button className="mt-4 px-4 py-2 bg-white text-black rounded font-semibold self-start">
-                          {card.buttonText}
-                        </button>
-                      </div>
+<div className="p-4 sm:p-6 h-full flex flex-col justify-between text-white overflow-y-auto">
+  <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">{card.title}</h3>
+  <p className="text-xs sm:text-sm md:text-base">{card.description}</p>
+  <button className="mt-4 px-3 py-1 sm:px-4 sm:py-2 bg-white text-black rounded font-semibold self-start text-xs sm:text-sm">
+    {card.buttonText}
+  </button>
+</div>
+
                     ) : (
                       <img
                         src={card.imageUrl}

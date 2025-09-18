@@ -45,6 +45,7 @@ import ServiceExplainer from "./components/ServiceExplainer";
 import serviceExplainerData from "./data/serviceExplainerData";
 import healthServicesData from "./data/healthServicesData";
 import HealthServices from "./components/healthServices";
+import LocationComponent from "./components/LocationComponent";
 
 function App() {
   
@@ -52,6 +53,10 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+                <div>
+          <LocationComponent/>
+        </div>
 
         <div>
           <HealthServices attributes={healthServicesData}/>

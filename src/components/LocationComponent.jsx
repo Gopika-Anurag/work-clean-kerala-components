@@ -178,7 +178,7 @@ useEffect(() => {
   return (
     <div className="map-wrapper">
       <div className="map-controls">
-        <div
+      <div
   className="draggable-search"
   style={{
     position: "absolute",
@@ -187,10 +187,26 @@ useEffect(() => {
     zIndex: 10,
     cursor: isDragging ? "grabbing" : "grab",
     userSelect: "none",
+    touchAction: "none", // important for mobile to stop map panning
   }}
-  onMouseDown={handleMouseDown}
-  onTouchStart={handleTouchStart}
+  onMouseDown={(e) => {
+    handleMouseDown(e);
+    e.stopPropagation();
+  }}
+  onTouchStart={(e) => {
+    handleTouchStart(e);
+    e.stopPropagation();
+  }}
+  onTouchMove={(e) => {
+    handleTouchMove(e);
+    e.stopPropagation();
+  }}
+  onTouchEnd={(e) => {
+    endDrag();
+    e.stopPropagation();
+  }}
 >
+
   <input
     type="text"
     placeholder="Search for a clinic..."

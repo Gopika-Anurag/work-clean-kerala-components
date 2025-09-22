@@ -289,13 +289,22 @@ useEffect(() => {
     position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
     onCloseClick={() => setSelectedClinic(null)}
     options={{
-      pixelOffset: new window.google.maps.Size(0, -40), // move 40px above the marker
+      pixelOffset: new window.google.maps.Size(0, -40), // popup above marker
     }}
   >
-    <div className="info-window-content">
-      <h4>{selectedClinic.name}</h4>
-      <p>📍 {selectedClinic.address}</p>
+    <div className="info-window-content" style={{ minWidth: "180px" }}>
+      <h4 style={{ margin: "0 0 5px 0" }}>{selectedClinic.name}</h4>
+      <p style={{ margin: "0 0 10px 0" }}>📍 {selectedClinic.address}</p>
       <button
+        style={{
+          padding: "8px 12px",
+          backgroundColor: "#1216da",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "14px",
+        }}
         onClick={() =>
           handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)
         }

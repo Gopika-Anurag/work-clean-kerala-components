@@ -263,48 +263,49 @@ useEffect(() => {
     options={{ styles: mapStyles }}
   >
     {/* Filtered Clinic Markers (Blue) */}
-    {filteredClinics.map((clinic) => (
-      <Marker
-        key={clinic.id}
-        position={{ lat: clinic.lat, lng: clinic.lng }}
-        icon={{
-          url:
-            "data:image/svg+xml;charset=UTF-8," +
-            encodeURIComponent(`
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" 
-                    viewBox="0 0 24 24" fill="#1216da" stroke="white" stroke-width="2">
-                <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z"/>
-                <circle cx="12" cy="9" r="2.5" fill="white"/>
-              </svg>
-            `),
-          scaledSize: new window.google.maps.Size(40, 40),
-        }}
-        onClick={() => setSelectedClinic(clinic)}
-      />
-    ))}
+    {/* All filtered clinic markers */}
+{filteredClinics.map((clinic) => (
+  <Marker
+    key={clinic.id}
+    position={{ lat: clinic.lat, lng: clinic.lng }}
+    icon={{
+      url:
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+            <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#1216da"/>
+            <circle cx="12" cy="9" r="2.5" fill="white"/>
+          </svg>
+        `),
+      scaledSize: new window.google.maps.Size(40, 40), // make sure size matches your SVG
+    }}
+    onClick={() => setSelectedClinic(clinic)}
+  />
+))}
 
-    {/* User Location Marker */}
-    {userLocation && <Marker position={userLocation} />}
-
-    {/* Info Window */}
-    {selectedClinic && (
-      <InfoWindow
-        position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
-        onCloseClick={() => setSelectedClinic(null)}
+{/* InfoWindow for selected clinic */}
+{selectedClinic && (
+  <InfoWindow
+    position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
+    onCloseClick={() => setSelectedClinic(null)}
+    options={{
+      pixelOffset: new window.google.maps.Size(0, -40), // move 40px above the marker
+    }}
+  >
+    <div className="info-window-content">
+      <h4>{selectedClinic.name}</h4>
+      <p>📍 {selectedClinic.address}</p>
+      <button
+        onClick={() =>
+          handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)
+        }
       >
-        <div className="info-window-content">
-          <h4>{selectedClinic.name}</h4>
-          <p>📍 {selectedClinic.address}</p>
-          <button
-            onClick={() =>
-              handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)
-            }
-          >
-            🚀 View on Google Maps
-          </button>
-        </div>
-      </InfoWindow>
-    )}
+        🚀 View on Google Maps
+      </button>
+    </div>
+  </InfoWindow>
+)}
+
   </GoogleMap>
   
 </div>

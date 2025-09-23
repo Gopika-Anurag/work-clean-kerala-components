@@ -11,7 +11,7 @@ import "../styles/location.css";
 const API_KEY = "AIzaSyAp1RD8e5YsoGU4E3InF90E2PoSbS_jIK8";
 
 const handleDirectionsClick = (lat, lng) => {
-const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
   window.open(url, "_blank");
 };
 
@@ -21,172 +21,106 @@ const mapContainerStyle = {
 };
 
 const mapStyles = [
-    {
-        featureType: "all",
-        elementType: "labels.text.fill",
-        stylers: [{ color: "#4a6fa5" }],
-    },
-    {
-        featureType: "administrative",
-        elementType: "geometry",
-        stylers: [{ visibility: "off" }],
-    },
-    {
-        featureType: "road",
-        elementType: "geometry",
-        stylers: [{ color: "#b3d1ff" }],
-    },
-    {
-        featureType: "road",
-        elementType: "labels.icon",
-        stylers: [{ visibility: "off" }],
-    },
-    {
-        featureType: "water",
-        elementType: "geometry.fill",
-        stylers: [{ color: "#4da6ff" }],
-    },
-    {
-        featureType: "landscape",
-        elementType: "geometry.fill",
-        stylers: [{ color: "#e6f2ff" }],
-    },
-    {
-        featureType: "poi",
-        elementType: "geometry.fill",
-        stylers: [{ color: "#d9ecff" }],
-    },
+  {
+    featureType: "all",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#4a6fa5" }],
+  },
+  {
+    featureType: "administrative",
+    elementType: "geometry",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#b3d1ff" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.icon",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry.fill",
+    stylers: [{ color: "#4da6ff" }],
+  },
+  {
+    featureType: "landscape",
+    elementType: "geometry.fill",
+    stylers: [{ color: "#e6f2ff" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "geometry.fill",
+    stylers: [{ color: "#d9ecff" }],
+  },
 ];
 
 function LocationComponent() {
   const [selectedClinic, setSelectedClinic] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const [userAccuracy, setUserAccuracy] = useState(null);
-  const [showUserInfo, setShowUserInfo] = useState(false);
+    const [userAccuracy, setUserAccuracy] = useState(null);   // ✅ NEW
+  const [showUserInfo, setShowUserInfo] = useState(false);  // ✅ NEW
+
   const [mapRef, setMapRef] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isScrollable, setIsScrollable] = useState(false);
   const dropdownRef = useRef(null);
-  const [searchPosition, setSearchPosition] = useState({ x: 20, y: 20 });
-  const [isDragging, setIsDragging] = useState(false);
-  const dragOffset = useRef({ x: 0, y: 0 });
+  const [userSelectedColor, setUserSelectedColor] = useState("#1b156dff"); // default white
+ const [searchPosition, setSearchPosition] = useState({ x: 20, y: 20 });
+const [isDragging, setIsDragging] = useState(false);
+const dragOffset = useRef({ x: 0, y: 0 });
 
-  const [originalSearchPosition, setOriginalSearchPosition] = useState(null);
-  const searchContainerRef = useRef(null);
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
 
-  useEffect(() => {
-  if (!isMobile) return;
 
-  let initialHeight = window.innerHeight;
-
-  const handleResize = () => {
-    const heightDiff = initialHeight - window.innerHeight;
-
-    if (heightDiff > 100) {
-      setKeyboardOpen(true); // keyboard likely open
-    } else {
-      setKeyboardOpen(false);
-      initialHeight = window.innerHeight; // reset
-    }
+// --- PC mouse drag ---
+const startDrag = (clientX, clientY) => {
+  setIsDragging(true);
+  dragOffset.current = {
+    x: clientX - searchPosition.x,
+    y: clientY - searchPosition.y,
   };
-
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, [isMobile]);
-
-
-useEffect(() => {
-  const handleResize = () => {
-    setViewportHeight(window.innerHeight);
-  };
-
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
-
-
-useEffect(() => {
-  const ua = navigator.userAgent;
-  if (/Android|iPhone|iPad|iPod/i.test(ua)) {
-    setIsMobile(true);
-  }
-}, []);
-
-
-
-
-  // --- Draggable Logic ---
-  const startDrag = (clientX, clientY) => {
-    setIsDragging(true);
-    dragOffset.current = {
-      x: clientX - searchPosition.x,
-      y: clientY - searchPosition.y,
-    };
-  };
-
-  const handleMouseDown = (e) => {
-  if (!isMobile) startDrag(e.clientX, e.clientY);
-};
-const handleTouchStart = (e) => {
-  if (!isMobile) startDrag(e.touches[0].clientX, e.touches[0].clientY);
 };
 
+const handleMouseDown = (e) => startDrag(e.clientX, e.clientY);
+const handleTouchStart = (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY);
 
-  const handleMove = (clientX, clientY) => {
-    if (!isDragging) return;
-    setSearchPosition({
-      x: clientX - dragOffset.current.x,
-      y: clientY - dragOffset.current.y,
-    });
+const handleMove = (clientX, clientY) => {
+  if (!isDragging) return;
+  setSearchPosition({
+    x: clientX - dragOffset.current.x,
+    y: clientY - dragOffset.current.y,
+  });
+};
+
+const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
+const handleTouchMove = (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY);
+
+const endDrag = () => setIsDragging(false);
+
+useEffect(() => {
+  window.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("mouseup", endDrag);
+  window.addEventListener("touchmove", handleTouchMove);
+  window.addEventListener("touchend", endDrag);
+
+  return () => {
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", endDrag);
+    window.removeEventListener("touchmove", handleTouchMove);
+    window.removeEventListener("touchend", endDrag);
   };
+}, [isDragging]);
 
-  const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
-  const handleTouchMove = (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY);
 
-  const endDrag = () => setIsDragging(false);
 
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", endDrag);
-    window.addEventListener("touchmove", handleTouchMove);
-    window.addEventListener("touchend", endDrag);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", endDrag);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", endDrag);
-    };
-  }, [isDragging]);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: API_KEY,
   });
-
-  const restorePosition = () => {
-      if (originalSearchPosition) {
-          setSearchPosition(originalSearchPosition);
-          setOriginalSearchPosition(null); 
-      }
-  };
-
-  useEffect(() => {
-      const handleClickOutside = (event) => {
-          if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-              setIsDropdownVisible(false);
-              restorePosition();
-          }
-      };
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-          document.removeEventListener("mousedown", handleClickOutside);
-      };
-  }, [originalSearchPosition]);
-
 
   const onMapLoad = (map) => {
     setMapRef(map);
@@ -196,38 +130,47 @@ const handleTouchStart = (e) => {
   };
 
   const handleFindMyLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude, accuracy } = pos.coords;
-          const newLoc = { lat: latitude, lng: longitude };
-          setUserLocation(newLoc);
-          setUserAccuracy(accuracy);
-          setShowUserInfo(true);
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        const newLoc = { lat: latitude, lng: longitude };
+        setUserLocation(newLoc);
+        setUserAccuracy(accuracy);
+        setShowUserInfo(true);
 
-          if (mapRef) {
-            mapRef.panTo(newLoc);
-            mapRef.setZoom(14);
-          }
-        },
-        (err) => {
-          console.error("Geolocation error:", err.message);
-          const fallbackLoc = { lat: 10.8505, lng: 76.2711 }; // Kerala
-          setUserLocation(fallbackLoc);
-          setUserAccuracy(null);
-          setShowUserInfo(true);
-          if (mapRef) {
-            mapRef.panTo(fallbackLoc);
-            mapRef.setZoom(10);
-          }
-          alert("Unable to get your location, showing default Kerala location.");
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    } else {
-      alert("Geolocation not supported in this browser.");
-    }
-  };
+        if (mapRef) {
+          mapRef.panTo(newLoc);
+          mapRef.setZoom(14);
+        }
+      },
+      (err) => {
+        console.error("Geolocation error:", err.message);
+
+        // fallback location (Kerala example)
+        const fallbackLoc = { lat: 10.8505, lng: 76.2711 };
+        setUserLocation(fallbackLoc);
+        setUserAccuracy(null);
+        setShowUserInfo(true);
+
+        if (mapRef) {
+          mapRef.panTo(fallbackLoc);
+          mapRef.setZoom(10);
+        }
+
+        alert("Unable to get your location, showing default Kerala location.");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  } else {
+    alert("Geolocation not supported in this browser.");
+  }
+};
+
 
   const handleClinicSelect = (clinic) => {
     setSelectedClinic(clinic);
@@ -237,31 +180,18 @@ const handleTouchStart = (e) => {
       mapRef.panTo({ lat: clinic.lat, lng: clinic.lng });
       mapRef.setZoom(14);
     }
-    restorePosition();
   };
-  
-  // ✅ UPDATED: Now centers the box on focus
-  const handleInputFocus = () => {
-      if (!originalSearchPosition) {
-          setOriginalSearchPosition(searchPosition);
-      }
-      
-      // Logic to center the search box
-      const searchBoxWidth = 320; // IMPORTANT: Adjust this to match your search box's actual width in CSS
-      const centeredX = (window.innerWidth - searchBoxWidth) / 2;
-
-      // Move to the new top-center position. If screen is too small, default to 20px.
-      setSearchPosition({ x: centeredX > 0 ? centeredX : 20, y: 20 });
-
-      setIsDropdownVisible(true);
-  }
 
   const filteredClinics = clinics.filter(
     (clinic) =>
       clinic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       clinic.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+ useEffect(() => {
+    console.log("User Location:", userLocation, "Accuracy:", userAccuracy);
+  }, [userLocation]);
+  
+  // 🔍 Detect if dropdown is scrollable
   useEffect(() => {
     if (dropdownRef.current) {
       setIsScrollable(
@@ -274,31 +204,34 @@ const handleTouchStart = (e) => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
+<div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
-       <div
-  ref={searchContainerRef}
+      <div
   className="draggable-search"
   style={{
-    position: isMobile ? "fixed" : "absolute",
-    top: isMobile
-      ? keyboardOpen
-        ? 20 // Always visible near the top when keyboard opens
-        : 20 // Default top position
-      : searchPosition.y,
-    left: isMobile
-      ? 20 // Fixed left on mobile or you can center it: (window.innerWidth - 320)/2
-      : searchPosition.x,
-    width: 320,
+    position: "absolute",
+    top: searchPosition.y,
+    left: searchPosition.x,
     zIndex: 10,
-    cursor: !isMobile && isDragging ? "grabbing" : "grab",
+    cursor: isDragging ? "grabbing" : "grab",
     userSelect: "none",
-    touchAction: "none",
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "10px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-    transition: "top 0.3s ease, left 0.3s ease",
+    touchAction: "none", // important for mobile to stop map panning
+  }}
+  onMouseDown={(e) => {
+    handleMouseDown(e);
+    e.stopPropagation();
+  }}
+  onTouchStart={(e) => {
+    handleTouchStart(e);
+    e.stopPropagation();
+  }}
+  onTouchMove={(e) => {
+    handleTouchMove(e);
+    e.stopPropagation();
+  }}
+  onTouchEnd={(e) => {
+    endDrag();
+    e.stopPropagation();
   }}
 >
 
@@ -310,9 +243,9 @@ const handleTouchStart = (e) => {
       setSearchQuery(e.target.value);
       setIsDropdownVisible(true);
     }}
+    onFocus={() => setIsDropdownVisible(true)}
   />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
-
 
   {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (
     <div
@@ -345,106 +278,118 @@ const handleTouchStart = (e) => {
     </div>
   )}
 </div>
+</div>
 
-      </div>
+<div
+  className="map-mask-wrapper"
+  style={{ backgroundColor: 'transparent' }} // background layer
 
-      <div className="map-mask-wrapper" style={{ backgroundColor: 'transparent' }}>
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          onLoad={onMapLoad}
-          options={{ styles: mapStyles }}
-        >
-          {/* User Location Marker */}
-          {userLocation && (
-            <Marker
-              position={userLocation}
-              icon={{
-                url:
-                  "data:image/svg+xml;charset=UTF-8," +
-                  encodeURIComponent(`
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                      <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#ff3333"/>
-                      <circle cx="12" cy="9" r="2.5" fill="white"/>
-                    </svg>
-                  `),
-                scaledSize: new window.google.maps.Size(40, 40),
-                anchor: new window.google.maps.Point(20, 40),
-              }}
-              onClick={() => setShowUserInfo(true)}
-            />
-          )}
+>
+  <GoogleMap
+    mapContainerStyle={mapContainerStyle}
+    onLoad={onMapLoad}
+    options={{ styles: mapStyles }}
+  >
 
-          {/* InfoWindow for User Location */}
-          {userLocation && showUserInfo && (
-            <InfoWindow
-              position={userLocation}
-              onCloseClick={() => setShowUserInfo(false)}
-              options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
-            >
-              <div style={{ minWidth: "160px" }}>
-                <strong>You are here</strong>
-                <p style={{ fontSize: "12px", margin: 0 }}>
-                  Lat: {userLocation.lat.toFixed(5)} <br />
-                  Lng: {userLocation.lng.toFixed(5)} <br />
-                  {userAccuracy && <>Accuracy: ±{Math.round(userAccuracy)} m</>}
-                </p>
-              </div>
-            </InfoWindow>
-          )}
+    {/* User Location Marker */}
+  {/* User Location Marker (Red) */}
+{/* User Location Marker (Red) */}
+{userLocation && (
+  <Marker
+    position={userLocation}
+    icon={{
+      url:
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+            <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#ff3333"/>
+            <circle cx="12" cy="9" r="2.5" fill="white"/>
+          </svg>
+        `),
+      scaledSize: new window.google.maps.Size(40, 40),   // ✅ forces correct size
+      anchor: new window.google.maps.Point(20, 40),      // ✅ ensures bottom tip aligns
+    }}
+    onClick={() => setShowUserInfo(true)}
+  />
+)}
 
-          {/* Filtered Clinic Markers */}
-          {filteredClinics.map((clinic) => (
-            <Marker
-              key={clinic.id}
-              position={{ lat: clinic.lat, lng: clinic.lng }}
-              icon={{
-                url:
-                  "data:image/svg+xml;charset=UTF-8," +
-                  encodeURIComponent(`
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                      <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#1216da"/>
-                      <circle cx="12" cy="9" r="2.5" fill="white"/>
-                    </svg>
-                  `),
-                scaledSize: new window.google.maps.Size(40, 40),
-              }}
-              onClick={() => setSelectedClinic(clinic)}
-            />
-          ))}
 
-          {/* InfoWindow for selected clinic */}
-          {selectedClinic && (
-            <InfoWindow
-              position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
-              onCloseClick={() => setSelectedClinic(null)}
-              options={{
-                pixelOffset: new window.google.maps.Size(0, -40),
-              }}
-            >
-              <div className="info-window-content" style={{ minWidth: "180px" }}>
-                <h4 style={{ margin: "0 0 5px 0" }}>{selectedClinic.name}</h4>
-                <p style={{ margin: "0 0 10px 0" }}>📍 {selectedClinic.address}</p>
-                <button
-                  style={{
-                    padding: "8px 12px",
-                    backgroundColor: "#1216da",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                  }}
-                  onClick={() =>
-                    handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)
-                  }
-                >
-                  🚀 View on Google Maps
-                </button>
-              </div>
-            </InfoWindow>
-          )}
-        </GoogleMap>
-      </div>
+{/* InfoWindow for User Location */}
+{userLocation && showUserInfo && (
+  <InfoWindow
+    position={userLocation}
+    onCloseClick={() => setShowUserInfo(false)}
+    options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
+  >
+    <div style={{ minWidth: "160px" }}>
+      <strong>You are here</strong>
+      <p style={{ fontSize: "12px", margin: 0 }}>
+        Lat: {userLocation.lat.toFixed(5)} <br />
+        Lng: {userLocation.lng.toFixed(5)} <br />
+        {userAccuracy && <>Accuracy: ±{Math.round(userAccuracy)} m</>}
+      </p>
+    </div>
+  </InfoWindow>
+)}
+
+    {/* Filtered Clinic Markers (Blue) */}
+    {/* All filtered clinic markers */}
+{filteredClinics.map((clinic) => (
+  <Marker
+    key={clinic.id}
+    position={{ lat: clinic.lat, lng: clinic.lng }}
+    icon={{
+      url:
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+            <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#1216da"/>
+            <circle cx="12" cy="9" r="2.5" fill="white"/>
+          </svg>
+        `),
+      scaledSize: new window.google.maps.Size(40, 40), // make sure size matches your SVG
+    }}
+    onClick={() => setSelectedClinic(clinic)}
+  />
+))}
+
+{/* InfoWindow for selected clinic */}
+{selectedClinic && (
+  <InfoWindow
+    position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
+    onCloseClick={() => setSelectedClinic(null)}
+    options={{
+      pixelOffset: new window.google.maps.Size(0, -40), // popup above marker
+    }}
+  >
+    <div className="info-window-content" style={{ minWidth: "180px" }}>
+      <h4 style={{ margin: "0 0 5px 0" }}>{selectedClinic.name}</h4>
+      <p style={{ margin: "0 0 10px 0" }}>📍 {selectedClinic.address}</p>
+      <button
+        style={{
+          padding: "8px 12px",
+          backgroundColor: "#1216da",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "14px",
+        }}
+        onClick={() =>
+          handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)
+        }
+      >
+        🚀 View on Google Maps
+      </button>
+    </div>
+  </InfoWindow>
+)}
+
+  </GoogleMap>
+  
+</div>
+
+
     </div>
   );
 }

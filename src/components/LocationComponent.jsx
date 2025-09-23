@@ -176,7 +176,7 @@ useEffect(() => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper">
+<div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
       <div
   className="draggable-search"
@@ -254,7 +254,7 @@ useEffect(() => {
 
 <div
   className="map-mask-wrapper"
-  style={{ backgroundColor: userSelectedColor }} // background layer
+  style={{ backgroundColor: 'transparent' }} // background layer
 
 >
   <GoogleMap

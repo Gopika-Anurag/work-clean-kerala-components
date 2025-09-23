@@ -74,6 +74,17 @@ function LocationComponent() {
 
   const [originalSearchPosition, setOriginalSearchPosition] = useState(null);
   const searchContainerRef = useRef(null);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+useEffect(() => {
+  const ua = navigator.userAgent;
+  if (/Android|iPhone|iPad|iPod/i.test(ua)) {
+    setIsMobile(true);
+  }
+}, []);
+
+
 
 
   // --- Draggable Logic ---
@@ -229,63 +240,77 @@ function LocationComponent() {
     <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
         <div
-          ref={searchContainerRef}
-          className="draggable-search"
-          style={{
-            position: "absolute",
-            top: searchPosition.y,
-            left: searchPosition.x,
-            zIndex: 10,
-            cursor: isDragging ? "grabbing" : "grab",
-            userSelect: "none",
-            touchAction: "none",
-          }}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-        >
-          <input
-            type="text"
-            placeholder="Search for a clinic..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setIsDropdownVisible(true);
-            }}
-            onFocus={handleInputFocus}
-          />
-          <button onClick={handleFindMyLocation}>📍 Find My Location</button>
+  ref={searchContainerRef}
+  className="draggable-search"
+  style={{
+    position: isMobile ? "fixed" : "absolute",
+    top: isMobile
+      ? keyboardOpen
+        ? 10 // move near top when keyboard open
+        : 20 // default top
+      : searchPosition.y,
+    left: isMobile
+      ? (keyboardOpen ? (window.innerWidth - 320) / 2 : 10) // center when keyboard open
+      : searchPosition.x,
+    zIndex: 10,
+    cursor: isDragging ? "grabbing" : "grab",
+    userSelect: "none",
+    touchAction: "none",
+    backgroundColor: "white",
+    borderRadius: "12px",
+    padding: "10px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+    transition: "top 0.3s ease, left 0.3s ease",
+    width: 320, // fixed width for mobile centering
+  }}
+  onMouseDown={handleMouseDown}
+  onTouchStart={handleTouchStart}
+>
+  <input
+    type="text"
+    placeholder="Search for a clinic..."
+    value={searchQuery}
+    onChange={(e) => {
+      setSearchQuery(e.target.value);
+      setIsDropdownVisible(true);
+    }}
+    onFocus={() => setKeyboardOpen(true)}
+    onBlur={() => setKeyboardOpen(false)}
+  />
+  <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 
-          {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (
-            <div
-              className="clinic-dropdown"
-              ref={dropdownRef}
-              style={{
-                overflowY: "auto",
-                maxHeight: "300px",
-                ...(isScrollable && {
-                  maskImage:
-                    "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-                  WebkitMaskImage:
-                    "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-                }),
-              }}
-            >
-              {filteredClinics.map((clinic) => (
-                <div
-                  key={clinic.id}
-                  className="clinic-item"
-                  onClick={() => handleClinicSelect(clinic)}
-                >
-                  <span>📍</span>
-                  <div>
-                    <strong>{clinic.name}</strong>
-                    <p>{clinic.address}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+  {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (
+    <div
+      className="clinic-dropdown"
+      ref={dropdownRef}
+      style={{
+        overflowY: "auto",
+        maxHeight: "300px",
+        ...(isScrollable && {
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+        }),
+      }}
+    >
+      {filteredClinics.map((clinic) => (
+        <div
+          key={clinic.id}
+          className="clinic-item"
+          onClick={() => handleClinicSelect(clinic)}
+        >
+          <span>📍</span>
+          <div>
+            <strong>{clinic.name}</strong>
+            <p>{clinic.address}</p>
+          </div>
         </div>
+      ))}
+    </div>
+  )}
+</div>
+
       </div>
 
       <div className="map-mask-wrapper" style={{ backgroundColor: 'transparent' }}>

@@ -236,14 +236,16 @@ useEffect(() => {
 <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
 
-      <div
+     <div
   className="draggable-search"
   style={{
     position: isMobile ? "fixed" : "absolute",
     top: isMobile
-      ? Math.min(searchPosition.y, window.innerHeight - 80) // always visible above keyboard
+      ? isInputFocused
+        ? 10 // moves to top when keyboard is open / input focused
+        : 20 // normal top padding
       : searchPosition.y - keyboardOffset,
-    left: searchPosition.x,
+    left: isMobile ? 10 : searchPosition.x,
     zIndex: 10,
     cursor: isDragging ? "grabbing" : "grab",
     userSelect: "none",
@@ -252,6 +254,7 @@ useEffect(() => {
     borderRadius: "12px",
     padding: "10px",
     boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+    transition: "top 0.3s ease", // smooth slide
   }}
   onMouseDown={(e) => {
     handleMouseDown(e);
@@ -278,24 +281,8 @@ useEffect(() => {
       setSearchQuery(e.target.value);
       setIsDropdownVisible(true);
     }}
-    onFocus={() => {
-      setIsInputFocused(true);
-      if (isMobile) {
-        setSearchPosition((prev) => ({
-          ...prev,
-          y: 10, // small padding from top when keyboard opens
-        }));
-      }
-    }}
-    onBlur={() => {
-      setIsInputFocused(false);
-      if (isMobile) {
-        setSearchPosition((prev) => ({
-          ...prev,
-          y: 20, // reset padding after keyboard closes
-        }));
-      }
-    }}
+    onFocus={() => setIsInputFocused(true)}
+    onBlur={() => setIsInputFocused(false)}
   />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 

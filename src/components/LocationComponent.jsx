@@ -11,7 +11,7 @@ import "../styles/location.css";
 const API_KEY = "AIzaSyAp1RD8e5YsoGU4E3InF90E2PoSbS_jIK8";
 
 const handleDirectionsClick = (lat, lng) => {
-  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  const url = `http://googleusercontent.com/maps/google.com/0{lat},${lng}`;
   window.open(url, "_blank");
 };
 
@@ -72,9 +72,7 @@ function LocationComponent() {
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
 
-  // ✨ NEW: State to store original position before keyboard opens
   const [originalSearchPosition, setOriginalSearchPosition] = useState(null);
-  // ✨ NEW: Ref to detect clicks outside the search box
   const searchContainerRef = useRef(null);
 
 
@@ -121,27 +119,25 @@ function LocationComponent() {
     googleMapsApiKey: API_KEY,
   });
 
-  // ✨ NEW: Function to restore search box position
   const restorePosition = () => {
       if (originalSearchPosition) {
           setSearchPosition(originalSearchPosition);
-          setOriginalSearchPosition(null); // Reset for next time
+          setOriginalSearchPosition(null); 
       }
   };
 
-  // ✨ NEW: Effect to handle clicks outside the search component
   useEffect(() => {
       const handleClickOutside = (event) => {
           if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-              setIsDropdownVisible(false); // Hide dropdown
-              restorePosition(); // Restore the position
+              setIsDropdownVisible(false);
+              restorePosition();
           }
       };
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
           document.removeEventListener("mousedown", handleClickOutside);
       };
-  }, [originalSearchPosition]); // Re-run effect if original position changes
+  }, [originalSearchPosition]);
 
 
   const onMapLoad = (map) => {
@@ -185,7 +181,6 @@ function LocationComponent() {
     }
   };
 
-  // ✅ UPDATED: Now also restores the position
   const handleClinicSelect = (clinic) => {
     setSelectedClinic(clinic);
     setSearchQuery(clinic.name);
@@ -194,15 +189,22 @@ function LocationComponent() {
       mapRef.panTo({ lat: clinic.lat, lng: clinic.lng });
       mapRef.setZoom(14);
     }
-    restorePosition(); // Restore position after selection
+    restorePosition();
   };
   
-  // ✨ NEW: Moves box to top when keyboard appears
+  // ✅ UPDATED: Now centers the box on focus
   const handleInputFocus = () => {
       if (!originalSearchPosition) {
           setOriginalSearchPosition(searchPosition);
       }
-      setSearchPosition({ x: 20, y: 20 }); // Move to a fixed top position
+      
+      // Logic to center the search box
+      const searchBoxWidth = 320; // IMPORTANT: Adjust this to match your search box's actual width in CSS
+      const centeredX = (window.innerWidth - searchBoxWidth) / 2;
+
+      // Move to the new top-center position. If screen is too small, default to 20px.
+      setSearchPosition({ x: centeredX > 0 ? centeredX : 20, y: 20 });
+
       setIsDropdownVisible(true);
   }
 
@@ -227,7 +229,7 @@ function LocationComponent() {
     <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
         <div
-          ref={searchContainerRef} // ✨ NEW: Add ref here
+          ref={searchContainerRef}
           className="draggable-search"
           style={{
             position: "absolute",
@@ -249,7 +251,7 @@ function LocationComponent() {
               setSearchQuery(e.target.value);
               setIsDropdownVisible(true);
             }}
-            onFocus={handleInputFocus} // ✅ UPDATED
+            onFocus={handleInputFocus}
           />
           <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 

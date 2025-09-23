@@ -142,7 +142,7 @@ const { latitude, longitude, accuracy } = pos.coords;
 
           if (mapRef) {
             mapRef.panTo(newLoc);
-            mapRef.setZoom(16);
+            mapRef.setZoom(14);
           }
         },
         () => {

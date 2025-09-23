@@ -238,46 +238,29 @@ useEffect(() => {
         {!(isMobile && isInputFocused) && (
 
       <div
-  className="draggable-search"
-  style={{
-    position: "absolute",
-    top: searchPosition.y - keyboardOffset, // move up when keyboard is open
-    left: searchPosition.x,
-    zIndex: 10,
-    cursor: isDragging ? "grabbing" : "grab",
-    userSelect: "none",
-    touchAction: "none", // important for mobile to stop map panning
-        transition: "top 0.2s ease", // smooth movement
-
-  }}
-  onMouseDown={(e) => {
-    handleMouseDown(e);
-    e.stopPropagation();
-  }}
-  onTouchStart={(e) => {
-    handleTouchStart(e);
-    e.stopPropagation();
-  }}
-  onTouchMove={(e) => {
-    handleTouchMove(e);
-    e.stopPropagation();
-  }}
-  onTouchEnd={(e) => {
-    endDrag();
-    e.stopPropagation();
-  }}
->
-
-  <input
-    type="text"
-    placeholder="Search for a clinic..."
-    value={searchQuery}
-    onChange={(e) => {
-      setSearchQuery(e.target.value);
-      setIsDropdownVisible(true);
+    className="draggable-search"
+    style={{
+      position: "absolute",
+    top: searchPosition.y - keyboardOffset, // moves it up when keyboard opens
+      left: searchPosition.x,
+      zIndex: 10,
+      cursor: isDragging ? "grabbing" : "grab",
+      userSelect: "none",
+      touchAction: "none",
     }}
-    onFocus={() => setIsDropdownVisible(true)}
-  />
+    onMouseDown={(e) => { handleMouseDown(e); e.stopPropagation(); }}
+    onTouchStart={(e) => { handleTouchStart(e); e.stopPropagation(); }}
+    onTouchMove={(e) => { handleTouchMove(e); e.stopPropagation(); }}
+    onTouchEnd={(e) => { endDrag(); e.stopPropagation(); }}
+  >
+  <input
+      type="text"
+      placeholder="Search for a clinic..."
+      value={searchQuery}
+      onChange={(e) => { setSearchQuery(e.target.value); setIsDropdownVisible(true); }}
+      onFocus={() => setIsInputFocused(true)}
+      onBlur={() => setIsInputFocused(false)}
+    />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 
   {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (

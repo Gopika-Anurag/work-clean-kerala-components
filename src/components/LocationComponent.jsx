@@ -73,8 +73,35 @@ function LocationComponent() {
  const [searchPosition, setSearchPosition] = useState({ x: 20, y: 20 });
 const [isDragging, setIsDragging] = useState(false);
 const dragOffset = useRef({ x: 0, y: 0 });
-const [isMobileInputFocused, setIsMobileInputFocused] = useState(false);
+const [keyboardOffset, setKeyboardOffset] = useState(0);
+const [isMobile, setIsMobile] = useState(false);
+const [isInputFocused, setIsInputFocused] = useState(false);
 
+
+useEffect(() => {
+  // Detect mobile devices
+  const ua = navigator.userAgent;
+  if (/Android|iPhone|iPad|iPod/i.test(ua)) setIsMobile(true);
+}, []);
+
+
+useEffect(() => {
+  const initialHeight = window.innerHeight;
+
+  const handleResize = () => {
+    const heightDiff = initialHeight - window.innerHeight;
+    if (heightDiff > 150) {
+      // keyboard open
+      setKeyboardOffset(heightDiff + 20); // add some padding
+    } else {
+      // keyboard closed
+      setKeyboardOffset(0);
+    }
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
 
 
@@ -208,19 +235,21 @@ useEffect(() => {
   return (
 <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
+        {!(isMobile && isInputFocused) && (
+
       <div
   className="draggable-search"
   style={{
-  position: "absolute",
-  top: isMobileInputFocused && window.innerWidth <= 768 ? 10 : searchPosition.y, 
-  left: isMobileInputFocused && window.innerWidth <= 768 ? 20 : searchPosition.x,
-  zIndex: 10,
-  cursor: isDragging ? "grabbing" : "grab",
-  userSelect: "none",
-  touchAction: "none",
-  transition: "top 0.3s, left 0.3s",
-}}
+    position: "absolute",
+    top: searchPosition.y - keyboardOffset, // move up when keyboard is open
+    left: searchPosition.x,
+    zIndex: 10,
+    cursor: isDragging ? "grabbing" : "grab",
+    userSelect: "none",
+    touchAction: "none", // important for mobile to stop map panning
+        transition: "top 0.2s ease", // smooth movement
 
+  }}
   onMouseDown={(e) => {
     handleMouseDown(e);
     e.stopPropagation();
@@ -248,10 +277,6 @@ useEffect(() => {
       setIsDropdownVisible(true);
     }}
     onFocus={() => setIsDropdownVisible(true)}
-      onClick={() => setIsMobileInputFocused(true)} // mobile focus
-        onBlur={() => setIsMobileInputFocused(false)} // when keyboard closes
-
-
   />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 
@@ -286,6 +311,8 @@ useEffect(() => {
     </div>
   )}
 </div>
+)}
+
 </div>
 
 <div
@@ -402,4 +429,4 @@ useEffect(() => {
   );
 }
 
-export default LocationComponent;
+export default LocationComponent;   

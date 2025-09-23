@@ -73,6 +73,27 @@ function LocationComponent() {
  const [searchPosition, setSearchPosition] = useState({ x: 20, y: 20 });
 const [isDragging, setIsDragging] = useState(false);
 const dragOffset = useRef({ x: 0, y: 0 });
+const [keyboardOffset, setKeyboardOffset] = useState(0);
+
+
+useEffect(() => {
+  const initialHeight = window.innerHeight;
+
+  const handleResize = () => {
+    const heightDiff = initialHeight - window.innerHeight;
+    if (heightDiff > 150) {
+      // keyboard open
+      setKeyboardOffset(heightDiff + 20); // add some padding
+    } else {
+      // keyboard closed
+      setKeyboardOffset(0);
+    }
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
 
 
 // --- PC mouse drag ---
@@ -209,12 +230,14 @@ useEffect(() => {
   className="draggable-search"
   style={{
     position: "absolute",
-    top: searchPosition.y,
+    top: searchPosition.y - keyboardOffset, // move up when keyboard is open
     left: searchPosition.x,
     zIndex: 10,
     cursor: isDragging ? "grabbing" : "grab",
     userSelect: "none",
     touchAction: "none", // important for mobile to stop map panning
+        transition: "top 0.2s ease", // smooth movement
+
   }}
   onMouseDown={(e) => {
     handleMouseDown(e);

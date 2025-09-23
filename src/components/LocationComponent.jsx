@@ -17,7 +17,7 @@ const handleDirectionsClick = (lat, lng) => {
 
 const mapContainerStyle = {
   width: "100%",
-  height: "900px",
+  height: "700px",
 };
 
 const mapStyles = [
@@ -253,7 +253,7 @@ useEffect(() => {
 </div>
 
 <div
-  className="map-mask-wrapper"
+  className="map-mask-wrapper fade-mask"
   style={{ backgroundColor: userSelectedColor }} // background layer
 
 >

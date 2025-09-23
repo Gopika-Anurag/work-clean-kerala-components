@@ -11,7 +11,7 @@ import "../styles/location.css";
 const API_KEY = "AIzaSyAp1RD8e5YsoGU4E3InF90E2PoSbS_jIK8";
 
 const handleDirectionsClick = (lat, lng) => {
-  const url = `http://googleusercontent.com/maps/google.com/0{lat},${lng}`;
+const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
   window.open(url, "_blank");
 };
 
@@ -76,6 +76,38 @@ function LocationComponent() {
   const searchContainerRef = useRef(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+  if (!isMobile) return;
+
+  let initialHeight = window.innerHeight;
+
+  const handleResize = () => {
+    const heightDiff = initialHeight - window.innerHeight;
+
+    if (heightDiff > 100) {
+      setKeyboardOpen(true); // keyboard likely open
+    } else {
+      setKeyboardOpen(false);
+      initialHeight = window.innerHeight; // reset
+    }
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, [isMobile]);
+
+
+useEffect(() => {
+  const handleResize = () => {
+    setViewportHeight(window.innerHeight);
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
 
 useEffect(() => {
   const ua = navigator.userAgent;
@@ -96,8 +128,13 @@ useEffect(() => {
     };
   };
 
-  const handleMouseDown = (e) => startDrag(e.clientX, e.clientY);
-  const handleTouchStart = (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY);
+  const handleMouseDown = (e) => {
+  if (!isMobile) startDrag(e.clientX, e.clientY);
+};
+const handleTouchStart = (e) => {
+  if (!isMobile) startDrag(e.touches[0].clientX, e.touches[0].clientY);
+};
+
 
   const handleMove = (clientX, clientY) => {
     if (!isDragging) return;
@@ -239,21 +276,22 @@ useEffect(() => {
   return (
     <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
-        <div
+       <div
   ref={searchContainerRef}
   className="draggable-search"
   style={{
     position: isMobile ? "fixed" : "absolute",
     top: isMobile
       ? keyboardOpen
-        ? 10 // move near top when keyboard open
-        : 20 // default top
+        ? 20 // Always visible near the top when keyboard opens
+        : 20 // Default top position
       : searchPosition.y,
     left: isMobile
-      ? (keyboardOpen ? (window.innerWidth - 320) / 2 : 10) // center when keyboard open
+      ? 20 // Fixed left on mobile or you can center it: (window.innerWidth - 320)/2
       : searchPosition.x,
+    width: 320,
     zIndex: 10,
-    cursor: isDragging ? "grabbing" : "grab",
+    cursor: !isMobile && isDragging ? "grabbing" : "grab",
     userSelect: "none",
     touchAction: "none",
     backgroundColor: "white",
@@ -261,11 +299,9 @@ useEffect(() => {
     padding: "10px",
     boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
     transition: "top 0.3s ease, left 0.3s ease",
-    width: 320, // fixed width for mobile centering
   }}
-  onMouseDown={handleMouseDown}
-  onTouchStart={handleTouchStart}
 >
+
   <input
     type="text"
     placeholder="Search for a clinic..."
@@ -274,10 +310,9 @@ useEffect(() => {
       setSearchQuery(e.target.value);
       setIsDropdownVisible(true);
     }}
-    onFocus={() => setKeyboardOpen(true)}
-    onBlur={() => setKeyboardOpen(false)}
   />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
+
 
   {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (
     <div

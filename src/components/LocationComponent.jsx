@@ -61,6 +61,9 @@ const mapStyles = [
 function LocationComponent() {
   const [selectedClinic, setSelectedClinic] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+    const [userAccuracy, setUserAccuracy] = useState(null);   // ✅ NEW
+  const [showUserInfo, setShowUserInfo] = useState(false);  // ✅ NEW
+
   const [mapRef, setMapRef] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -129,9 +132,13 @@ useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const { latitude, longitude } = pos.coords;
+const { latitude, longitude, accuracy } = pos.coords;
           const newLoc = { lat: latitude, lng: longitude };
           setUserLocation(newLoc);
+                    setUserAccuracy(accuracy);  // ✅ Save accuracy
+                              setShowUserInfo(true);
+
+
 
           if (mapRef) {
             mapRef.panTo(newLoc);
@@ -140,6 +147,11 @@ useEffect(() => {
         },
         () => {
           alert("Unable to retrieve your location.");
+        },
+         {
+          enableHighAccuracy: true,   // ✅ Better accuracy
+          timeout: 10000,
+          maximumAge: 0,
         }
       );
     } else {
@@ -262,6 +274,46 @@ useEffect(() => {
     onLoad={onMapLoad}
     options={{ styles: mapStyles }}
   >
+
+    {/* User Location Marker */}
+  {/* User Location Marker (Red) */}
+{userLocation && (
+  <Marker
+    position={userLocation}
+    icon={{
+      url:
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+            <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#ff3333"/>
+            <circle cx="12" cy="9" r="2.5" fill="white"/>
+          </svg>
+        `),
+      scaledSize: new window.google.maps.Size(40, 40),
+    }}
+        onClick={() => setShowUserInfo(true)}   // ✅ add this
+
+  />
+)}
+
+{/* InfoWindow for User Location */}
+{userLocation && showUserInfo && (
+  <InfoWindow
+    position={userLocation}
+    onCloseClick={() => setShowUserInfo(false)}
+    options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
+  >
+    <div style={{ minWidth: "160px" }}>
+      <strong>You are here</strong>
+      <p style={{ fontSize: "12px", margin: 0 }}>
+        Lat: {userLocation.lat.toFixed(5)} <br />
+        Lng: {userLocation.lng.toFixed(5)} <br />
+        {userAccuracy && <>Accuracy: ±{Math.round(userAccuracy)} m</>}
+      </p>
+    </div>
+  </InfoWindow>
+)}
+
     {/* Filtered Clinic Markers (Blue) */}
     {/* All filtered clinic markers */}
 {filteredClinics.map((clinic) => (

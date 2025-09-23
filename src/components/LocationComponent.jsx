@@ -235,7 +235,6 @@ useEffect(() => {
   return (
 <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
-        {!(isMobile && isInputFocused) && (
 
       <div
     className="draggable-search"
@@ -294,7 +293,6 @@ useEffect(() => {
     </div>
   )}
 </div>
-)}
 
 </div>
 

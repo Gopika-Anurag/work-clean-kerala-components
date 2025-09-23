@@ -142,7 +142,7 @@ const { latitude, longitude, accuracy } = pos.coords;
 
           if (mapRef) {
             mapRef.panTo(newLoc);
-            mapRef.setZoom(14);
+            mapRef.setZoom(16);
           }
         },
         () => {
@@ -277,6 +277,7 @@ const { latitude, longitude, accuracy } = pos.coords;
 
     {/* User Location Marker */}
   {/* User Location Marker (Red) */}
+{/* User Location Marker (Red) */}
 {userLocation && (
   <Marker
     position={userLocation}
@@ -289,12 +290,13 @@ const { latitude, longitude, accuracy } = pos.coords;
             <circle cx="12" cy="9" r="2.5" fill="white"/>
           </svg>
         `),
-      scaledSize: new window.google.maps.Size(40, 40),
+      scaledSize: new window.google.maps.Size(40, 40),   // ✅ forces correct size
+      anchor: new window.google.maps.Point(20, 40),      // ✅ ensures bottom tip aligns
     }}
-        onClick={() => setShowUserInfo(true)}   // ✅ add this
-
+    onClick={() => setShowUserInfo(true)}
   />
 )}
+
 
 {/* InfoWindow for User Location */}
 {userLocation && showUserInfo && (

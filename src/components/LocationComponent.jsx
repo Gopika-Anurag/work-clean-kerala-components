@@ -237,37 +237,66 @@ useEffect(() => {
       <div className="map-controls">
 
       <div
-    className="draggable-search"
-    style={{
-  position: isMobile ? "fixed" : "absolute",
-  top: isMobile
-    ? 20 /* fixed distance from top of viewport */
-    : searchPosition.y - keyboardOffset,
-  left: searchPosition.x,
-  zIndex: 10,
-  cursor: isDragging ? "grabbing" : "grab",
-  userSelect: "none",
-  touchAction: "none",
-}}
-    onMouseDown={(e) => { handleMouseDown(e); e.stopPropagation(); }}
-    onTouchStart={(e) => { handleTouchStart(e); e.stopPropagation(); }}
-    onTouchMove={(e) => { handleTouchMove(e); e.stopPropagation(); }}
-    onTouchEnd={(e) => { endDrag(); e.stopPropagation(); }}
-  >
+  className="draggable-search"
+  style={{
+    position: isMobile ? "fixed" : "absolute",
+    top: isMobile
+      ? Math.min(searchPosition.y, window.innerHeight - 80) // always visible above keyboard
+      : searchPosition.y - keyboardOffset,
+    left: searchPosition.x,
+    zIndex: 10,
+    cursor: isDragging ? "grabbing" : "grab",
+    userSelect: "none",
+    touchAction: "none",
+    backgroundColor: "white",
+    borderRadius: "12px",
+    padding: "10px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+  }}
+  onMouseDown={(e) => {
+    handleMouseDown(e);
+    e.stopPropagation();
+  }}
+  onTouchStart={(e) => {
+    handleTouchStart(e);
+    e.stopPropagation();
+  }}
+  onTouchMove={(e) => {
+    handleTouchMove(e);
+    e.stopPropagation();
+  }}
+  onTouchEnd={(e) => {
+    endDrag();
+    e.stopPropagation();
+  }}
+>
   <input
-      type="text"
-      placeholder="Search for a clinic..."
-      value={searchQuery}
-      onChange={(e) => { setSearchQuery(e.target.value); setIsDropdownVisible(true); }}
-      onFocus={() => {
-  setIsInputFocused(true);
-  if (isMobile) {
-    setSearchPosition((prev) => ({ ...prev, y: 10 })); // move it up
-  }
-}}
-onBlur={() => setIsInputFocused(false)}
-
-    />
+    type="text"
+    placeholder="Search for a clinic..."
+    value={searchQuery}
+    onChange={(e) => {
+      setSearchQuery(e.target.value);
+      setIsDropdownVisible(true);
+    }}
+    onFocus={() => {
+      setIsInputFocused(true);
+      if (isMobile) {
+        setSearchPosition((prev) => ({
+          ...prev,
+          y: 10, // small padding from top when keyboard opens
+        }));
+      }
+    }}
+    onBlur={() => {
+      setIsInputFocused(false);
+      if (isMobile) {
+        setSearchPosition((prev) => ({
+          ...prev,
+          y: 20, // reset padding after keyboard closes
+        }));
+      }
+    }}
+  />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 
   {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (

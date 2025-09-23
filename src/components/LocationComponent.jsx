@@ -74,6 +74,16 @@ function LocationComponent() {
 const [isDragging, setIsDragging] = useState(false);
 const dragOffset = useRef({ x: 0, y: 0 });
 const [keyboardOffset, setKeyboardOffset] = useState(0);
+const [isMobile, setIsMobile] = useState(false);
+const [isInputFocused, setIsInputFocused] = useState(false);
+
+
+useEffect(() => {
+  // Detect mobile devices
+  const ua = navigator.userAgent;
+  if (/Android|iPhone|iPad|iPod/i.test(ua)) setIsMobile(true);
+}, []);
+
 
 
 useEffect(() => {
@@ -226,80 +236,66 @@ useEffect(() => {
   return (
 <div className="map-wrapper" style={{ backgroundColor: 'lightblue' }}>
       <div className="map-controls">
-      <div
-  className="draggable-search"
-  style={{
-    position: "absolute",
-    top: searchPosition.y - keyboardOffset, // move up when keyboard is open
-    left: searchPosition.x,
-    zIndex: 10,
-    cursor: isDragging ? "grabbing" : "grab",
-    userSelect: "none",
-    touchAction: "none", // important for mobile to stop map panning
-        transition: "top 0.2s ease", // smooth movement
-
-  }}
-  onMouseDown={(e) => {
-    handleMouseDown(e);
-    e.stopPropagation();
-  }}
-  onTouchStart={(e) => {
-    handleTouchStart(e);
-    e.stopPropagation();
-  }}
-  onTouchMove={(e) => {
-    handleTouchMove(e);
-    e.stopPropagation();
-  }}
-  onTouchEnd={(e) => {
-    endDrag();
-    e.stopPropagation();
-  }}
->
-
-  <input
-    type="text"
-    placeholder="Search for a clinic..."
-    value={searchQuery}
-    onChange={(e) => {
-      setSearchQuery(e.target.value);
-      setIsDropdownVisible(true);
+      {!(isMobile && isInputFocused) && (
+  <div
+    className="draggable-search"
+    style={{
+      position: "absolute",
+      top: searchPosition.y,
+      left: searchPosition.x,
+      zIndex: 10,
+      cursor: isDragging ? "grabbing" : "grab",
+      userSelect: "none",
+      touchAction: "none",
     }}
-    onFocus={() => setIsDropdownVisible(true)}
-  />
-  <button onClick={handleFindMyLocation}>📍 Find My Location</button>
+    onMouseDown={(e) => { handleMouseDown(e); e.stopPropagation(); }}
+    onTouchStart={(e) => { handleTouchStart(e); e.stopPropagation(); }}
+    onTouchMove={(e) => { handleTouchMove(e); e.stopPropagation(); }}
+    onTouchEnd={(e) => { endDrag(); e.stopPropagation(); }}
+  >
+    <input
+      type="text"
+      placeholder="Search for a clinic..."
+      value={searchQuery}
+      onChange={(e) => { setSearchQuery(e.target.value); setIsDropdownVisible(true); }}
+      onFocus={() => setIsInputFocused(true)}
+      onBlur={() => setIsInputFocused(false)}
+    />
+    <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 
-  {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (
-    <div
-      className="clinic-dropdown"
-      ref={dropdownRef}
-      style={{
-        overflowY: "auto",
-        maxHeight: "300px",
-        ...(isScrollable && {
-          maskImage:
-            "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-        }),
-      }}
-    >
-      {filteredClinics.map((clinic) => (
-        <div
-          key={clinic.id}
-          className="clinic-item"
-          onClick={() => handleClinicSelect(clinic)}
-        >
-          <span>📍</span>
-          <div>
-            <strong>{clinic.name}</strong>
-            <p>{clinic.address}</p>
+    {isDropdownVisible && searchQuery && filteredClinics.length > 0 && (
+      <div
+        className="clinic-dropdown"
+        ref={dropdownRef}
+        style={{
+          overflowY: "auto",
+          maxHeight: "300px",
+          ...(isScrollable && {
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+          }),
+        }}
+      >
+        {filteredClinics.map((clinic) => (
+          <div
+            key={clinic.id}
+            className="clinic-item"
+            onClick={() => handleClinicSelect(clinic)}
+          >
+            <span>📍</span>
+            <div>
+              <strong>{clinic.name}</strong>
+              <p>{clinic.address}</p>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
 </div>
 
 <div

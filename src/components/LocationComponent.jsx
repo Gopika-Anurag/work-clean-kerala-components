@@ -129,35 +129,47 @@ useEffect(() => {
   };
 
   const handleFindMyLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-const { latitude, longitude, accuracy } = pos.coords;
-          const newLoc = { lat: latitude, lng: longitude };
-          setUserLocation(newLoc);
-                    setUserAccuracy(accuracy);  // ✅ Save accuracy
-                              setShowUserInfo(true);
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        const newLoc = { lat: latitude, lng: longitude };
+        setUserLocation(newLoc);
+        setUserAccuracy(accuracy);
+        setShowUserInfo(true);
 
-
-
-          if (mapRef) {
-            mapRef.panTo(newLoc);
-            mapRef.setZoom(14);
-          }
-        },
-        () => {
-          alert("Unable to retrieve your location.");
-        },
-         {
-          enableHighAccuracy: true,   // ✅ Better accuracy
-          timeout: 10000,
-          maximumAge: 0,
+        if (mapRef) {
+          mapRef.panTo(newLoc);
+          mapRef.setZoom(14);
         }
-      );
-    } else {
-      alert("Geolocation not supported.");
-    }
-  };
+      },
+      (err) => {
+        console.error("Geolocation error:", err.message);
+
+        // fallback location (Kerala example)
+        const fallbackLoc = { lat: 10.8505, lng: 76.2711 };
+        setUserLocation(fallbackLoc);
+        setUserAccuracy(null);
+        setShowUserInfo(true);
+
+        if (mapRef) {
+          mapRef.panTo(fallbackLoc);
+          mapRef.setZoom(10);
+        }
+
+        alert("Unable to get your location, showing default Kerala location.");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  } else {
+    alert("Geolocation not supported in this browser.");
+  }
+};
+
 
   const handleClinicSelect = (clinic) => {
     setSelectedClinic(clinic);
@@ -174,7 +186,10 @@ const { latitude, longitude, accuracy } = pos.coords;
       clinic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       clinic.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+ useEffect(() => {
+    console.log("User Location:", userLocation, "Accuracy:", userAccuracy);
+  }, [userLocation]);
+  
   // 🔍 Detect if dropdown is scrollable
   useEffect(() => {
     if (dropdownRef.current) {

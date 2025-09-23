@@ -239,14 +239,16 @@ useEffect(() => {
       <div
     className="draggable-search"
     style={{
-      position: "absolute",
-    top: searchPosition.y - keyboardOffset, // moves it up when keyboard opens
-      left: searchPosition.x,
-      zIndex: 10,
-      cursor: isDragging ? "grabbing" : "grab",
-      userSelect: "none",
-      touchAction: "none",
-    }}
+  position: isMobile ? "fixed" : "absolute",
+  top: isMobile
+    ? 20 /* fixed distance from top of viewport */
+    : searchPosition.y - keyboardOffset,
+  left: searchPosition.x,
+  zIndex: 10,
+  cursor: isDragging ? "grabbing" : "grab",
+  userSelect: "none",
+  touchAction: "none",
+}}
     onMouseDown={(e) => { handleMouseDown(e); e.stopPropagation(); }}
     onTouchStart={(e) => { handleTouchStart(e); e.stopPropagation(); }}
     onTouchMove={(e) => { handleTouchMove(e); e.stopPropagation(); }}
@@ -257,8 +259,14 @@ useEffect(() => {
       placeholder="Search for a clinic..."
       value={searchQuery}
       onChange={(e) => { setSearchQuery(e.target.value); setIsDropdownVisible(true); }}
-      onFocus={() => setIsInputFocused(true)}
-      onBlur={() => setIsInputFocused(false)}
+      onFocus={() => {
+  setIsInputFocused(true);
+  if (isMobile) {
+    setSearchPosition((prev) => ({ ...prev, y: 10 })); // move it up
+  }
+}}
+onBlur={() => setIsInputFocused(false)}
+
     />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 

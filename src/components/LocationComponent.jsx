@@ -73,6 +73,9 @@ function LocationComponent() {
  const [searchPosition, setSearchPosition] = useState({ x: 20, y: 20 });
 const [isDragging, setIsDragging] = useState(false);
 const dragOffset = useRef({ x: 0, y: 0 });
+const [isMobileInputFocused, setIsMobileInputFocused] = useState(false);
+
+
 
 
 // --- PC mouse drag ---
@@ -208,14 +211,16 @@ useEffect(() => {
       <div
   className="draggable-search"
   style={{
-    position: "absolute",
-    top: searchPosition.y,
-    left: searchPosition.x,
-    zIndex: 10,
-    cursor: isDragging ? "grabbing" : "grab",
-    userSelect: "none",
-    touchAction: "none", // important for mobile to stop map panning
-  }}
+  position: "absolute",
+  top: isMobileInputFocused && window.innerWidth <= 768 ? 10 : searchPosition.y, 
+  left: isMobileInputFocused && window.innerWidth <= 768 ? 20 : searchPosition.x,
+  zIndex: 10,
+  cursor: isDragging ? "grabbing" : "grab",
+  userSelect: "none",
+  touchAction: "none",
+  transition: "top 0.3s, left 0.3s",
+}}
+
   onMouseDown={(e) => {
     handleMouseDown(e);
     e.stopPropagation();
@@ -243,6 +248,10 @@ useEffect(() => {
       setIsDropdownVisible(true);
     }}
     onFocus={() => setIsDropdownVisible(true)}
+      onClick={() => setIsMobileInputFocused(true)} // mobile focus
+        onBlur={() => setIsMobileInputFocused(false)} // when keyboard closes
+
+
   />
   <button onClick={handleFindMyLocation}>📍 Find My Location</button>
 

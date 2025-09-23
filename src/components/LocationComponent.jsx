@@ -253,7 +253,7 @@ useEffect(() => {
 </div>
 
 <div
-  className="map-mask-wrapper fade-mask"
+  className="map-mask-wrapper"
   style={{ backgroundColor: userSelectedColor }} // background layer
 
 >

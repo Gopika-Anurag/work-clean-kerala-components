@@ -164,9 +164,13 @@ function LocationComponent() {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "700px" }}>
-      <GoogleMap mapContainerStyle={{ width: "100%", height: "100%" }} onLoad={onMapLoad} options={{ styles: mapStyles }}>
-        {/* User Location */}
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "700px", backgroundColor:"lightblue" }}>
+<div className="map-mask-wrapper">
+  <GoogleMap
+    mapContainerStyle={{ width: "100%", height: "100%" }}
+    onLoad={onMapLoad}
+    options={{ styles: mapStyles }}
+  >        {/* User Location */}
         {userLocation && (
           <Marker
             position={userLocation}
@@ -246,6 +250,8 @@ function LocationComponent() {
           </InfoWindow>
         )}
       </GoogleMap>
+      </div>
+
 
       {/* Search box inside map */}
       <div

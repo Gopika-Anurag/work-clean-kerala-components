@@ -1,11 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  GoogleMap,
-  useLoadScript,
-  Marker,
-  InfoWindow,
-  Circle,
-} from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker, InfoWindow, Circle } from "@react-google-maps/api";
 import { clinics } from "../data/clinicsData";
 import "../styles/location.css";
 
@@ -22,11 +16,7 @@ const mapContainerStyle = {
 };
 
 const mapStyles = [
-  {
-    featureType: "all",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#4a6fa5" }],
-  },
+  { featureType: "all", elementType: "labels.text.fill", stylers: [{ color: "#4a6fa5" }] },
   { featureType: "administrative", elementType: "geometry", stylers: [{ visibility: "off" }] },
   { featureType: "road", elementType: "geometry", stylers: [{ color: "#b3d1ff" }] },
   { featureType: "road", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
@@ -47,27 +37,30 @@ function LocationComponent() {
   const [isScrollable, setIsScrollable] = useState(false);
   const dropdownRef = useRef(null);
 
-  // --- draggable search box state ---
+  // Desktop draggable
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
-  const [searchPosition, setSearchPosition] = useState({ x: 20, y: 120 });
+  const defaultSearchPos = { x: 20, y: 20 };
+  const [searchPosition, setSearchPosition] = useState(defaultSearchPos);
 
-  // ✅ Adjust search box when keyboard opens/closes
+  // Mobile / keyboard
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  // --- Detect mobile and keyboard open ---
   useEffect(() => {
-    const initialHeight = window.innerHeight;
-
     const handleResize = () => {
-      const currentHeight = window.innerHeight;
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
 
-      if (currentHeight < initialHeight * 0.75) {
-        // keyboard open → pin near top
-        setSearchPosition((prev) => ({ ...prev, y: 60 }));
-      } else {
-        // keyboard closed → reset if too high
-        setSearchPosition((prev) => ({
-          ...prev,
-          y: prev.y < 100 ? 120 : prev.y,
-        }));
+      const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+      if (mobile) {
+        if (vh < window.innerHeight * 0.75) {
+          setKeyboardOpen(true); // keyboard open → top center
+        } else {
+          setKeyboardOpen(false); // keyboard closed → bottom center
+        }
       }
     };
 
@@ -84,7 +77,7 @@ function LocationComponent() {
     };
   }, []);
 
-  // --- Dragging logic ---
+  // --- Desktop drag handlers ---
   const startDrag = (clientX, clientY) => {
     setIsDragging(true);
     dragOffset.current = {
@@ -101,12 +94,13 @@ function LocationComponent() {
     });
   };
 
+  const handleMouseDown = (e) => startDrag(e.clientX, e.clientY);
+  const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
+  const handleTouchStart = (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY);
+  const handleTouchMove = (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY);
   const endDrag = () => setIsDragging(false);
 
   useEffect(() => {
-    const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
-    const handleTouchMove = (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY);
-
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", endDrag);
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
@@ -120,10 +114,7 @@ function LocationComponent() {
     };
   }, [isDragging]);
 
-  // --- Map load ---
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: API_KEY,
-  });
+  const { isLoaded, loadError } = useLoadScript({ googleMapsApiKey: API_KEY });
 
   const onMapLoad = (map) => {
     setMapRef(map);
@@ -132,43 +123,43 @@ function LocationComponent() {
     map.fitBounds(bounds);
   };
 
-  // --- Location ---
   const handleFindMyLocation = () => {
-    if (!navigator.geolocation) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          const newLoc = { lat: latitude, lng: longitude };
+          setUserLocation(newLoc);
+          setUserAccuracy(accuracy);
+          setShowUserInfo(true);
+
+          if (mapRef) {
+            mapRef.panTo(newLoc);
+            mapRef.setZoom(14);
+          }
+        },
+        (err) => {
+          console.error("Geolocation error:", err.message);
+
+          const fallbackLoc = { lat: 10.8505, lng: 76.2711 };
+          setUserLocation(fallbackLoc);
+          setUserAccuracy(null);
+          setShowUserInfo(true);
+
+          if (mapRef) {
+            mapRef.panTo(fallbackLoc);
+            mapRef.setZoom(10);
+          }
+
+          alert("Unable to get your location, showing default Kerala location.");
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    } else {
       alert("Geolocation not supported in this browser.");
-      return;
     }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
-        const newLoc = { lat: latitude, lng: longitude };
-        setUserLocation(newLoc);
-        setUserAccuracy(accuracy);
-        setShowUserInfo(true);
-
-        if (mapRef) {
-          mapRef.panTo(newLoc);
-          mapRef.setZoom(14);
-        }
-      },
-      (err) => {
-        console.error("Geolocation error:", err.message);
-        const fallbackLoc = { lat: 10.8505, lng: 76.2711 }; // Kerala fallback
-        setUserLocation(fallbackLoc);
-        setUserAccuracy(null);
-        setShowUserInfo(true);
-        if (mapRef) {
-          mapRef.panTo(fallbackLoc);
-          mapRef.setZoom(10);
-        }
-        alert("Unable to get your location, showing default Kerala location.");
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
   };
 
-  // --- Search ---
   const handleClinicSelect = (clinic) => {
     setSelectedClinic(clinic);
     setSearchQuery(clinic.name);
@@ -186,10 +177,50 @@ function LocationComponent() {
   );
 
   useEffect(() => {
+    console.log("User Location:", userLocation, "Accuracy:", userAccuracy);
+  }, [userLocation]);
+
+  useEffect(() => {
     if (dropdownRef.current) {
       setIsScrollable(dropdownRef.current.scrollHeight > dropdownRef.current.clientHeight);
     }
   }, [filteredClinics, isDropdownVisible]);
+
+  const getSearchBoxStyle = () => {
+    if (isMobile) {
+      return {
+        position: "absolute",
+        left: "50%",
+        transform: "translateX(-50%)",
+        bottom: keyboardOpen ? "auto" : "20px",
+        top: keyboardOpen ? "60px" : "auto",
+        zIndex: 10,
+        backgroundColor: "white",
+        borderRadius: "12px",
+        padding: "10px",
+        width: "90%",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+        transition: "top 0.3s ease, bottom 0.3s ease",
+        textAlign: "center",
+      };
+    } else {
+      return {
+        position: "absolute",
+        top: searchPosition.y,
+        left: searchPosition.x,
+        zIndex: 10,
+        cursor: isDragging ? "grabbing" : "grab",
+        userSelect: "none",
+        touchAction: "none",
+        backgroundColor: "white",
+        borderRadius: "12px",
+        padding: "10px",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+        transition: "top 0.3s ease, left 0.3s ease",
+        width: "260px",
+      };
+    }
+  };
 
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps...</div>;
@@ -199,23 +230,9 @@ function LocationComponent() {
       {/* Search box */}
       <div
         className="draggable-search"
-        style={{
-          position: "absolute",
-          top: searchPosition.y,
-          left: Math.max(10, Math.min(searchPosition.x, window.innerWidth - 280)),
-          zIndex: 10,
-          cursor: isDragging ? "grabbing" : "grab",
-          userSelect: "none",
-          touchAction: "none",
-          backgroundColor: "white",
-          borderRadius: "12px",
-          padding: "10px",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-          transition: "top 0.3s ease",
-          width: "260px",
-        }}
-        onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
-        onTouchStart={(e) => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
+        style={getSearchBoxStyle()}
+        onMouseDown={isMobile ? null : handleMouseDown}
+        onTouchStart={isMobile ? null : handleTouchStart}
       >
         <input
           type="text"
@@ -261,14 +278,10 @@ function LocationComponent() {
         )}
       </div>
 
-      {/* Map */}
+      {/* Google Map */}
       <div className="map-mask-wrapper" style={{ backgroundColor: "transparent" }}>
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          onLoad={onMapLoad}
-          options={{ styles: mapStyles }}
-        >
-          {/* User Location Marker */}
+        <GoogleMap mapContainerStyle={mapContainerStyle} onLoad={onMapLoad} options={{ styles: mapStyles }}>
+          {/* User location */}
           {userLocation && (
             <Marker
               position={userLocation}
@@ -276,11 +289,11 @@ function LocationComponent() {
                 url:
                   "data:image/svg+xml;charset=UTF-8," +
                   encodeURIComponent(`
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                      <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#ff3333"/>
-                      <circle cx="12" cy="9" r="2.5" fill="white"/>
-                    </svg>
-                  `),
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+                    <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#ff3333"/>
+                    <circle cx="12" cy="9" r="2.5" fill="white"/>
+                  </svg>
+                `),
                 scaledSize: new window.google.maps.Size(40, 40),
                 anchor: new window.google.maps.Point(20, 40),
               }}
@@ -288,20 +301,14 @@ function LocationComponent() {
             />
           )}
 
-          {/* Accuracy Circle */}
           {userLocation && userAccuracy && (
             <Circle
               center={userLocation}
               radius={userAccuracy}
-              options={{
-                fillColor: "#4da6ff44",
-                strokeColor: "#4da6ff",
-                strokeWeight: 1,
-              }}
+              options={{ fillColor: "#4da6ff44", strokeColor: "#4da6ff", strokeWeight: 1 }}
             />
           )}
 
-          {/* User InfoWindow */}
           {userLocation && showUserInfo && (
             <InfoWindow
               position={userLocation}
@@ -319,7 +326,7 @@ function LocationComponent() {
             </InfoWindow>
           )}
 
-          {/* Clinic Markers */}
+          {/* Clinic markers */}
           {filteredClinics.map((clinic) => (
             <Marker
               key={clinic.id}
@@ -328,18 +335,17 @@ function LocationComponent() {
                 url:
                   "data:image/svg+xml;charset=UTF-8," +
                   encodeURIComponent(`
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                      <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#1216da"/>
-                      <circle cx="12" cy="9" r="2.5" fill="white"/>
-                    </svg>
-                  `),
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+                    <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#1216da"/>
+                    <circle cx="12" cy="9" r="2.5" fill="white"/>
+                  </svg>
+                `),
                 scaledSize: new window.google.maps.Size(40, 40),
               }}
               onClick={() => setSelectedClinic(clinic)}
             />
           ))}
 
-          {/* Clinic InfoWindow */}
           {selectedClinic && (
             <InfoWindow
               position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
@@ -359,9 +365,7 @@ function LocationComponent() {
                     cursor: "pointer",
                     fontSize: "14px",
                   }}
-                  onClick={() =>
-                    handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)
-                  }
+                  onClick={() => handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)}
                 >
                   🚀 View on Google Maps
                 </button>

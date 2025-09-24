@@ -85,6 +85,8 @@
   user-select: none;
   width: 280px;
   transition: transform 0.2s, box-shadow 0.3s;
+    margin-bottom: env(safe-area-inset-bottom);
+
 }
 
 .draggable-search:hover {
@@ -119,7 +121,7 @@
   padding: 10px 14px;
   border-radius: 12px;
   border: none;
-  background-color: #3b82f6;
+  background-color: #1216da;
   color: white;
   font-weight: 600;
   cursor: pointer;

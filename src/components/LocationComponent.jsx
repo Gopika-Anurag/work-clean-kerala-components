@@ -5,10 +5,7 @@ import "../styles/location.css";
 
 const API_KEY = "AIzaSyAp1RD8e5YsoGU4E3InF90E2PoSbS_jIK8";
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "700px",
-};
+
 
 const mapStyles = [
   { featureType: "all", elementType: "labels.text.fill", stylers: [{ color: "#4a6fa5" }] },
@@ -165,7 +162,7 @@ function LocationComponent() {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "100vh", maxHeight: "800px", backgroundColor:"lightblue" }}>
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "90vh", maxHeight: "800px", backgroundColor:"lightblue" }}>
 <div className="map-mask-wrapper">
   <GoogleMap
     mapContainerStyle={{ width: "100%", height: "100%" }}

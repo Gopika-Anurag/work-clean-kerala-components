@@ -269,6 +269,7 @@ useEffect(() => {
       left: "50%",
       transform: "translateX(-50%)",
       transition: "top 0.3s ease, bottom 0.3s ease",
+      // when keyboard open -> move to top of map container
       top: isKeyboardOpen ? "20px" : "auto",
       bottom: isKeyboardOpen ? "auto" : "20px",
       width: "90%",
@@ -286,7 +287,6 @@ useEffect(() => {
     touchAction: "none",
   };
 };
-
 
 
   return (

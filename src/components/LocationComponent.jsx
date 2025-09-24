@@ -175,32 +175,37 @@ function LocationComponent() {
     <div className="map-wrapper" style={{ backgroundColor: "lightblue" }}>
       {/* Search box */}
       <div
-        className="draggable-search"
-        style={
-          isMobile
-            ? {
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-                bottom: searchPosition.bottom !== null ? `${searchPosition.bottom}px` : "auto",
-                top: searchPosition.top !== null ? `${searchPosition.top}px` : "auto",
-                zIndex: 100,
-                width: "90%",
-              }
-            : {
-                position: "absolute",
-                top: searchPosition.y || defaultSearchPos.y,
-                left: searchPosition.x || defaultSearchPos.x,
-                zIndex: 100,
-                cursor: isDragging ? "grabbing" : "grab",
-                userSelect: "none",
-                touchAction: "none",
-                width: "260px",
-              }
-        }
-        onMouseDown={isMobile ? null : handleMouseDown}
-        onTouchStart={isMobile ? null : handleTouchStart}
-      >
+  className="draggable-search"
+  style={{
+    position: "absolute",
+    left: isMobile ? "50%" : "20px", // center on mobile, left on PC
+    top: isMobile
+      ? keyboardOpen
+        ? "60px"
+        : "auto"
+      : "50%", // vertical center on PC
+    bottom: isMobile
+      ? keyboardOpen
+        ? "auto"
+        : "20px"
+      : "auto",
+    transform: isMobile
+      ? "translateX(-50%)"
+      : "translateY(-50%)", // vertical center for PC
+    zIndex: 100,
+    width: isMobile ? "90%" : "260px",
+    cursor: isMobile ? "default" : isDragging ? "grabbing" : "grab",
+    userSelect: isMobile ? "auto" : "none",
+    touchAction: "none",
+    backgroundColor: "white",
+    borderRadius: "12px",
+    padding: "10px",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+  }}
+  onMouseDown={isMobile ? null : handleMouseDown}
+  onTouchStart={isMobile ? null : handleTouchStart}
+>
+
         <input
           type="text"
           placeholder="Search for a clinic..."

@@ -46,16 +46,7 @@ function LocationComponent() {
   // Mobile detection
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
-
-  const mapOptions = {
-  styles: mapStyles,
-  disableDefaultUI: true,   // remove ALL default controls
-  zoomControl: false,       // no zoom
-  streetViewControl: false, // no street view
-  mapTypeControl: false,    // no satellite/terrain
-  fullscreenControl: false, // no fullscreen
-};
-
+  
 
   // Detect window resize
   useEffect(() => {
@@ -179,7 +170,14 @@ function LocationComponent() {
   <GoogleMap
     mapContainerStyle={{ width: "100%", height: "100%" }}
     onLoad={onMapLoad}
-    options={mapOptions}
+    options={{
+    styles: mapStyles,
+    disableDefaultUI: true,   // 🚫 removes all default buttons
+    zoomControl: false,       // (optional) make sure zoom is gone
+    streetViewControl: false, // remove street view
+    mapTypeControl: false,    // remove satellite/terrain switch
+    fullscreenControl: false, // remove fullscreen button
+  }}
   >        {/* User Location */}
         {userLocation && (
           <Marker

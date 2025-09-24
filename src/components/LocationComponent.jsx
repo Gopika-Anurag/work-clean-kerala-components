@@ -41,39 +41,41 @@ function LocationComponent() {
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const defaultSearchPos = { x: 20, y: 20 };
-  const [searchPosition, setSearchPosition] = useState(defaultSearchPos);
+  const [searchPosition, setSearchPosition] = useState({ x: defaultSearchPos.x, y: defaultSearchPos.y, top: null, bottom: 20 });
 
   // Mobile / keyboard
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
 
-  // --- Detect mobile and keyboard open ---
+  // --- Mobile keyboard & resize detection ---
   useEffect(() => {
-    const handleResize = () => {
+    const updatePosition = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
 
-      const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      if (mobile && window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const keyboardDetected = viewportHeight < window.innerHeight * 0.75;
+        setKeyboardOpen(keyboardDetected);
 
-      if (mobile) {
-        if (vh < window.innerHeight * 0.75) {
-          setKeyboardOpen(true); // keyboard open → top center
+        if (keyboardDetected) {
+          setSearchPosition((prev) => ({ ...prev, top: 60, bottom: null }));
         } else {
-          setKeyboardOpen(false); // keyboard closed → bottom center
+          setSearchPosition((prev) => ({ ...prev, top: null, bottom: 20 }));
         }
+      } else {
+        setKeyboardOpen(false);
+        setSearchPosition((prev) => ({ ...prev, top: null, bottom: null }));
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", handleResize);
-    }
+    window.addEventListener("resize", updatePosition);
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", updatePosition);
+    updatePosition();
 
     return () => {
-      window.removeEventListener("resize", handleResize);
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener("resize", handleResize);
-      }
+      window.removeEventListener("resize", updatePosition);
+      if (window.visualViewport) window.visualViewport.removeEventListener("resize", updatePosition);
     };
   }, []);
 
@@ -81,14 +83,15 @@ function LocationComponent() {
   const startDrag = (clientX, clientY) => {
     setIsDragging(true);
     dragOffset.current = {
-      x: clientX - searchPosition.x,
-      y: clientY - searchPosition.y,
+      x: clientX - (searchPosition.x || defaultSearchPos.x),
+      y: clientY - (searchPosition.y || defaultSearchPos.y),
     };
   };
 
   const handleMove = (clientX, clientY) => {
     if (!isDragging) return;
     setSearchPosition({
+      ...searchPosition,
       x: clientX - dragOffset.current.x,
       y: clientY - dragOffset.current.y,
     });
@@ -105,7 +108,6 @@ function LocationComponent() {
     window.addEventListener("mouseup", endDrag);
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
     window.addEventListener("touchend", endDrag);
-
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", endDrag);
@@ -124,50 +126,36 @@ function LocationComponent() {
   };
 
   const handleFindMyLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude, accuracy } = pos.coords;
-          const newLoc = { lat: latitude, lng: longitude };
-          setUserLocation(newLoc);
-          setUserAccuracy(accuracy);
-          setShowUserInfo(true);
+    if (!navigator.geolocation) return alert("Geolocation not supported in this browser.");
 
-          if (mapRef) {
-            mapRef.panTo(newLoc);
-            mapRef.setZoom(14);
-          }
-        },
-        (err) => {
-          console.error("Geolocation error:", err.message);
-
-          const fallbackLoc = { lat: 10.8505, lng: 76.2711 };
-          setUserLocation(fallbackLoc);
-          setUserAccuracy(null);
-          setShowUserInfo(true);
-
-          if (mapRef) {
-            mapRef.panTo(fallbackLoc);
-            mapRef.setZoom(10);
-          }
-
-          alert("Unable to get your location, showing default Kerala location.");
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    } else {
-      alert("Geolocation not supported in this browser.");
-    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        const newLoc = { lat: latitude, lng: longitude };
+        setUserLocation(newLoc);
+        setUserAccuracy(accuracy);
+        setShowUserInfo(true);
+        mapRef?.panTo(newLoc);
+        mapRef?.setZoom(14);
+      },
+      () => {
+        const fallbackLoc = { lat: 10.8505, lng: 76.2711 };
+        setUserLocation(fallbackLoc);
+        setShowUserInfo(true);
+        mapRef?.panTo(fallbackLoc);
+        mapRef?.setZoom(10);
+        alert("Unable to get your location, showing default Kerala location.");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
   const handleClinicSelect = (clinic) => {
     setSelectedClinic(clinic);
     setSearchQuery(clinic.name);
     setIsDropdownVisible(false);
-    if (mapRef) {
-      mapRef.panTo({ lat: clinic.lat, lng: clinic.lng });
-      mapRef.setZoom(14);
-    }
+    mapRef?.panTo({ lat: clinic.lat, lng: clinic.lng });
+    mapRef?.setZoom(14);
   };
 
   const filteredClinics = clinics.filter(
@@ -177,50 +165,8 @@ function LocationComponent() {
   );
 
   useEffect(() => {
-    console.log("User Location:", userLocation, "Accuracy:", userAccuracy);
-  }, [userLocation]);
-
-  useEffect(() => {
-    if (dropdownRef.current) {
-      setIsScrollable(dropdownRef.current.scrollHeight > dropdownRef.current.clientHeight);
-    }
+    if (dropdownRef.current) setIsScrollable(dropdownRef.current.scrollHeight > dropdownRef.current.clientHeight);
   }, [filteredClinics, isDropdownVisible]);
-
-  const getSearchBoxStyle = () => {
-    if (isMobile) {
-      return {
-        position: "absolute",
-        left: "50%",
-        transform: "translateX(-50%)",
-        bottom: keyboardOpen ? "auto" : "20px",
-        top: keyboardOpen ? "60px" : "auto",
-        zIndex: 10,
-        backgroundColor: "white",
-        borderRadius: "12px",
-        padding: "10px",
-        width: "90%",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-        transition: "top 0.3s ease, bottom 0.3s ease",
-        textAlign: "center",
-      };
-    } else {
-      return {
-        position: "absolute",
-        top: searchPosition.y,
-        left: searchPosition.x,
-        zIndex: 10,
-        cursor: isDragging ? "grabbing" : "grab",
-        userSelect: "none",
-        touchAction: "none",
-        backgroundColor: "white",
-        borderRadius: "12px",
-        padding: "10px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-        transition: "top 0.3s ease, left 0.3s ease",
-        width: "260px",
-      };
-    }
-  };
 
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps...</div>;
@@ -230,7 +176,28 @@ function LocationComponent() {
       {/* Search box */}
       <div
         className="draggable-search"
-        style={getSearchBoxStyle()}
+        style={
+          isMobile
+            ? {
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
+                bottom: searchPosition.bottom !== null ? `${searchPosition.bottom}px` : "auto",
+                top: searchPosition.top !== null ? `${searchPosition.top}px` : "auto",
+                zIndex: 100,
+                width: "90%",
+              }
+            : {
+                position: "absolute",
+                top: searchPosition.y || defaultSearchPos.y,
+                left: searchPosition.x || defaultSearchPos.x,
+                zIndex: 100,
+                cursor: isDragging ? "grabbing" : "grab",
+                userSelect: "none",
+                touchAction: "none",
+                width: "260px",
+              }
+        }
         onMouseDown={isMobile ? null : handleMouseDown}
         onTouchStart={isMobile ? null : handleTouchStart}
       >
@@ -254,19 +221,13 @@ function LocationComponent() {
               overflowY: "auto",
               maxHeight: "300px",
               ...(isScrollable && {
-                maskImage:
-                  "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+                maskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
               }),
             }}
           >
             {filteredClinics.map((clinic) => (
-              <div
-                key={clinic.id}
-                className="clinic-item"
-                onClick={() => handleClinicSelect(clinic)}
-              >
+              <div key={clinic.id} className="clinic-item" onClick={() => handleClinicSelect(clinic)}>
                 <span>📍</span>
                 <div>
                   <strong>{clinic.name}</strong>

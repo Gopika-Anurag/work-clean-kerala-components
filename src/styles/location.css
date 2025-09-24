@@ -84,10 +84,11 @@
   z-index: 100;
   user-select: none;
   width: 280px;
-  transition: top 0.3s ease;
-    margin-bottom: env(safe-area-inset-bottom);
-
+  left: 50%;
+  transform: translateX(-50%);
+  transition: top 0.3s ease, bottom 0.3s ease;
 }
+
 
 .draggable-search:hover {
   transform: translateY(-2px);

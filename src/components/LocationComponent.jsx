@@ -97,6 +97,24 @@ function LocationComponent() {
   // ✅ FIXED: Declare the missing isInputFocused state.
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isScrollable, setIsScrollable] = useState(false); 
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
+useEffect(() => {
+  if (window.visualViewport) {
+    const handleResize = () => {
+      const viewportHeight = window.visualViewport.height;
+      const windowHeight = window.innerHeight;
+      // If viewport is significantly smaller than window -> keyboard is open
+      setIsKeyboardOpen(viewportHeight < windowHeight - 100);
+    };
+
+    window.visualViewport.addEventListener("resize", handleResize);
+    return () => {
+      window.visualViewport.removeEventListener("resize", handleResize);
+    };
+  }
+}, []);
+
 
 
 
@@ -245,28 +263,29 @@ function LocationComponent() {
 
   // This function will now work correctly because isMobile and isInputFocused are defined.
   const getSearchBoxStyle = () => {
-    if (isMobile) {
-      return {
-        position: 'absolute',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        top: isInputFocused ? '20px' : 'auto',
-        bottom: isInputFocused ? 'auto' : '20px',
-        width: '90%',
-        maxWidth: '500px',
-        zIndex: 10,
-      };
-    }
+  if (isMobile) {
     return {
-      position: 'absolute',
-      top: searchPosition.y,
-      left: searchPosition.x,
+      position: "absolute",
+      left: "50%",
+      transform: "translateX(-50%)",
+      transition: "top 0.3s ease, bottom 0.3s ease",
+      top: isKeyboardOpen ? "20px" : "auto",
+      bottom: isKeyboardOpen ? "auto" : "20px",
+      width: "90%",
+      maxWidth: "500px",
       zIndex: 10,
-      cursor: isDragging ? 'grabbing' : 'grab',
-      userSelect: 'none',
-      touchAction: 'none',
     };
+  }
+  return {
+    position: "absolute",
+    top: searchPosition.y,
+    left: searchPosition.x,
+    zIndex: 10,
+    cursor: isDragging ? "grabbing" : "grab",
+    userSelect: "none",
+    touchAction: "none",
   };
+};
 
 
 

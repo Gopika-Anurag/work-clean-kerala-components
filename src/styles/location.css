@@ -21,7 +21,8 @@
 .map-mask-wrapper {
   position: relative;
   width: 100%;
-  height: 700px;
+height: 100vh;  
+max-height: 800px;
   overflow: hidden;
 
   /* Fade edges using combined linear gradients */

@@ -34,7 +34,7 @@ const handleDirectionsClick = (lat, lng) => {
 
 const mapContainerStyle = {
   width: "100%",
-  height: "700px",
+  height: "650px",
 };
 
 const mapStyles = [

@@ -169,7 +169,14 @@ function LocationComponent() {
   <GoogleMap
     mapContainerStyle={{ width: "100%", height: "100%" }}
     onLoad={onMapLoad}
-    options={{ styles: mapStyles }}
+    options={{
+    styles: mapStyles,
+    disableDefaultUI: true,   // 🚫 removes all default buttons
+    zoomControl: false,       // (optional) make sure zoom is gone
+    streetViewControl: false, // remove street view
+    mapTypeControl: false,    // remove satellite/terrain switch
+    fullscreenControl: false, // remove fullscreen button
+  }}
   >        {/* User Location */}
         {userLocation && (
           <Marker

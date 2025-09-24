@@ -162,7 +162,7 @@ function LocationComponent() {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "90vh", maxHeight: "800px", backgroundColor:"lightblue" }}>
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "80vh", maxHeight: "800px", backgroundColor:"lightblue" }}>
 <div className="map-mask-wrapper">
   <GoogleMap
     mapContainerStyle={{ width: "100%", height: "100%" }}

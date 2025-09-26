@@ -60,6 +60,7 @@ function LocationComponent() {
   const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi
 
 
+
   // Detect window resize
   useEffect(() => {
     const handleResize = () => {
@@ -151,23 +152,30 @@ function LocationComponent() {
   );
 };
 
+useEffect(() => {
+  const permissionGranted = localStorage.getItem("locationPermissionGranted");
+
+  if (permissionGranted === "true") {
+    // User already allowed → auto-get location
+    setShowPermissionPopup(false);
+    handleFindMyLocation();
+  } else if (permissionGranted === "false") {
+    // User denied → don't auto-show popup
+    setShowPermissionPopup(false);
+  } else {
+    // First time → show popup
+    setShowPermissionPopup(true);
+  }
+}, []);
+
 
   const handleClinicSelect = (clinic) => {
-  setSelectedClinic(clinic);
-  setSearchQuery(clinic.name);
-  setIsDropdownVisible(false);
-
-  // Pan to clinic
-  mapRef?.panTo({ lat: clinic.lat, lng: clinic.lng });
-  mapRef?.setZoom(14);
-
-  // Blur input on mobile to close keyboard and dropdown
-  if (isMobile) {
-    const input = document.querySelector(".draggable-search input");
-    input?.blur();
-  }
-};
-
+    setSelectedClinic(clinic);
+    setSearchQuery(clinic.name);
+    setIsDropdownVisible(false);
+    mapRef?.panTo({ lat: clinic.lat, lng: clinic.lng });
+    mapRef?.setZoom(14);
+  };
 
   // Show nearest 3 clinics if user location is available, else filter by search query
   const filteredClinics = userLocation
@@ -339,6 +347,7 @@ function LocationComponent() {
 
 {/* Dropdown */}
 {/* Dropdown */}
+{/* Dropdown */}
 {((isDropdownVisible && filteredClinics.length > 0) || userLocation) && (
   <div
     className="clinic-dropdown"
@@ -358,11 +367,17 @@ function LocationComponent() {
     }}
   >
     {filteredClinics.map((clinic) => (
-      <div key={clinic.id} className="clinic-item" onClick={() => handleClinicSelect(clinic)}>
+      <div
+        key={clinic.id}
+        className="clinic-item"
+        onClick={() => handleClinicSelect(clinic)}
+        style={{ padding: "8px 12px", cursor: "pointer" }}
+      >
         <span>📍</span>
         <div>
           <strong>{clinic.name}</strong>
-          <p>{clinic.address}</p>
+          {/* Show address only on desktop */}
+          {!isMobile && <p>{clinic.address}</p>}
         </div>
       </div>
     ))}
@@ -370,8 +385,19 @@ function LocationComponent() {
 )}
 
 
+
 {/* Button now AFTER dropdown */}
-<button onClick={() => setShowPermissionPopup(true)} style={{ width: "100%", marginTop: "5px" }}>
+<button onClick={() => {
+    const permission = localStorage.getItem("locationPermissionGranted");
+
+    if (permission === "false") {
+      // Only show popup again for users who previously denied
+      setShowPermissionPopup(true);
+    } else {
+      // Already allowed or first-time → directly get location
+      handleFindMyLocation();
+    }
+  }} style={{ width: "100%", marginTop: "5px" }}>
   📍 Find My Location
 </button>
 
@@ -406,39 +432,43 @@ function LocationComponent() {
       <p>We’d like to access your location to show the nearest clinics.</p>
       <div style={{ marginTop: "15px", display: "flex", gap: "10px", justifyContent: "center" }}>
         <button
-          onClick={() => {
-            setShowPermissionPopup(false);
-            handleFindMyLocation(); // Triggers browser permission dialog
-          }}
-          style={{
-            padding: "8px 12px",
-            backgroundColor: "#1216da",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-        >
-          Allow
-        </button>
+  onClick={() => {
+    localStorage.setItem("locationPermissionGranted", "true"); // save user choice
+    setShowPermissionPopup(false);
+    handleFindMyLocation(); // triggers browser location
+  }}
+  style={{
+    padding: "8px 12px",
+    backgroundColor: "#1216da",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  }}
+>
+  Allow
+</button>
+
         <button
-          onClick={() => {
-            setShowPermissionPopup(false);
-            setUserLocation(null); // fallback to Kochi
-            mapRef?.panTo(defaultCenter);
-            mapRef?.setZoom(12);
-          }}
-          style={{
-            padding: "8px 12px",
-            backgroundColor: "#ccc",
-            color: "#000",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-        >
-          Deny
-        </button>
+  onClick={() => {
+    localStorage.setItem("locationPermissionGranted", "false"); // save denial
+    setShowPermissionPopup(false);
+    setUserLocation(null);
+    mapRef?.panTo(defaultCenter);
+    mapRef?.setZoom(12);
+  }}
+  style={{
+    padding: "8px 12px",
+    backgroundColor: "#ccc",
+    color: "#000",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  }}
+>
+  Deny
+</button>
+
       </div>
     </div>
   </div>

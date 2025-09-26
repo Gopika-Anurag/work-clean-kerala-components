@@ -153,12 +153,21 @@ function LocationComponent() {
 
 
   const handleClinicSelect = (clinic) => {
-    setSelectedClinic(clinic);
-    setSearchQuery(clinic.name);
-    setIsDropdownVisible(false);
-    mapRef?.panTo({ lat: clinic.lat, lng: clinic.lng });
-    mapRef?.setZoom(14);
-  };
+  setSelectedClinic(clinic);
+  setSearchQuery(clinic.name);
+  setIsDropdownVisible(false);
+
+  // Pan to clinic
+  mapRef?.panTo({ lat: clinic.lat, lng: clinic.lng });
+  mapRef?.setZoom(14);
+
+  // Blur input on mobile to close keyboard and dropdown
+  if (isMobile) {
+    const input = document.querySelector(".draggable-search input");
+    input?.blur();
+  }
+};
+
 
   // Show nearest 3 clinics if user location is available, else filter by search query
   const filteredClinics = userLocation

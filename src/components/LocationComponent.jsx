@@ -306,22 +306,20 @@ function LocationComponent() {
         onTouchStart={isMobile ? null : handleTouchStart}
       >
         <input
-          type="text"
-          placeholder="Search for a clinic..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setIsDropdownVisible(true);
-          }}
-          onFocus={() => setIsDropdownVisible(true)}
-          style={{ width: "100%" }}
-        />
-        <button onClick={handleFindMyLocation} style={{ width: "100%", marginTop: "5px" }}>
-          📍 Find My Location
-        </button>
+  type="text"
+  placeholder="Search for a clinic..."
+  value={searchQuery}
+  onChange={(e) => {
+    setSearchQuery(e.target.value);
+    setIsDropdownVisible(true);
+  }}
+  onFocus={() => setIsDropdownVisible(true)}
+  style={{ width: "100%" }}
+/>
 
-        {/* Dropdown */}
-        {isDropdownVisible && filteredClinics.length > 0 && (
+{/* Dropdown */}
+{/* Dropdown */}
+{((isDropdownVisible && filteredClinics.length > 0) || userLocation) && (
   <div
     className="clinic-dropdown"
     ref={dropdownRef}
@@ -350,6 +348,13 @@ function LocationComponent() {
     ))}
   </div>
 )}
+
+
+{/* Button now AFTER dropdown */}
+<button onClick={handleFindMyLocation} style={{ width: "100%", marginTop: "5px" }}>
+  📍 Find My Location
+</button>
+
 
       </div>
     </div>

@@ -55,6 +55,8 @@ function LocationComponent() {
   // Mobile detection
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [showPermissionPopup, setShowPermissionPopup] = useState(true);
+
   const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi
 
 
@@ -112,11 +114,19 @@ function LocationComponent() {
   const { isLoaded, loadError } = useLoadScript({ googleMapsApiKey: API_KEY });
 
   const onMapLoad = (map) => {
-    setMapRef(map);
-    const bounds = new window.google.maps.LatLngBounds();
-    clinics.forEach(({ lat, lng }) => bounds.extend({ lat, lng }));
-    map.fitBounds(bounds);
-  };
+  setMapRef(map);
+
+  // Fit clinics initially
+  const bounds = new window.google.maps.LatLngBounds();
+  clinics.forEach(({ lat, lng }) => bounds.extend({ lat, lng }));
+  map.fitBounds(bounds);
+};
+
+  useEffect(() => {
+    if (isLoaded && mapRef) {
+    }
+  }, [isLoaded, mapRef]);
+
 
   const handleFindMyLocation = () => {
   if (!navigator.geolocation) return alert("Geolocation not supported.");
@@ -131,11 +141,12 @@ function LocationComponent() {
       mapRef?.setZoom(14);
     },
     (err) => {
-      // User denied or error
-      setUserLocation(null); // do NOT set fallback
-      setShowUserInfo(false);
-      alert("Unable to get your location. Red marker will not be shown.");
-    },
+  // User denied or error
+  setUserLocation(null); // do NOT set fallback
+  setShowUserInfo(false);
+  mapRef?.panTo(defaultCenter);
+  mapRef?.setZoom(12);
+},
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
   );
 };
@@ -351,14 +362,81 @@ function LocationComponent() {
 
 
 {/* Button now AFTER dropdown */}
-<button onClick={handleFindMyLocation} style={{ width: "100%", marginTop: "5px" }}>
+<button onClick={() => setShowPermissionPopup(true)} style={{ width: "100%", marginTop: "5px" }}>
   📍 Find My Location
 </button>
 
 
       </div>
+      {showPermissionPopup && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(0,0,0,0.5)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 1000,
+    }}
+  >
+    <div
+      style={{
+        background: "white",
+        padding: "20px",
+        borderRadius: "10px",
+        maxWidth: "300px",
+        textAlign: "center",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+      }}
+    >
+      <h3>📍 Location Permission</h3>
+      <p>We’d like to access your location to show the nearest clinics.</p>
+      <div style={{ marginTop: "15px", display: "flex", gap: "10px", justifyContent: "center" }}>
+        <button
+          onClick={() => {
+            setShowPermissionPopup(false);
+            handleFindMyLocation(); // Triggers browser permission dialog
+          }}
+          style={{
+            padding: "8px 12px",
+            backgroundColor: "#1216da",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Allow
+        </button>
+        <button
+          onClick={() => {
+            setShowPermissionPopup(false);
+            setUserLocation(null); // fallback to Kochi
+            mapRef?.panTo(defaultCenter);
+            mapRef?.setZoom(12);
+          }}
+          style={{
+            padding: "8px 12px",
+            backgroundColor: "#ccc",
+            color: "#000",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Deny
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
 
-export default LocationComponent;
+export default LocationComponent; 

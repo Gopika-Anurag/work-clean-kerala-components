@@ -59,6 +59,12 @@ function LocationComponent() {
 
   const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi
 
+useEffect(() => {
+  if (mapRef && userLocation) {
+    mapRef.panTo(userLocation);
+    mapRef.setZoom(14); // or keep previous zoom if you prefer
+  }
+}, [userLocation, mapRef]);
 
 
   // Detect window resize
@@ -116,11 +122,11 @@ function LocationComponent() {
 
   const onMapLoad = (map) => {
   setMapRef(map);
-
-  // Fit clinics initially
-  const bounds = new window.google.maps.LatLngBounds();
-  clinics.forEach(({ lat, lng }) => bounds.extend({ lat, lng }));
-  map.fitBounds(bounds);
+  if (!userLocation) {
+    const bounds = new window.google.maps.LatLngBounds();
+    clinics.forEach(({ lat, lng }) => bounds.extend({ lat, lng }));
+    map.fitBounds(bounds);
+  }
 };
 
   useEffect(() => {

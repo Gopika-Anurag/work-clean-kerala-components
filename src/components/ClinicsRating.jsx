@@ -75,6 +75,12 @@ function ClinicsRating() {
   const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi
   const ITEM_HEIGHT = 60; // height of one clinic item
 
+useEffect(() => {
+  if (mapRef && userLocation) {
+    mapRef.panTo(userLocation);
+    mapRef.setZoom(14); // or keep previous zoom if you prefer
+  }
+}, [userLocation, mapRef]);
 
   // Detect window resize
   useEffect(() => {
@@ -130,11 +136,14 @@ function ClinicsRating() {
   const { isLoaded, loadError } = useLoadScript({ googleMapsApiKey: API_KEY });
 
   const onMapLoad = (map) => {
-    setMapRef(map);
+  setMapRef(map);
+  if (!userLocation) {
     const bounds = new window.google.maps.LatLngBounds();
     clinics.forEach(({ lat, lng }) => bounds.extend({ lat, lng }));
     map.fitBounds(bounds);
-  };
+  }
+};
+
 
   const handleFindMyLocation = () => {
     if (!navigator.geolocation) return alert("Geolocation not supported.");

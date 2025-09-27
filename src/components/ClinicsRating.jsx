@@ -17,19 +17,82 @@ const mapStyles = [
 ];
 
 // Renders stars with golden fill
+// New StarIcon Component
+// StarIcon component
+/* StarIcon: stable unique gradient id + horizontal gradient */
+function StarIcon({ size = 20, color = "#FFD700", fillPercentage = 100, index = 0 }) {
+  // stable unique id per StarIcon instance
+  const idRef = useRef(null);
+  if (!idRef.current) idRef.current = `star-${Math.random().toString(36).slice(2, 9)}`;
+
+  const gradientId = `starGradient-${idRef.current}-${index}`;
+
+  // ensure a number between 0..100
+  const pct = Math.max(0, Math.min(100, Number(fillPercentage) || 0));
+
+  return (
+    <svg
+      viewBox="0 0 576 512"
+      width={size}
+      height={size}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      role="img"
+    >
+      <defs>
+        {/* horizontal left->right gradient */}
+        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor={color} />
+          <stop offset={`${pct}%`} stopColor={color} />
+          <stop offset={`${pct}%`} stopColor="#ccc" />
+          <stop offset="100%" stopColor="#ccc" />
+        </linearGradient>
+      </defs>
+
+      <path
+        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 
+           54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 
+           46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 
+           50.9-7.4 46.4-33.7l-25-145.5 
+           105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 
+           150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
+        fill={`url(#${gradientId})`}
+      />
+    </svg>
+  );
+}
+
+/* renderStars: fixed-size stars, clamped percentages */
 const renderStars = (rating) => {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    if (rating >= i) {
-      stars.push(<span key={i} style={{ color: "#FFD700", fontSize: "14px" }}>★</span>); // full star
-    } else if (rating >= i - 0.5) {
-      stars.push(<span key={i} style={{ color: "#FFD700", fontSize: "14px" }}>☆</span>); // half star (optional)
-    } else {
-      stars.push(<span key={i} style={{ color: "#ccc", fontSize: "14px" }}>★</span>); // empty star
-    }
-  }
-  return <span>{stars}</span>;
+  const r = Number(rating) || 0;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+      {Array.from({ length: 5 }, (_, i) => {
+        let fillPercent = 0;
+        if (i + 1 <= r) {
+          fillPercent = 100;
+        } else if (i < r) {
+          fillPercent = (r - i) * 100;
+        }
+        const clamped = Math.max(0, Math.min(100, fillPercent));
+        return (
+          <StarIcon
+            key={i}
+            index={i}
+            size={15}
+            color="#FFD700"
+            fillPercentage={clamped}
+          />
+        );
+      })}
+    </div>
+  );
 };
+
+export { StarIcon, renderStars };
+
+
+
 
 // Haversine formula to calculate distance (km)
 const getDistance = (lat1, lng1, lat2, lng2) => {
@@ -73,7 +136,7 @@ function ClinicsRating() {
   const [showPermissionPopup, setShowPermissionPopup] = useState(true);
 
   const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi
-  const ITEM_HEIGHT = 60; // height of one clinic item
+  const ITEM_HEIGHT = 41; // height of one clinic item
 
 useEffect(() => {
   if (mapRef && userLocation) {
@@ -298,38 +361,39 @@ useEffect(() => {
           ))}
 
           {selectedClinic && (
-            <InfoWindow
-              position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
-              onCloseClick={() => setSelectedClinic(null)}
-              options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
-            >
-              <div className="info-window-content" style={{ minWidth: "180px" }}>
-                <h4 style={{ margin: "0 0 5px 0" }}>{selectedClinic.name}</h4>
-                <p style={{ margin: "0 0 5px 0" }}>📍 {selectedClinic.address}</p>
-                <div>
-  {renderStars(selectedClinic.rating)}
-  <small style={{ marginLeft: "4px", fontSize: "12px", color: "#555" }}>
-    {selectedClinic.rating.toFixed(1)}
-  </small>
-</div>
+  <InfoWindow
+    position={{ lat: selectedClinic.lat, lng: selectedClinic.lng }}
+    onCloseClick={() => setSelectedClinic(null)}
+    options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
+  >
+    <div className="info-window-content" style={{ minWidth: "180px" }}>
+      <h4 style={{ margin: "0 0 5px 0" }}>{selectedClinic.name}</h4>
+      <p style={{ margin: "0 0 5px 0" }}>📍 {selectedClinic.address}</p>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+        {renderStars(selectedClinic.rating)}   {/* ✅ FIXED */}
+        <small style={{ fontSize: "12px", color: "#555" }}>
+          {selectedClinic.rating.toFixed(1)}   {/* ✅ FIXED */}
+        </small>
+      </div>
 
-                <button
-                  style={{
-                    padding: "8px 12px",
-                    backgroundColor: "#1216da",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                  }}
-                  onClick={() => handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)}
-                >
-                  🚀 View on Google Maps
-                </button>
-              </div>
-            </InfoWindow>
-          )}
+      <button
+        style={{
+          padding: "8px 12px",
+          backgroundColor: "#1216da",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "14px",
+        }}
+        onClick={() => handleDirectionsClick(selectedClinic.lat, selectedClinic.lng)}
+      >
+        🚀 View on Google Maps
+      </button>
+    </div>
+  </InfoWindow>
+)}
+
         </GoogleMap>
       </div>
 
@@ -401,16 +465,38 @@ useEffect(() => {
                   borderBottom: "1px solid #eee",
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <strong>{clinic.name}</strong>
-                    {!isMobile && <p style={{ margin: 0, fontSize: "12px" }}>{clinic.address}</p>}
-                  </div>
-<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-  <div>{renderStars(clinic.rating)}</div>
-  <small style={{ fontSize: "12px", color: "#555" }}>{clinic.rating.toFixed(1)}</small>
+                <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between", // ✅ always separates name & stars
+    alignItems: "center",
+    width: "100%",
+  }}
+>
+  {/* Left side: Clinic name (and address if not mobile) */}
+  <div style={{ flex: 1 }}>
+    <strong>{clinic.name}</strong>
+    {!isMobile && (
+      <p style={{ margin: 0, fontSize: "12px" }}>{clinic.address}</p>
+    )}
+  </div>
+
+  {/* Right side: Stars + rating */}
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-end",
+      minWidth: "70px",
+    }}
+  >
+    <div>{renderStars(clinic.rating)}</div>
+    <small style={{ fontSize: "12px", color: "#555" }}>
+      {clinic.rating.toFixed(1)}
+    </small>
+  </div>
 </div>
-                </div>
+
               </div>
             ))}
           </div>

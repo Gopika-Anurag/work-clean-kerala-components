@@ -148,15 +148,16 @@ useEffect(() => {
   // Detect window resize
   useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (mobile && window.visualViewport) {
-        const viewportHeight = window.visualViewport.height;
-        setKeyboardOpen(viewportHeight < window.innerHeight * 0.75);
-      } else {
-        setKeyboardOpen(false);
-      }
-    };
+  const mobile = window.innerWidth <= 768;
+  setIsMobile(mobile);
+  if (mobile && "visualViewport" in window && window.visualViewport) {
+    const viewportHeight = window.visualViewport.height || window.innerHeight;
+    setKeyboardOpen(viewportHeight < window.innerHeight * 0.75);
+  } else {
+    setKeyboardOpen(false);
+  }
+};
+
     window.addEventListener("resize", handleResize);
     if (window.visualViewport)
       window.visualViewport.addEventListener("resize", handleResize);
@@ -306,7 +307,7 @@ useEffect(() => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "90vh",}}>
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "90dvh", backgroundColor:"lightblue"}}>
       <div className="map-mask-wrapper">
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}

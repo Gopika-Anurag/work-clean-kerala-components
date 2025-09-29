@@ -134,6 +134,8 @@ function ClinicsRating() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [showPermissionPopup, setShowPermissionPopup] = useState(true);
+    const [viewportTop, setViewportTop] = useState(0);
+
 
   const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi
   const ITEM_HEIGHT = 32; // height of one clinic item
@@ -150,12 +152,15 @@ useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
+
       if (mobile && window.visualViewport) {
-        // A keyboard is open if the visible area is >150px smaller than the window
         const isKeyboardVisible = window.visualViewport.height < window.innerHeight - 150;
         setKeyboardOpen(isKeyboardVisible);
+        // Store the current top offset of the visible area
+        setViewportTop(window.visualViewport.offsetTop);
       } else {
         setKeyboardOpen(false);
+        setViewportTop(0); // Reset on desktop
       }
     };
 
@@ -163,7 +168,7 @@ useEffect(() => {
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", handleResize);
     }
-    handleResize(); // Initial check
+    handleResize();
     return () => {
       window.removeEventListener("resize", handleResize);
       if (window.visualViewport) {
@@ -426,7 +431,7 @@ useEffect(() => {
                 width: "90%",
                 zIndex: 100,
                 bottom: keyboardOpen ? "auto" : "20px",
-                top: keyboardOpen ? "20px" : "auto", 
+                top: keyboardOpen ? `${viewportTop + 15}px` : "auto",
               }
             : {
                 position: "absolute",

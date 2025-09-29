@@ -146,39 +146,31 @@ useEffect(() => {
 }, [userLocation, mapRef]);
 
   // Detect window resize
-  useEffect(() => {
+   useEffect(() => {
     const handleResize = () => {
-        const mobile = window.innerWidth <= 768;
-        setIsMobile(mobile);
-
-        // This is the updated, more reliable keyboard detection logic
-        if (mobile && window.visualViewport) {
-            // A keyboard is likely open if the visual viewport height is significantly
-            // smaller than the layout viewport (window.innerHeight).
-            // A threshold of 150px is a robust way to account for most keyboards.
-            const isKeyboardVisible = window.visualViewport.height < window.innerHeight - 150;
-            setKeyboardOpen(isKeyboardVisible);
-        } else {
-            setKeyboardOpen(false);
-        }
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile && window.visualViewport) {
+        // A keyboard is open if the visible area is >150px smaller than the window
+        const isKeyboardVisible = window.visualViewport.height < window.innerHeight - 150;
+        setKeyboardOpen(isKeyboardVisible);
+      } else {
+        setKeyboardOpen(false);
+      }
     };
 
-    // Listen to both the window and the visualViewport for resize events
     window.addEventListener("resize", handleResize);
     if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", handleResize);
+      window.visualViewport.addEventListener("resize", handleResize);
     }
-
-    handleResize(); // Call once on initial render
-
+    handleResize(); // Initial check
     return () => {
-        window.removeEventListener("resize", handleResize);
-        if (window.visualViewport) {
-            window.visualViewport.removeEventListener("resize", handleResize);
-        }
+      window.removeEventListener("resize", handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", handleResize);
+      }
     };
-}, []);
-
+  }, []);
   
 
   // Drag handlers
@@ -319,17 +311,14 @@ useEffect(() => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "100dvh", backgroundColor:"lightblue"}}>
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "100dvh", backgroundColor: "lightblue" }}>
       <div className="map-mask-wrapper">
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}
           onLoad={onMapLoad}
           center={userLocation || defaultCenter}
           zoom={12}
-          options={{
-            styles: mapStyles,
-            disableDefaultUI: true,
-          }}
+          options={{ styles: mapStyles, disableDefaultUI: true, }}
         >
           {/* User Location */}
           {userLocation && (
@@ -437,7 +426,7 @@ useEffect(() => {
                 width: "90%",
                 zIndex: 100,
                 bottom: keyboardOpen ? "auto" : "20px",
-                top: keyboardOpen ? "60px" : "auto",
+                top: keyboardOpen ? "20px" : "auto", 
               }
             : {
                 position: "absolute",

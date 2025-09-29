@@ -251,8 +251,7 @@ useEffect(() => {
   };
 
   // Filtered clinics: top-rated within 20km + ad clinics on top
-  // Filtered clinics: top-rated within 20km + ad clinics on top + search matches to top
-const filteredClinics = (() => {
+  const filteredClinics = (() => {
   let list = [];
 
   if (userLocation) {
@@ -271,9 +270,10 @@ const filteredClinics = (() => {
     list = [...clinics];
   }
 
-  // Search prioritization
-  if (searchQuery.trim() !== "") {
-    const query = searchQuery.toLowerCase();
+  const query = searchQuery.trim().toLowerCase();
+
+  if (query !== "") {
+    // 🔹 Search mode: ignore ads, bring matches to top
     const matches = list.filter(
       (clinic) =>
         clinic.name.toLowerCase().includes(query) ||
@@ -284,15 +284,17 @@ const filteredClinics = (() => {
         !clinic.name.toLowerCase().includes(query) &&
         !clinic.address.toLowerCase().includes(query)
     );
-    list = [...matches, ...nonMatches];
+
+    // Exclude ads when searching
+    return [...matches.filter((c) => !c.isAd), ...nonMatches.filter((c) => !c.isAd)];
+  } else {
+    // 🔹 Normal mode: ads first
+    const adClinics = list.filter((clinic) => clinic.isAd);
+    const normalClinics = list.filter((clinic) => !clinic.isAd);
+    return [...adClinics, ...normalClinics];
   }
-
-  // Ads first
-  const adClinics = list.filter((clinic) => clinic.isAd);
-  const normalClinics = list.filter((clinic) => !clinic.isAd);
-
-  return [...adClinics, ...normalClinics];
 })();
+
 
 
   useEffect(() => {

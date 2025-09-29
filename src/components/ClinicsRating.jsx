@@ -136,7 +136,7 @@ function ClinicsRating() {
   const [showPermissionPopup, setShowPermissionPopup] = useState(true);
 
   const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi
-  const ITEM_HEIGHT = 41; // height of one clinic item
+  const ITEM_HEIGHT = 32; // height of one clinic item
 
 useEffect(() => {
   if (mapRef && userLocation) {

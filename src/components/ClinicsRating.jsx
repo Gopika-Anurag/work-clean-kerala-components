@@ -306,7 +306,7 @@ useEffect(() => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "80vh",}}>
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "95vh",}}>
       <div className="map-mask-wrapper">
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}

@@ -251,7 +251,8 @@ useEffect(() => {
   };
 
   // Filtered clinics: top-rated within 20km + ad clinics on top
-  const filteredClinics = (() => {
+  // Filtered clinics: top-rated within 20km + ad clinics on top + search matches to top
+const filteredClinics = (() => {
   let list = [];
 
   if (userLocation) {
@@ -263,18 +264,30 @@ useEffect(() => {
       .filter((clinic) => clinic.distance <= 20)
       .sort((a, b) => b.rating - a.rating);
 
-    // ✅ fallback: if no clinic found within 20km, show all sorted by rating
     if (list.length === 0) {
       list = clinics.sort((a, b) => b.rating - a.rating);
     }
   } else {
-    list = clinics.filter(
-      (clinic) =>
-        clinic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        clinic.address.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    list = [...clinics];
   }
 
+  // Search prioritization
+  if (searchQuery.trim() !== "") {
+    const query = searchQuery.toLowerCase();
+    const matches = list.filter(
+      (clinic) =>
+        clinic.name.toLowerCase().includes(query) ||
+        clinic.address.toLowerCase().includes(query)
+    );
+    const nonMatches = list.filter(
+      (clinic) =>
+        !clinic.name.toLowerCase().includes(query) &&
+        !clinic.address.toLowerCase().includes(query)
+    );
+    list = [...matches, ...nonMatches];
+  }
+
+  // Ads first
   const adClinics = list.filter((clinic) => clinic.isAd);
   const normalClinics = list.filter((clinic) => !clinic.isAd);
 
@@ -291,7 +304,7 @@ useEffect(() => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "100vh",}}>
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "80vh",}}>
       <div className="map-mask-wrapper">
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}
@@ -453,52 +466,65 @@ useEffect(() => {
   }}
 >
 
-            {filteredClinics.map((clinic) => (
-              <div
-                key={clinic.id}
-                className="clinic-item"
-                onClick={() => handleClinicSelect(clinic)}
-                style={{
-                  padding: "8px 12px",
-                  cursor: "pointer",
-                  backgroundColor: clinic.isAd ? "#fff4e5" : "#fff",
-                  borderBottom: "1px solid #eee",
-                }}
-              >
-                <div
-  style={{
-    display: "flex",
-    justifyContent: "space-between", // ✅ always separates name & stars
-    alignItems: "center",
-    width: "100%",
-  }}
->
-  {/* Left side: Clinic name (and address if not mobile) */}
-  <div style={{ flex: 1 }}>
-    <strong>{clinic.name}</strong>
-    {!isMobile && (
-      <p style={{ margin: 0, fontSize: "12px" }}>{clinic.address}</p>
-    )}
-  </div>
+           {filteredClinics.map((clinic) => {
+  const query = searchQuery.toLowerCase().trim();
+  const isMatch =
+    query &&
+    (clinic.name.toLowerCase().includes(query) ||
+      clinic.address.toLowerCase().includes(query));
 
-  {/* Right side: Stars + rating */}
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "flex-end",
-      minWidth: "70px",
-    }}
-  >
-    <div>{renderStars(clinic.rating)}</div>
-    <small style={{ fontSize: "12px", color: "#555" }}>
-      {clinic.rating.toFixed(1)}
-    </small>
-  </div>
-</div>
+  return (
+    <div
+      key={clinic.id}
+      className="clinic-item"
+      onClick={() => handleClinicSelect(clinic)}
+      style={{
+        padding: "8px 12px",
+        cursor: "pointer",
+        backgroundColor: clinic.isAd
+          ? "#fff4e5" // ✅ Ads stay orange-ish
+          : isMatch
+          ? "#e0f7ff" // ✅ Highlight matches light blue
+          : "#fff",   // ✅ Normal
+        borderBottom: "1px solid #eee",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        {/* Left: name + address */}
+        <div style={{ flex: 1 }}>
+          <strong>{clinic.name}</strong>
+          {!isMobile && (
+            <p style={{ margin: 0, fontSize: "12px" }}>{clinic.address}</p>
+          )}
+        </div>
 
-              </div>
-            ))}
+        {/* Right: stars + rating */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            minWidth: "70px",
+          }}
+        >
+          <div>{renderStars(clinic.rating)}</div>
+          <small style={{ fontSize: "12px", color: "#555" }}>
+            {clinic.rating.toFixed(1)}
+          </small>
+        </div>
+      </div>
+    </div>
+  );
+})}
+
+
           </div>
         )}
 

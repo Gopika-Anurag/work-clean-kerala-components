@@ -21,7 +21,7 @@
 .map-mask-wrapper {
   position: relative;
   width: 100%;
-  height: 97dvh;  /* let the map almost fill screen */
+  height: 100dvh;  /* let the map almost fill screen */
   max-height: 1000px;
   overflow: hidden;
 

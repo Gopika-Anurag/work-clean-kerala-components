@@ -148,26 +148,38 @@ useEffect(() => {
   // Detect window resize
   useEffect(() => {
     const handleResize = () => {
-  const mobile = window.innerWidth <= 768;
-  setIsMobile(mobile);
-  if (mobile && "visualViewport" in window && window.visualViewport) {
-    const viewportHeight = window.visualViewport.height || window.innerHeight;
-    setKeyboardOpen(viewportHeight < window.innerHeight * 0.75);
-  } else {
-    setKeyboardOpen(false);
-  }
-};
+        const mobile = window.innerWidth <= 768;
+        setIsMobile(mobile);
 
-    window.addEventListener("resize", handleResize);
-    if (window.visualViewport)
-      window.visualViewport.addEventListener("resize", handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      if (window.visualViewport)
-        window.visualViewport.removeEventListener("resize", handleResize);
+        // This is the updated, more reliable keyboard detection logic
+        if (mobile && window.visualViewport) {
+            // A keyboard is likely open if the visual viewport height is significantly
+            // smaller than the layout viewport (window.innerHeight).
+            // A threshold of 150px is a robust way to account for most keyboards.
+            const isKeyboardVisible = window.visualViewport.height < window.innerHeight - 150;
+            setKeyboardOpen(isKeyboardVisible);
+        } else {
+            setKeyboardOpen(false);
+        }
     };
-  }, []);
+
+    // Listen to both the window and the visualViewport for resize events
+    window.addEventListener("resize", handleResize);
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", handleResize);
+    }
+
+    handleResize(); // Call once on initial render
+
+    return () => {
+        window.removeEventListener("resize", handleResize);
+        if (window.visualViewport) {
+            window.visualViewport.removeEventListener("resize", handleResize);
+        }
+    };
+}, []);
+
+  
 
   // Drag handlers
   const startDrag = (clientX, clientY) => {
@@ -307,7 +319,7 @@ useEffect(() => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "97dvh", backgroundColor:"lightblue"}}>
+    <div className="map-wrapper" style={{ position: "relative", width: "100%", height: "100dvh", backgroundColor:"lightblue"}}>
       <div className="map-mask-wrapper">
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}

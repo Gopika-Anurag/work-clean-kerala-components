@@ -7,7 +7,6 @@ const FaqPopup = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', content: '' });
 
-    const [linkBehavior, setLinkBehavior] = useState('popup'); // 'popup' or 'page'
     const [currentPage, setCurrentPage] = useState('faq'); // 'faq' or 'detail'
     const [pageContent, setPageContent] = useState({ title: '', content: '' });
 
@@ -24,10 +23,10 @@ const FaqPopup = () => {
     const handleLinkClick = (e, link) => {
         e.preventDefault();
         const content = link.content || 'Detailed information for this topic is not available yet.';
-        if (linkBehavior === 'popup') {
+        if (link.type === 'popup') {
             setModalContent({ title: link.text, content: content });
             setIsModalOpen(true);
-        } else {
+        } else { // Defaults to 'page'
             setPageContent({ title: link.text, content: content });
             setCurrentPage('detail');
         }
@@ -125,27 +124,6 @@ const FaqPopup = () => {
                     Frequently asked questions
                 </h1>
             </header>
-
-            <div className="flex justify-center mb-10">
-                <div className="bg-gray-200 p-1 rounded-full flex items-center space-x-1">
-                    <button
-                        onClick={() => setLinkBehavior('popup')}
-                        className={`px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300 ${
-                            linkBehavior === 'popup' ? 'bg-white text-gray-800 shadow-sm' : 'bg-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                        Show in Pop-up
-                    </button>
-                    <button
-                        onClick={() => setLinkBehavior('page')}
-                        className={`px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300 ${
-                            linkBehavior === 'page' ? 'bg-white text-gray-800 shadow-sm' : 'bg-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                        Go to Page
-                    </button>
-                </div>
-            </div>
 
             <main className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 max-w-6xl mx-auto">
                 <div className="space-y-4">{leftColumnData.map((item) => <AccordionItem key={item.id} item={item} />)}</div>

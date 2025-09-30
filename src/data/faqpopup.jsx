@@ -12,26 +12,28 @@ export const faqData = [
                     { 
                         text: 'How can I pay?', 
                         href: '#', 
+                        type: 'popup',
                         content: 'You can pay for your Klarna purchases in a variety of ways, including with a debit or credit card directly in the app, or by setting up automatic payments. We provide detailed instructions and options to make your payment process as smooth as possible.' 
                     },
                     { 
                         text: 'When is my payment due?', 
                         href: '#',
+                        type: 'page',
                         content: 'Your payment due date is determined by the payment option you selected at checkout. You can always view your upcoming due dates in the Klarna app under the "Payments" tab.'
                     },
-                    { text: 'How can I extend my due date?', href: '#' },
-                    { text: "What happens if I can't pay on time?", href: '#' },
-                    { text: 'I have a payment due, which payment methods are accepted by Klarna?', href: '#'},
-                    { text: 'How do I change the card for a purchase?', href: '#' },
+                    { text: 'How can I extend my due date?', href: '#', type: 'popup' },
+                    { text: "What happens if I can't pay on time?", href: '#', type: 'page' },
+                    { text: 'I have a payment due, which payment methods are accepted by Klarna?', href: '#', type: 'popup'},
+                    { text: 'How do I change the card for a purchase?', href: '#', type: 'page' },
                 ]
             },
             {
                 id: 'sh1-2',
                 title: 'Payment issues',
                 links: [
-                    { text: 'Where can I find my payment plan?', href: '#'},
-                    { text: 'Why was the first installment of my payment plan higher?', href: '#'},
-                    { text: 'Why did Klarna charge me twice?', href: '#'},
+                    { text: 'Where can I find my payment plan?', href: '#', type: 'popup'},
+                    { text: 'Why was the first installment of my payment plan higher?', href: '#', type: 'page'},
+                    { text: 'Why did Klarna charge me twice?', href: '#', type: 'popup'},
                 ]
             }
         ]
@@ -46,15 +48,15 @@ export const faqData = [
                 id: 'sh2-1',
                 title: 'How to use Klarna',
                 links: [
-                    { text: 'How does Klarna work?', href: '#' },
-                    { text: 'What is the Klarna app?', href: '#' },
+                    { text: 'How does Klarna work?', href: '#', type: 'popup' },
+                    { text: 'What is the Klarna app?', href: '#', type: 'page' },
                 ]
             },
             {
                 id: 'sh2-2',
                 title: 'Credit score & credit checks',
                 links: [
-                    { text: 'Does Klarna affect my credit score?', href: '#' },
+                    { text: 'Does Klarna affect my credit score?', href: '#', type: 'popup' },
                 ]
             }
         ]
@@ -69,9 +71,9 @@ export const faqData = [
                 id: 'sh3-1',
                 title: 'Manage refunds',
                 links: [
-                    { text: 'How do refunds work?', href: '#' },
-                    { text: 'When will I receive my refund?', href: '#' },
-                    { text: 'My refund is incorrect', href: '#' },
+                    { text: 'How do refunds work?', href: '#', type: 'popup' },
+                    { text: 'When will I receive my refund?', href: '#', type: 'page' },
+                    { text: 'My refund is incorrect', href: '#', type: 'popup' },
                 ]
             }
         ]
@@ -86,8 +88,8 @@ export const faqData = [
                 id: 'sh4-1',
                 title: 'Klarna Debit Flex Card',
                 links: [
-                    { text: 'What is the Klarna card?', href: '#' },
-                    { text: 'How do I use my Klarna card?', href: '#' },
+                    { text: 'What is the Klarna card?', href: '#', type: 'popup' },
+                    { text: 'How do I use my Klarna card?', href: '#', type: 'page' },
                 ]
             }
         ]
@@ -102,9 +104,9 @@ export const faqData = [
                 id: 'sh5-1',
                 title: 'Deliveries & Returns',
                 links: [
-                    { text: 'Where is my order?', href: '#' },
-                    { text: 'How do I return an item?', href: '#' },
-                    { text: 'How do I cancel my order?', href: '#' },
+                    { text: 'Where is my order?', href: '#', type: 'popup' },
+                    { text: 'How do I return an item?', href: '#', type: 'page' },
+                    { text: 'How do I cancel my order?', href: '#', type: 'popup' },
                 ]
             }
         ]
@@ -119,9 +121,9 @@ export const faqData = [
                 id: 'sh6-1',
                 title: 'Fraud & Security',
                 links: [
-                    { text: 'I suspect a fraudulent transaction', href: '#' },
-                    { text: 'How does Klarna protect my data?', href: '#' },
-                    { text: 'How do I report a security vulnerability?', href: '#' },
+                    { text: 'I suspect a fraudulent transaction', href: '#', type: 'popup' },
+                    { text: 'How does Klarna protect my data?', href: '#', type: 'page' },
+                    { text: 'How do I report a security vulnerability?', href: '#', type: 'popup' },
                 ]
             }
         ]
@@ -136,8 +138,8 @@ export const faqData = [
                 id: 'sh7-1',
                 title: 'Declined Purchase',
                 links: [
-                    { text: 'Why was my purchase declined?', href: '#' },
-                    { text: 'How can I get my purchase approved?', href: '#' },
+                    { text: 'Why was my purchase declined?', href: '#', type: 'popup' },
+                    { text: 'How can I get my purchase approved?', href: '#', type: 'page' },
                 ]
             }
         ]
@@ -152,9 +154,9 @@ export const faqData = [
                 id: 'sh8-1',
                 title: 'Account Management',
                 links: [
-                    { text: 'How do I create an account?', href: '#' },
-                    { text: 'How do I change my personal details?', href: '#' },
-                    { text: "I can't log in to my account", href: '#' },
+                    { text: 'How do I create an account?', href: '#', type: 'popup' },
+                    { text: 'How do I change my personal details?', href: '#', type: 'page' },
+                    { text: "I can't log in to my account", href: '#', type: 'popup' },
                 ]
             }
         ]
@@ -169,9 +171,9 @@ export const faqData = [
     //             id: 'sh9-1',
     //             title: 'Getting Started with Klarna Mobile',
     //             links: [
-    //                 { text: 'How do I get started with Klarna Mobile?', href: '#' },
-    //                 { text: 'What is an eSIM?', href: '#' },
-    //                 { text: 'How do I manage my device?', href: '#' },
+    //                 { text: 'How do I get started with Klarna Mobile?', href: '#', type: 'popup' },
+    //                 { text: 'What is an eSIM?', href: '#', type: 'page' },
+    //                 { text: 'How do I manage my device?', href: '#', type: 'popup' },
     //             ]
     //         }
     //     ]

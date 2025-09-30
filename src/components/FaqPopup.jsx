@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { faqData } from '../data/faqpopup';
 
 const FaqPopup = () => {
@@ -9,6 +9,19 @@ const FaqPopup = () => {
 
     const [currentPage, setCurrentPage] = useState('faq'); // 'faq' or 'detail'
     const [pageContent, setPageContent] = useState({ title: '', content: '' });
+
+    useEffect(() => {
+        // Prevent body from scrolling when the detail page is open
+        if (currentPage === 'detail') {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        // Cleanup function to reset the style when the component unmounts
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [currentPage]);
 
 
     const handleAccordionClick = (id) => {

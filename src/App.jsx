@@ -48,6 +48,7 @@ import HealthServices from "./components/healthServices";
 import LocationComponent from "./components/LocationComponent";
 import ClinicsRating from "./components/ClinicsRating";
 import FaqComponent from "./components/FaqComponent";
+import FaqPopup from "./components/FaqPopup";
 
 function App() {
   
@@ -55,6 +56,10 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <div>
+          <FaqPopup/>
+        </div>
 
         <div>
           <FaqComponent/>

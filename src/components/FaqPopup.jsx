@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { faqData } from '../data/faqpopup';
 
 const FaqPopup = () => {
-     const [openAccordion, setOpenAccordion] = useState(null);
+    const [openAccordion, setOpenAccordion] = useState(null);
     const [openSubAccordion, setOpenSubAccordion] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', content: '' });
@@ -105,14 +105,18 @@ const FaqPopup = () => {
     };
     
     const DetailPage = () => (
-        <div className="max-w-4xl mx-auto animate-fade-in-scale">
-            <button onClick={() => setCurrentPage('faq')} className="mb-8 flex items-center text-pink-500 font-semibold hover:underline">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                 Back to FAQ
-            </button>
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-                <h1 className="text-3xl font-bold mb-4">{pageContent.title}</h1>
-                <p className="text-gray-700 leading-relaxed">{pageContent.content}</p>
+        <div className="fixed inset-0 z-40 bg-gray-50 overflow-y-auto animate-fade-in-scale">
+            <div className="container mx-auto px-4 py-12 md:py-20">
+                <div className="max-w-4xl mx-auto">
+                    <button onClick={() => setCurrentPage('faq')} className="mb-8 flex items-center text-pink-500 font-semibold hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        Back to FAQ
+                    </button>
+                    <div className="bg-white p-8 rounded-2xl shadow-lg">
+                        <h1 className="text-3xl font-bold mb-4">{pageContent.title}</h1>
+                        <p className="text-gray-700 leading-relaxed">{pageContent.content}</p>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -146,8 +150,11 @@ const FaqPopup = () => {
                 .animate-fade-in-scale { animation: fade-in-scale 0.3s ease-out forwards; }
             `}</style>
             <div className="container mx-auto px-4 py-12 md:py-20">
-                {currentPage === 'faq' ? <FaqPage /> : <DetailPage />}
+                <FaqPage />
             </div>
+
+            {currentPage === 'detail' && <DetailPage />}
+            
             <Modal isOpen={isModalOpen} onClose={closeModal} title={modalContent.title}>
                 <p>{modalContent.content}</p>
             </Modal>

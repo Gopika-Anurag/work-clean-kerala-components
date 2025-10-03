@@ -49,6 +49,8 @@ import LocationComponent from "./components/LocationComponent";
 import ClinicsRating from "./components/ClinicsRating";
 import FaqComponent from "./components/FaqComponent";
 import FaqPopup from "./components/FaqPopup";
+import VideoCarousel from "./components/VideoCarousel";
+import { videocarouselData } from "./data/videocarouselData";
 
 function App() {
   
@@ -56,6 +58,10 @@ function App() {
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <div>
+          <VideoCarousel attributes={videocarouselData}/>
+        </div>
 
         <div>
           <FaqPopup/>

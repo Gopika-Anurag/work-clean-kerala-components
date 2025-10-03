@@ -14,10 +14,11 @@
 /* Overlay content styling */
 .overlay-content {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0; /* covers entire card */
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* pushes title up, button down */
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.75) 0%,
@@ -25,10 +26,12 @@
     rgba(0, 0, 0, 0) 100%
   );
   color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   text-align: center;
+}
+
+/* Title & subtitle */
+.overlay-top {
+  margin-bottom: auto; /* keeps text at top */
 }
 
 .overlay-title {
@@ -42,10 +45,12 @@
   margin-bottom: 16px;
 }
 
+/* Button pinned at bottom */
 .overlay-bottom {
-  margin-top: 140px; /* ✅ adds extra spacing above button */
-  text-align: left;
+  margin-top: auto;
+  text-align: center;
 }
+
 .overlay-btn {
   display: inline-block;
   background-color: #ffffff;
@@ -62,7 +67,7 @@
   color: #ffffff;
 }
 
-/* Buttons to scroll */
+/* Carousel navigation buttons */
 .carousel-button {
   position: absolute;
   top: 50%;
@@ -93,4 +98,18 @@
 .progress-bar {
   height: 100%;
   border-radius: 4px;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 768px) {
+  .overlay-title {
+    font-size: 1.2rem;
+  }
+  .overlay-subtitle {
+    font-size: 0.9rem;
+  }
+  .overlay-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
 }

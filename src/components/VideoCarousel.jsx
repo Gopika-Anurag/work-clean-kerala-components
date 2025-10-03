@@ -160,6 +160,21 @@ const slidesToShow = window.innerWidth <= 768 ? 1.5 : 6.5;
     return () => sc.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Keyboard arrow navigation
+useEffect(() => {
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowLeft") {
+      scrollLeft();
+    } else if (e.key === "ArrowRight") {
+      scrollRight();
+    }
+  };
+
+  window.addEventListener("keydown", handleKeyDown);
+  return () => window.removeEventListener("keydown", handleKeyDown);
+}, [scrollLeft, scrollRight]);
+
+
   return (
     <div
       className="relative select-none carousel-section"

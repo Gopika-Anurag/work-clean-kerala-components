@@ -207,50 +207,51 @@ useEffect(() => {
           onMouseMove={handleMouseMove}
         >
           {slides.map((item, index) => (
-            <div
-              key={index}
-              className="story-item"
-              style={{
-                width: `${dimensions.cardWidth}px`,
-                height: `${dimensions.cardHeight}px`,
-                position: "relative",
-                flexShrink: 0,
-                borderRadius: "20px",
-                overflow: "hidden",
-              }}
-            >
-              <video
-                ref={(el) => (videoRefs.current[index] = el)}
-                src={item.video}
-                muted
-                loop
-                playsInline
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
+  <div
+    key={index}
+    className="story-item"
+    style={{
+      width: `${dimensions.cardWidth}px`,
+      height: `${dimensions.cardHeight}px`,
+      position: "relative",
+      flexShrink: 0,
+      borderRadius: "20px",
+      overflow: "hidden",
+    }}
+  >
+    {/* --- Use iframe instead of video --- */}
+    <iframe
+      src={item.video}
+      title={item.title || `video-${index}`}
+      frameBorder="0"
+      allow="autoplay; fullscreen; encrypted-media"
+      allowFullScreen
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    ></iframe>
 
-              <div className="overlay-content">
-  {/* --- TOP: Title + Subtitle --- */}
-  <div className="overlay-top">
-    {item.title && <h3 className="overlay-title">{item.title}</h3>}
-    {item.subtitle && <p className="overlay-subtitle">{item.subtitle}</p>}
-  </div>
+    <div className="overlay-content">
+      {/* --- TOP: Title + Subtitle --- */}
+      <div className="overlay-top">
+        {item.title && <h3 className="overlay-title">{item.title}</h3>}
+        {item.subtitle && <p className="overlay-subtitle">{item.subtitle}</p>}
+      </div>
 
-  {/* --- BOTTOM: Button --- */}
-  {item.buttonText && item.buttonLink && (
-    <div className="overlay-bottom">
-      <a href={item.buttonLink} className="overlay-btn">
-        {item.buttonText}
-      </a>
+      {/* --- BOTTOM: Button --- */}
+      {item.buttonText && item.buttonLink && (
+        <div className="overlay-bottom">
+          <a href={item.buttonLink} className="overlay-btn">
+            {item.buttonText}
+          </a>
+        </div>
+      )}
     </div>
-  )}
-</div>
+  </div>
+))}
 
-            </div>
-          ))}
         </div>
 
         {canScrollRight && (

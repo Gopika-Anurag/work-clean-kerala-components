@@ -1,5 +1,5 @@
 // src/App.jsx
-import React from "react";
+import React, { useState } from "react";
 import ActivitiesCarousel from "./components/ActivitiesCarousel";
 import ProjectsCarousel from "./components/ProjectsCarousel";
 import StepByStepCarousel from "./components/StepByStepCarosel";
@@ -51,13 +51,31 @@ import FaqComponent from "./components/FaqComponent";
 import FaqPopup from "./components/FaqPopup";
 import VideoCarousel from "./components/VideoCarousel";
 import { videocarouselData } from "./data/videocarouselData";
+import LoginPage from "./Pages/LoginPage";
+import DashboardPage from "./Pages/DashboardPage";
 
 function App() {
+const [currentUser, setCurrentUser] = useState(null);
+
+  const handleLogin = (user) => {
+    setCurrentUser(user);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+  };
   
   return (
+   
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+{currentUser ? (
+        <DashboardPage currentUser={currentUser} onLogout={handleLogout} />
+      ) : (
+        <LoginPage onLogin={handleLogin} />
+      )}
 
         <div>
           <VideoCarousel attributes={videocarouselData}/>

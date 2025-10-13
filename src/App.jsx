@@ -54,6 +54,7 @@ import { videocarouselData } from "./data/videocarouselData";
 import LoginPage from "./Pages/LoginPage";
 import DashboardPage from "./Pages/DashboardPage";
 import PatientComponent from "./components/PatientComponent";
+import MainTestimonialsSection from "./components/MainTestimonialsSection";
 
 function App() {
 const [currentUser, setCurrentUser] = useState(null);
@@ -71,6 +72,9 @@ const [currentUser, setCurrentUser] = useState(null);
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <MainTestimonialsSection />
+
 
     <PatientComponent  />
 

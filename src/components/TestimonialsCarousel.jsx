@@ -1,7 +1,50 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+// --- Helper: A hook to calculate responsive dimensions ---
+const useResponsiveDimensions = (originalDimensions) => {
+  const [dimensions, setDimensions] = useState(originalDimensions);
+
+  useEffect(() => {
+    // A function to calculate the dimensions based on screen size.
+    const calculateDimensions = () => {
+      const screenWidth = window.innerWidth;
+
+      // Fallback to default dimensions if original ones are not provided.
+      if (!originalDimensions?.cardWidth) {
+        setDimensions({ cardWidth: 360, cardHeight: 520, fontScale: 1 });
+        return;
+      }
+
+      // For mobile screens (less than 768px wide).
+      if (screenWidth < 768) {
+        // We want the card to take up 80% of the screen width to show previews.
+        const desiredCardWidth = screenWidth * 0.80;
+        const scaleFactor = desiredCardWidth / originalDimensions.cardWidth;
+        
+        // Apply the scale factor to all dimensions.
+        setDimensions({
+          cardWidth: desiredCardWidth,
+          cardHeight: originalDimensions.cardHeight * scaleFactor,
+          fontScale: originalDimensions.fontScale * scaleFactor,
+        });
+      } else {
+        // For larger screens, use the original dimensions.
+        setDimensions(originalDimensions);
+      }
+    };
+
+    calculateDimensions();
+    window.addEventListener('resize', calculateDimensions);
+    return () => window.removeEventListener('resize', calculateDimensions);
+  }, [originalDimensions]);
+
+  return dimensions;
+};
+
+
 // --- Helper Component for Logos ---
 const CompanyLogo = ({ logo }) => {
+  if (!logo) return null;
   if (logo.type === "text") return <span style={logo.style}>{logo.content}</span>;
   if (logo.type === "svg") return logo.content;
   return null;
@@ -68,7 +111,8 @@ const Slide = ({
     gap: "0.5rem",
     padding: "0.5rem 1.25rem 0.5rem 1rem",
     fontWeight: 600,
-    fontSize: "0.875rem"
+    fontSize: "0.875rem",
+    cursor: "pointer",
   };
 
   return (
@@ -153,7 +197,7 @@ const Slide = ({
             </div>
           </div>
 
-          <div style={{ position: "relative", minHeight: "120px" }}>
+          <div style={{ position: "relative", minHeight: `${120 * dimensions.fontScale}px` }}>
             <div
               style={{
                 opacity: isButtonVisible ? 0 : 1,
@@ -192,26 +236,14 @@ const Slide = ({
               <div style={playPauseButtonStyle}>
                 {isPlaying ? (
                   <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
                     </svg>
                     <span>Pause</span>
                   </>
                 ) : (
                   <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z"></path>
                     </svg>
                     <span>Play story</span>
@@ -227,8 +259,15 @@ const Slide = ({
 };
 
 // --- Main Testimonials Carousel Component ---
-export default function TestimonialsCarousel({ attributes, useEditor }) {
-  const { slides = [], slideGap, dimensions } = attributes;
+export default function TestimonialsCarousel({ attributes }) {
+  const { slides = [], slideGap = 16 } = attributes;
+  // Use original dimensions from props for the hook, with a fallback.
+  const originalDimensions = attributes.dimensions || { cardWidth: 360, cardHeight: 520, fontScale: 1 };
+
+  // Get responsive dimensions.
+  const effectiveDimensions = useResponsiveDimensions(originalDimensions);
+  const cardWidth = effectiveDimensions.cardWidth;
+
   const scrollRef = useRef(null);
   const scrollEndTimeout = useRef(null);
   const [extendedSlides, setExtendedSlides] = useState([]);
@@ -237,31 +276,48 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
   const [listPadding, setListPadding] = useState(0);
   const [slideVisibilities, setSlideVisibilities] = useState({});
   const [isHovered, setIsHovered] = useState(false);
-  const cardWidth = dimensions.cardWidth;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
 
   useEffect(() => {
     const calculatePadding = () => {
-        const scrollContainer = scrollRef.current;
-        if (!scrollContainer) return;
-        const containerWidth = scrollContainer.offsetWidth;
-        const contentWidth = (3 * cardWidth) + (2 * slideGap);
-        const padding = (containerWidth - contentWidth) / 2;
-        setListPadding(Math.max(0, padding));
+      const scrollContainer = scrollRef.current;
+      if (!scrollContainer) return;
+      const containerWidth = scrollContainer.offsetWidth;
+      // Calculate padding to center one card.
+      const paddingForCentering = (containerWidth - cardWidth) / 2;
+      // Limit the padding so adjacent cards remain visible on wider screens.
+      const maxPadding = cardWidth / 4;
+      const padding = Math.min(paddingForCentering, maxPadding);
+
+      // Ensure a minimum padding.
+      setListPadding(Math.max(16, padding));
     };
 
-    const debouncedHandler = () => {
-        clearTimeout(scrollEndTimeout.current);
-        scrollEndTimeout.current = setTimeout(calculatePadding, 100);
-    };
     calculatePadding();
+    // Use a timeout to avoid excessive recalculations on resize.
+    const debouncedHandler = () => {
+      clearTimeout(scrollEndTimeout.current);
+      scrollEndTimeout.current = setTimeout(calculatePadding, 100);
+    };
     window.addEventListener('resize', debouncedHandler);
     return () => window.removeEventListener('resize', debouncedHandler);
-  }, [cardWidth, slideGap]);
+  }, [cardWidth]); // Recalculate padding when responsive cardWidth changes.
   
+  // Extend slides for infinite loop effect
   useEffect(() => {
     if (slides.length > 0) setExtendedSlides([...slides, ...slides, ...slides]);
   }, [slides]);
 
+  // Set initial scroll position to the start of the "middle" set of slides
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (extendedSlides.length > 0 && scrollContainer) {
@@ -270,6 +326,7 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
     }
   }, [extendedSlides, slides.length, slideGap, cardWidth]);
 
+  // Use IntersectionObserver to fade out non-centered cards
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer || extendedSlides.length === 0) return;
@@ -280,7 +337,7 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
             entries.forEach((entry) => {
                 const id = entry.target.dataset.id;
                 if (id) {
-                   newVisibilities[id] = entry.intersectionRatio >= 0.95;
+                    newVisibilities[id] = entry.intersectionRatio >= 0.95;
                 }
             });
             setSlideVisibilities(prev => ({ ...prev, ...newVisibilities }));
@@ -298,6 +355,7 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
     });
   }, [extendedSlides]);
 
+  // Handle the infinite scroll logic by repositioning the scroll silently
   const handleInfiniteScroll = useCallback(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
@@ -334,7 +392,7 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
   };
 
   const navButtonStyle = {
-    opacity: isHovered ? 1 : 0,
+    opacity: isHovered || isMobile ? 1 : 0,
     transition: 'opacity 0.2s ease-in-out',
     position: 'absolute',
     top: '50%',
@@ -359,9 +417,9 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-        <button 
-            onClick={() => scrollBy('left')} 
-            aria-label="Previous Slide" 
+        <button
+            onClick={() => scrollBy('left')}
+            aria-label="Previous Slide"
             style={{ ...navButtonStyle, left: `${listPadding}px`, transform: 'translate(-50%, -50%)' }}
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -382,9 +440,10 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
             <style>{`ul::-webkit-scrollbar { display: none; }`}</style>
             {extendedSlides.map((slide, index) => {
                 const uniqueId = `${slide.id}-${index}`;
+                // Default to visible on first render before observer runs.
                 const isVisible = slideVisibilities[uniqueId] === undefined ? true : slideVisibilities[uniqueId];
                 return (
-                    <li 
+                    <li
                         key={uniqueId}
                         data-id={uniqueId}
                         style={{
@@ -397,7 +456,7 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
                     >
                         <Slide
                             item={slide}
-                            dimensions={dimensions}
+                            dimensions={effectiveDimensions}
                             isPlaying={currentlyPlaying === slide.id}
                             onPlayToggle={() => handlePlayToggle(slide.id)}
                             isCurrentlyHovered={hoveredId === slide.id}
@@ -409,9 +468,9 @@ export default function TestimonialsCarousel({ attributes, useEditor }) {
                 );
             })}
         </ul>
-        <button 
-            onClick={() => scrollBy('right')} 
-            aria-label="Next Slide" 
+        <button
+            onClick={() => scrollBy('right')}
+            aria-label="Next Slide"
             style={{ ...navButtonStyle, right: `${listPadding}px`, transform: 'translate(50%, -50%)' }}
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>

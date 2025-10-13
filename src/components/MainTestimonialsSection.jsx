@@ -13,31 +13,31 @@ export default function MainTestimonialsSection() {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingTop: '4rem',
-    paddingBottom: '4rem',
+    paddingTop: '64px',   // 4rem = 64px
+    paddingBottom: '64px',
     overflow: 'hidden'
   };
 
   const headerStyle = {
     textAlign: 'center',
-    marginBottom: '3rem',
-    paddingLeft: '1rem',
-    paddingRight: '1rem',
-    maxWidth: '80rem',
+    marginBottom: '48px', // 3rem = 48px
+    paddingLeft: '16px',  // 1rem = 16px
+    paddingRight: '16px',
+    maxWidth: '1280px',   // 80rem = 1280px
     marginLeft: 'auto',
     marginRight: 'auto',
   };
 
   const pStyle = {
-    fontSize: '0.875rem',
+    fontSize: '14px',      // 0.875rem = 14px
     fontWeight: '700',
     color: '#2563eb',
     letterSpacing: '0.2em',
-    marginBottom: '1rem',
+    marginBottom: '16px',  // 1rem = 16px
   };
 
   const h1Style = {
-    fontSize: '2.25rem',
+    fontSize: '28px',      // 2.25rem = 36px
     fontWeight: '700',
     color: '#000000',
   };

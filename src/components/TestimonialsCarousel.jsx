@@ -63,27 +63,41 @@ const Slide = ({
 }) => {
   const videoRef = useRef(null);
   const wasPlayingRef = useRef(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     if (isPlaying) {
+      // If the video is just starting to play, reset its time to the beginning.
       if (!wasPlayingRef.current) {
         video.currentTime = 0;
-        video.muted = false;
       }
       video.play().catch((e) => console.error("Video play failed:", e));
     } else {
       video.pause();
     }
+    // Track the current playing state for the next check.
     wasPlayingRef.current = isPlaying;
   }, [isPlaying]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if(video) {
+        video.muted = isMuted;
+    }
+  }, [isMuted]);
 
   const handlePlayClick = (e) => {
     e.stopPropagation();
     onPlayToggle();
   };
+
+  const handleMuteToggle = (e) => {
+  e.stopPropagation(); // Prevents the click from also triggering the play/pause on the card
+  setIsMuted(prev => !prev);
+}
 
   const isButtonVisible = isCurrentlyHovered || (isPlaying && !isAnotherCardHovered);
 
@@ -113,6 +127,22 @@ const Slide = ({
     fontWeight: 600,
     fontSize: "0.875rem",
     cursor: "pointer",
+  };
+
+   const muteButtonStyle = {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    backdropFilter: "blur(4px)",
+    borderRadius: '9999px',
+    width: `${32 * dimensions.fontScale}px`,
+    height: `${32 * dimensions.fontScale}px`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: 'none',
+    color: 'white',
+    cursor: 'pointer',
+    opacity: isPlaying ? 1 : 0,
+    transition: 'opacity 0.3s ease-in-out',
   };
 
   return (
@@ -173,6 +203,32 @@ const Slide = ({
             color: "white"
           }}
         >
+          {/* --- Mute Button --- */}
+          {/* You can position this div to place the button in any corner. */}
+          {/* For top-left: use 'top' and 'left' */}
+          {/* For top-right: use 'top' and 'right' */}
+          {/* For bottom-left: use 'bottom' and 'left' */}
+          {/* For bottom-right: use 'bottom' and 'right' */}
+          <div style={{
+            position: 'absolute',
+            top: `${24 * dimensions.fontScale}px`,
+            left: `${24 * dimensions.fontScale}px`,
+            zIndex: 10,
+          }}>
+             <button onClick={handleMuteToggle} style={muteButtonStyle}>
+                  {isMuted ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                          <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zM6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96V5.04zm7.854.606a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"/>
+                      </svg>
+                  ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                         <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/>
+                         <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/>
+                         <path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/>
+                      </svg>
+                  )}
+              </button>
+          </div>
           <div
             style={{
               display: "flex",
@@ -354,6 +410,36 @@ export default function TestimonialsCarousel({ attributes }) {
         if (item.dataset.id) observer.unobserve(item);
     });
   }, [extendedSlides]);
+
+  // --- MOUSE WHEEL SCROLL EFFECT ---
+useEffect(() => {
+  const scrollContainer = scrollRef.current;
+  if (!scrollContainer) return;
+
+  const handleWheelScroll = (e) => {
+    // Don't interfere with native horizontal scrolling (e.g., trackpads)
+    if (e.deltaX !== 0) return;
+    
+    e.preventDefault();
+    
+    // Temporarily disable snap for smooth programmatic scroll
+    scrollContainer.style.scrollSnapType = 'none';
+    scrollContainer.scrollLeft += e.deltaY;
+
+    // Clear any existing timeout
+    if (wheelTimeout.current) {
+      clearTimeout(wheelTimeout.current);
+    }
+
+    // Set a timeout to re-enable snap scrolling after the user stops scrolling
+    wheelTimeout.current = setTimeout(() => {
+      scrollContainer.style.scrollSnapType = 'x mandatory';
+    }, 150);
+  };
+
+  scrollContainer.addEventListener('wheel', handleWheelScroll, { passive: false });
+  return () => scrollContainer.removeEventListener('wheel', handleWheelScroll);
+}, []); // Runs once on mount
 
   // Handle the infinite scroll logic by repositioning the scroll silently
   const handleInfiniteScroll = useCallback(() => {

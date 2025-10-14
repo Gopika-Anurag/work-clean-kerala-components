@@ -6,7 +6,7 @@ export const testimonialsData = [
     quote: '"Interactive video is redefining training for us"',
     authorName: 'Jen Ruthven',
     authorTitle: 'Group Director, Learning & Career Development',
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ export const testimonialsData = [
     quote: '"We push updates without touching the LMS."',
     authorName: 'Mark Stauffer',
     authorTitle: 'Senior Manager, Global L&D',
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ export const testimonialsData = [
     quote: '"We saved $56K and hit 100+ custom videos"',
     authorName: 'Matt Wezar',
     authorTitle: 'Senior Director of Talent Development',
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ export const testimonialsData = [
     quote: '"Fast and easy, transforming our company."',
     authorName: 'Jane Doe',
     authorTitle: 'Head of Innovation',
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
   },
   {
     id: 5,

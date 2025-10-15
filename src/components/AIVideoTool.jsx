@@ -29,6 +29,20 @@ export default function AIVideoTool() {
     }
   }, [selectedAvatarId]);
 
+  useEffect(() => {
+  const videos = document.querySelectorAll('.avatar-video');
+  videos.forEach((video) => {
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        video.muted = true;
+        video.play().catch(() => {}); // Retry silently
+      });
+    }
+  });
+}, [avatarData, selectedAvatarId]);
+
+
   const charactersLeft = SCRIPT_MAX_LENGTH - (selectedAvatar?.script?.length || 0);
 
  const handleScriptChange = (e) => {
@@ -54,29 +68,70 @@ export default function AIVideoTool() {
             <div className="step">
               <p className="step-label">1. Select an AI avatar</p>
               <div className="avatar-selector" ref={selectorRef}>
-                {avatarData.map((avatar) => (
-                  <div
-                    key={avatar.id}
-                    className={`avatar-option ${
-                      avatar.id === selectedAvatarId ? 'selected' : ''
-                    }`}
-                    onClick={() => setSelectedAvatarId(avatar.id)}
-                  >
-                    <div className="avatar-name-overlay">AVATAR: {avatar.name.toUpperCase()}</div>
-                    <img src={avatar.thumbnail} alt={avatar.name} />
-                  </div>
-                ))}
-              </div>
+  {avatarData.map((avatar) => (
+    <div
+      key={avatar.id}
+      className={`avatar-option ${avatar.id === selectedAvatarId ? 'selected' : ''}`}
+      onClick={() => setSelectedAvatarId(avatar.id)}
+    >
+      <div className="avatar-name-overlay">AVATAR: {avatar.name.toUpperCase()}</div>
+
+      {/* Desktop: Image preview */}
+      <img
+        src={avatar.thumbnail}
+        alt={avatar.name}
+        className="avatar-image desktop-only"
+      />
+
+      {/* Mobile: Only play selected video */}
+      {avatar.id === selectedAvatarId ? (
+        <video
+          key={avatar.video}
+          src={avatar.video}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="avatar-video mobile-only"
+        />
+      ) : (
+        <div className="avatar-video-placeholder mobile-only">
+          <img
+            src={avatar.thumbnail}
+            alt={avatar.name}
+            className="avatar-video-thumbnail"
+          />
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
+
               <div className="avatar-dots">
-                {avatarData.map((avatar) => (
-                  <span
-                    key={avatar.id}
-                    className={`dot ${
-                      avatar.id === selectedAvatarId ? 'active' : ''
-                    }`}
-                  />
-                ))}
-              </div>
+  {avatarData.map((avatar) => (
+    <span
+      key={avatar.id}
+      className={`dot ${avatar.id === selectedAvatarId ? 'active' : ''}`}
+      onClick={() => {
+        setSelectedAvatarId(avatar.id);
+        // Scroll the selected avatar into view
+        const element = selectorRef.current?.querySelector(
+          `.avatar-option:nth-child(${avatar.id})`
+        );
+        if (element) {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            inline: 'center',
+            block: 'nearest'
+          });
+        }
+      }}
+    />
+  ))}
+</div>
+
             </div>
           {/* Step 2: Script Input */}
           <div className="step">

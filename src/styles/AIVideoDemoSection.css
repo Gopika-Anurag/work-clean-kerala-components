@@ -72,6 +72,24 @@
       gap: 1rem;
     }
 
+    /* Hide videos by default, show on mobile */
+.avatar-video {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Default show images, hide videos */
+.avatar-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
     .avatar-option {
       position: relative;
       cursor: pointer;
@@ -245,6 +263,15 @@
     .avatar-dots {
     display: none;
 }
+
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
        @media (max-width: 1024px) {
       .ai-video-tool-container {
         padding: 0;
@@ -270,6 +297,12 @@
         display: none;
       }
 
+      .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
       
 
       /* Make avatar selector a scrollable row */
@@ -338,22 +371,24 @@
       }
 
       .avatar-dots {
-    display: flex; /* Makes the dots visible on mobile */
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    margin-top: 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  cursor: pointer;
 }
 
 .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.3); /* Default gray dot */
-    transition: background-color 0.3s ease;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
 }
 
 .dot.active {
-    background-color: #FFFFFF; /* Active dot is white */
+  background-color: #ffffff;
+  transform: scale(1.2);
 }
     }

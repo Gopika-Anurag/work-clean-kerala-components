@@ -55,6 +55,7 @@ import LoginPage from "./Pages/LoginPage";
 import DashboardPage from "./Pages/DashboardPage";
 import PatientComponent from "./components/PatientComponent";
 import MainTestimonialsSection from "./components/MainTestimonialsSection";
+import AIVideoTool from "./components/AIVideoTool";
 
 function App() {
 const [currentUser, setCurrentUser] = useState(null);
@@ -72,6 +73,8 @@ const [currentUser, setCurrentUser] = useState(null);
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <AIVideoTool/>
 
         <MainTestimonialsSection />
 

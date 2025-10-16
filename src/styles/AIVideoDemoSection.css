@@ -90,35 +90,48 @@
   border-radius: 16px;
 }
 
-    .avatar-option {
-      position: relative;
-      cursor: pointer;
-      border-radius: 12px;
-      border: 3px solid transparent;
-      transition: border-color 0.2s ease;
-    }
+   .avatar-option {
+  position: relative;
+  flex: 0 0 150px;       /* slightly larger base size */
+  height: 150px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: transform 0.2s ease;
+  scroll-snap-align: center;
+  background: none;
+}
     
-    .avatar-option img {
-        display: block;
-        width: 140px;
-        height: 140px;
-        object-fit: cover;
-        filter: brightness(0.6);
-    }
+    .avatar-option img,
+.avatar-option video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+  background-color: transparent;
+}
 
-    .avatar-option:hover img {
-  filter: brightness(1); /* Brighten on hover */
+   .avatar-option img {
+  filter: brightness(0.7);
+  transition: filter 0.3s ease;
+}
+
+.avatar-option:hover img {
+  filter: brightness(1);
 }
 
 .avatar-option.selected img {
-  filter: brightness(1); /* Keep selected bright */
+  filter: brightness(1);
 }
 
-     .avatar-option.selected {
-        border-color: #4a80f0;
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(74, 128, 240, 0.5);
-      }
+/* Add blue glow on selection */
+.avatar-option.selected {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px #4a80f0, 0 0 15px rgba(74, 128, 240, 0.5);
+}
 
     .avatar-name-overlay {
   z-index: 10;
@@ -306,37 +319,57 @@
       
 
       /* Make avatar selector a scrollable row */
-      .avatar-selector {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-top: 0;
-        padding-bottom: 1rem; /* Add some space for scrollbar */
-        padding-left: 5%; /* Padding to help center first item */
-        padding-right: 5%; /* Padding to help center last item */
-        scroll-snap-type: x mandatory; /* Snap scrolling */
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-      }
-      .avatar-selector::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
-      }
+     /* MOBILE FIXED AVATAR SELECTOR LAYOUT */
+.avatar-selector {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 3%;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 3%;
+  scroll-padding-right: 3%;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.avatar-selector::-webkit-scrollbar {
+  display: none;
+}
 
-      /* Enlarge the avatar thumbnails to act as previews */
-      .avatar-option {
-        width: 250px;
-        height: 267px;
-        flex-shrink: 0; /* Prevent items from shrinking */
-        overflow: hidden; /* Hide anything outside the border-radius */
-        border-radius: 16px;
-        scroll-snap-align: center; /* Snap to center */
-      }
-      
-      .avatar-option img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 16px;
-      }
+/* Ensures all avatars have identical sizing and alignment */
+.avatar-option {
+  flex: 0 0 230px;
+  height: 267px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  box-sizing: border-box;
+  background-color: #000; /* ensures no transparent gap flashes */
+}
+
+/* Makes image and video always fill the container exactly */
+.avatar-option img,
+.avatar-option video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+  background-color: transparent;
+}
+
+/* Force consistent size for all children (no extra padding/margin) */
+.avatar-option * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
 
       /* Reposition and restyle the name overlay to be a permanent label on mobile */
       .avatar-option .avatar-name-overlay {

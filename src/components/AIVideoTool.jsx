@@ -4,21 +4,26 @@ import avatars from '../data/AIAvatarData';
 import '../styles/AIVideoDemoSection.css';
 
 export default function AIVideoTool() {
-  const [selectedAvatarId, setSelectedAvatarId] = useState(null);
+  // ✅ Initialize state directly to prevent an extra render on load.
+  const [selectedAvatarId, setSelectedAvatarId] = useState(() =>
+    avatars.length > 0 ? avatars[0].id : null
+  );
+
   const [avatarData, setAvatarData] = useState(avatars);
   const selectorRef = useRef(null);
+  const isInitialMount = useRef(true); // Helper ref to track the first render
 
   const SCRIPT_MAX_LENGTH = 250;
 
-  // 🧠 Automatically select the first avatar when the component loads
+  // ✅ This useEffect now correctly handles scrolling but safely ignores the initial render.
   useEffect(() => {
-    if (avatars.length > 0 && selectedAvatarId === null) {
-      setSelectedAvatarId(avatars[0].id);
+    // If this is the first time the component renders, set the ref to false and do nothing.
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
     }
-  }, [selectedAvatarId]);
 
-  // 🔹 Scroll selected avatar into view (mobile + desktop)
-  useEffect(() => {
+    // For all subsequent avatar selections (i.e., user clicks), run the scroll logic.
     if (selectorRef.current) {
       const selectedElement = selectorRef.current.querySelector('.selected');
       if (selectedElement) {
@@ -31,7 +36,7 @@ export default function AIVideoTool() {
     }
   }, [selectedAvatarId]);
 
-  // 🔹 Ensure videos auto-play (handle browser restrictions)
+  // Ensure videos auto-play (handle browser restrictions)
   useEffect(() => {
     const videos = document.querySelectorAll('.avatar-video');
     videos.forEach((video) => {
@@ -77,7 +82,9 @@ export default function AIVideoTool() {
               {avatarData.map((avatar) => (
                 <div
                   key={avatar.id}
-                  className={`avatar-option ${avatar.id === selectedAvatarId ? 'selected' : ''}`}
+                  className={`avatar-option ${
+                    avatar.id === selectedAvatarId ? 'selected' : ''
+                  }`}
                   onClick={() => setSelectedAvatarId(avatar.id)}
                 >
                   <div className="avatar-name-overlay">AVATAR: {avatar.name.toUpperCase()}</div>
@@ -116,23 +123,14 @@ export default function AIVideoTool() {
 
             {/* Dots for navigation */}
             <div className="avatar-dots">
-              {avatarData.map((avatar, index) => (
+              {avatarData.map((avatar) => (
                 <span
                   key={avatar.id}
-                  className={`dot ${avatar.id === selectedAvatarId ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedAvatarId(avatar.id);
-                    const element = selectorRef.current?.querySelector(
-                      `.avatar-option:nth-child(${index + 1})`
-                    );
-                    if (element) {
-                      element.scrollIntoView({
-                        behavior: 'smooth',
-                        inline: 'center',
-                        block: 'nearest'
-                      });
-                    }
-                  }}
+                  className={`dot ${
+                    avatar.id === selectedAvatarId ? 'active' : ''
+                  }`}
+                  // ✅ Let the useEffect handle all scroll logic for consistency.
+                  onClick={() => setSelectedAvatarId(avatar.id)}
                 />
               ))}
             </div>

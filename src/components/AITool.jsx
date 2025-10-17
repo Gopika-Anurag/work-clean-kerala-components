@@ -14,24 +14,24 @@ export default function AITool() {
 
   const SCRIPT_MAX_LENGTH = 250;
 
-// useLayoutEffect(() => {
-//     const originalScrollRestoration = window.history.scrollRestoration;
+useLayoutEffect(() => {
+    const originalScrollRestoration = window.history.scrollRestoration;
 
-//     // Set to manual before scrolling
-//     if ('scrollRestoration' in window.history) {
-//       window.history.scrollRestoration = 'manual';
-//     }
+    // Set to manual before scrolling
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
     
-//     // Scroll to top before the page is painted
-//     window.scrollTo(0, 0);
+    // Scroll to top before the page is painted
+    window.scrollTo(0, 0);
 
-//     // Cleanup function to restore the original setting
-//     return () => {
-//       if ('scrollRestoration' in window.history) {
-//         window.history.scrollRestoration = originalScrollRestoration;
-//       }
-//     };
-//   }, []);
+    // Cleanup function to restore the original setting
+    return () => {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = originalScrollRestoration;
+      }
+    };
+  }, []);
 
   // 🧩 Ensure avatar selector starts at the beginning on first load
 

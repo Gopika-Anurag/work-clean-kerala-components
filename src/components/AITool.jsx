@@ -193,22 +193,17 @@ onClick={() => {
             </div>
           </div>
 
-          {/* Step 2: Script Input */}
+{/* Step 2: Script Display (Predefined per Avatar) */}
 <div className="step">
   <p className="step-label">2. Type your script</p>
 
-  <div
-    className="script-input-div"
-    contentEditable
-    suppressContentEditableWarning={true}
-    ref={inputRef}
-    onInput={(e) => {
-      const value = e.currentTarget.textContent.trim();
-      setScript(value);
-    }}
-    data-placeholder="Type your script here..."
-  ></div>
+  <div className="paragraph-wrapper">
+    <p className="script-paragraph">
+      {selectedAvatar?.script || "Select an avatar to view their sample script."}
+    </p>
+  </div>
 </div>
+
 
 
 

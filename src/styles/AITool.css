@@ -1,0 +1,438 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    .ai-video-tool-container {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .ai-video-tool {
+      display: flex;
+      flex-direction: row;
+      background: linear-gradient(135deg, #0a0f2b, #1e295d);
+      color: white;
+       border-radius: 24px 24px 120px 24px;
+      padding: 3rem;
+      max-width: 1500px;
+      width: 100%;
+      gap: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .form-panel {
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .preview-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    
+    
+    .free-demo-badge {
+        background-color: #3f51b5;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+    
+    .step {
+        margin-bottom: 2rem;
+    }
+    
+    .step-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .avatar-selector {
+      display: flex;
+      gap: 1rem;
+    }
+
+    /* Hide videos by default, show on mobile */
+.avatar-video {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Default show images, hide videos */
+.avatar-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+   .avatar-option {
+  position: relative;
+  flex: 0 0 150px;       /* slightly larger base size */
+  height: 150px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: transform 0.2s ease;
+  scroll-snap-align: center;
+  background: none;
+}
+    
+    .avatar-option img,
+.avatar-option video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+  background-color: transparent;
+}
+
+   .avatar-option img {
+  filter: brightness(0.7);
+  transition: filter 0.3s ease;
+}
+
+.avatar-option:hover img {
+  filter: brightness(1);
+}
+
+.avatar-option.selected img {
+  filter: brightness(1);
+}
+
+/* Add blue glow on selection */
+.avatar-option.selected {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px #4a80f0, 0 0 15px rgba(74, 128, 240, 0.5);
+}
+
+    .avatar-name-overlay {
+  z-index: 10;
+}
+
+    
+    /* Editable paragraph div (replaces textarea) */
+.script-input-div {
+  width: 100%;
+  min-height: 150px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  box-sizing: border-box;
+  outline: none;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  caret-color: #ffffff;
+  position: relative;
+}
+
+.script-input-div:focus {
+  border-color: #4a80f0;
+  box-shadow: 0 0 0 2px rgba(74, 128, 240, 0.5);
+}
+
+/* ✅ Show placeholder only when empty */
+.script-input-div:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+}
+
+
+/* Smooth scroll if text overflows */
+.script-input-div::-webkit-scrollbar {
+  width: 6px;
+}
+.script-input-div::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+    
+    .create-video-btn {
+        background-color: #4a80f0;
+        color: white;
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 1rem;
+    }
+    
+    .create-video-btn:hover {
+        background-color: #3b6acb;
+    }
+    
+    .disclaimer {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 1rem;
+        text-align: center;
+    }
+    
+
+    .avatar-preview {
+      width: 100%;
+      max-width: 760px;
+      aspect-ratio: 1 / 1;
+       border-radius: 24px 24px 120px 24px;
+      overflow: hidden;
+      background-color: rgba(0,0,0,0.2);
+      position: relative;
+    }
+    
+    
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+
+    
+    .avatar-name {
+        position: absolute; /* Positioned inside the preview div */
+        bottom: 0;
+        left: 0;
+        padding: 1rem;
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .avatar-name-overlay {
+      position: absolute;
+      bottom: 100%; /* Position above the element */
+      left: 50%;
+      transform: translateX(-50%);
+      margin-bottom: 13px; /* Space for arrow + gap */
+      color: #333;
+      background-color: white;
+      font-weight: 600;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: all 0.2s ease-out;
+      pointer-events: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .avatar-name-overlay::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+
+.avatar-option:hover .avatar-name-overlay {
+      opacity: 1;
+      margin-bottom: 17px; /* Animate upwards slightly */
+    }
+    
+    
+    .avatar-dots {
+    display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+       @media (max-width: 1024px) {
+      .ai-video-tool-container {
+        padding: 0;
+      }
+      
+      .ai-video-tool {
+        flex-direction: column;
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .form-panel {
+        max-width: 100%;
+      }
+      .title {
+        font-size: 2rem;
+      }
+
+      /* Hide the main video preview on mobile */
+      .preview-panel {
+        display: none;
+      }
+
+      .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+      
+
+      /* Make avatar selector a scrollable row */
+     /* MOBILE FIXED AVATAR SELECTOR LAYOUT */
+.avatar-selector {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 3%;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 3%;
+  scroll-padding-right: 3%;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.avatar-selector::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensures all avatars have identical sizing and alignment */
+.avatar-option {
+  flex: 0 0 230px;
+  height: 267px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  box-sizing: border-box;
+  background-color: #000; /* ensures no transparent gap flashes */
+}
+
+/* Makes image and video always fill the container exactly */
+.avatar-option img,
+.avatar-option video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+  background-color: transparent;
+}
+
+/* Force consistent size for all children (no extra padding/margin) */
+.avatar-option * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+      /* Reposition and restyle the name overlay to be a permanent label on mobile */
+      .avatar-option .avatar-name-overlay {
+        opacity: 1;
+        pointer-events: auto;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: none;
+        margin: 0;
+        padding: 1rem;
+        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        border-radius: 0;
+        box-shadow: none;
+        text-align: left;
+      }
+
+      /* Hide the tooltip arrow on mobile */
+      .avatar-option .avatar-name-overlay::after {
+        display: none;
+      }
+
+      /* Remove hover effect for overlay on mobile */
+      .avatar-option:hover .avatar-name-overlay {
+          margin-bottom: 0;
+      }
+
+      .avatar-dots {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background-color: #ffffff;
+  transform: scale(1.2);
+}
+    }

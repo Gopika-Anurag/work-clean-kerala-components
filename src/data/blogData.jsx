@@ -86,4 +86,44 @@ export const blogData = [
         headerBG: "linear-gradient(90deg, #FFFFFF 65%, #FFFFFF 100%)",
         cardType: "lighthouse", // Mapped to Vibrant Yellow/Orange
     },
+    {
+        id: 4,
+        headerText: "New Chrome Web Store API",
+        title: "Introducing a new Chrome Web Store API",
+        description: "We're launching a new version of the Chrome Web Store API.",
+        categories: ["Blog", "Development"],
+        subCategories: ["JavaScript", "Chrome", "Chrome Extensions"],
+        author: "Oliver Dunk",
+        date: "October 15, 2025",
+        svg: <ChromeWebStoreSVG />,
+        headerBG: "linear-gradient(90deg, #FFFFFF 65%, #FFFFFF 100%)", 
+        cardType: "chrome", // Mapped to Vibrant Blue
+    },
+    {
+        id: 5,
+        headerText: "Highlights from our AI in Action workshop",
+        title: "Highlights from our AI in Action workshop",
+        description:
+            "In partnership with startups in NYC, we demonstrated how built-in AI APIs can be integrated into products for better speed, privacy, and user experience.",
+        categories: ["AI & Machine Learning", "Blog"],
+        subCategories: ["Chrome"],
+        author: "Damani Brown and Melissa Mitchell",
+        date: "October 14, 2025",
+        svg: <AiInActionSVG />,
+        headerBG: "linear-gradient(90deg, #FFFFFF 65%, #FFFFFF 100%)",
+        cardType: "ai", // Mapped to Vibrant Green
+    },
+    {
+        id: 6,
+        headerText: "What's new in Lighthouse 13",
+        title: "What's new in Lighthouse 13",
+        description: "Lighthouse 13 is here with the move to Insights audits.",
+        categories: ["Blog", "Performance", "News"],
+        subCategories: ["Chrome", "Insights Audits"],
+        author: "Barry Pollard and Connor Clark",
+        date: "October 10, 2025",
+        svg: <LighthouseSVG />,
+        headerBG: "linear-gradient(90deg, #FFFFFF 65%, #FFFFFF 100%)",
+        cardType: "lighthouse", // Mapped to Vibrant Yellow/Orange
+    },
 ];

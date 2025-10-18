@@ -3,11 +3,11 @@
 /* Base Card Styling */
 .blog-card {
     background: #fff;
-    border-radius: 0;       /* remove rounding so cards touch cleanly */
+    border-radius: 0;
     width: 100%;
-    max-width: none;        /* allow full grid use */
+    max-width: none;
     overflow: hidden;
-    box-shadow: none;       /* optional: remove shadow so seams are invisible */
+    box-shadow: none;
     margin: 0 !important;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
@@ -43,10 +43,8 @@
     transform: translateY(-50%);
 }
 
-/* --- AI Card Specific Layout Fixes (Text Left, Circle Right) --- */
-/* 1. Set up the header for space-between layout */
+/* AI Card Specific Layout Fixes */
 .bg-ai-light.card-header-bg {
-    /* This makes the header a flex container and spaces its children out. */
     display: flex;
     justify-content: space-between; 
     align-items: center;
@@ -66,9 +64,7 @@
     align-items: center;
     justify-content: center;
 }
-/* 2. Style the Content (Text) to take the remaining left space */
 .bg-ai-light .header-content {
-    /* This allows the text container to take up all the space on the left side. */
     flex: 1; 
     justify-content: flex-start !important; 
     text-align: left !important;
@@ -77,14 +73,14 @@
 .card-header-bg.align-left .circle-bg { left: -60px; }
 .card-header-bg.align-right .circle-bg { right: -60px; }
 
-/* Icon inside the small circle */
+/* Icon inside the circle */
 .icon-inside-circle svg {
     width: 110px; 
     height: 110px;
     z-index: 2;
 }
 
-/* Header Content (Text and Icon) */
+/* Header Content */
 .header-content {
     position: relative;
     z-index: 2;
@@ -95,13 +91,11 @@
     gap: 16px;
     width: 100%;
 }
-
 .icon-header svg {
     width: 110px;
     height: 110px;
     flex-shrink: 0;
 }
-
 .header-text {
     font-size: 1.6rem;
     font-weight: 700;
@@ -115,7 +109,6 @@
     width: 100%;
     box-sizing: border-box;
 }
-
 .main-heading {
     font-size: 2.5rem;
     font-weight: 800;
@@ -124,27 +117,68 @@
     margin-left: 40px; 
 }
 
-.blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 50px; 
-    justify-content: start;
-    width: 80%;
-    padding: 0; 
-    margin: 40px;
+/* Carousel wrapper */
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-/* Ensure white text for better contrast on vibrant backgrounds */
-.bg-chrome-light .header-text, 
-.bg-ai-light .header-text, 
-.bg-lighthouse-light .header-text {
-    color: #fff; 
-    -webkit-text-fill-color: #fff;
+/* Carousel scrollable container */
+.carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 20px 0;
+  scroll-padding-left: 40px;
 }
 
-.header-content.row-reverse .header-text { text-align: right; }
-.header-content.row { flex-direction: row; }
-.header-content.row-reverse { flex-direction: row-reverse; justify-content: flex-end; }
+/* Hide scrollbar */
+.carousel::-webkit-scrollbar { display: none; }
+.carousel { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Navigation buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ffffffcc;
+  border: none;
+  border-radius: 50%;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 8px 14px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+.carousel-btn:hover { background: #fff; }
+.carousel-btn.left { left: -20px; }
+.carousel-btn.right { right: -20px; }
+
+/* Each card width: 3.5 on desktop, 1 on mobile */
+.carousel .blog-card {
+  flex: 0 0 calc((100% / 3.5) - 16px);
+  min-width: 220px;
+}
+
+/* Tablet: ~2 cards */
+@media (max-width: 1024px) {
+  .carousel .blog-card {
+    flex: 0 0 calc((100% / 2.2) - 16px);
+  }
+}
+
+/* Mobile: 1 card */
+@media (max-width: 768px) {
+  .carousel .blog-card {
+    flex: 0 0 90%;
+  }
+  .carousel-wrapper { padding: 0 10px; }
+  .carousel-btn.left { left: 0; }
+  .carousel-btn.right { right: 0; }
+}
 
 /* Card Content */
 .card-content { padding: 24px; }
@@ -160,12 +194,6 @@
     margin-right: 8px;
     margin-bottom: 8px;
 }
-/* Tag Colors */
-.tag-0 { background: #fee2e2; color: #dc2626; }
-.tag-1 { background: #dcfce7; color: #16a34a; }
-.tag-2 { background: #eff6ff; color: #2563eb; }
-.tag-3 { background: #f3e5f5; color: #a855f7; }
-
 /* Footer */
 .card-footer {
     display: flex;
@@ -178,9 +206,20 @@
 .author { font-weight: 600; color: #374151; }
 .date { color: #9ca3af; }
 
+/* Text contrast for vibrant backgrounds */
+.bg-chrome-light .header-text, 
+.bg-ai-light .header-text, 
+.bg-lighthouse-light .header-text {
+    color: #fff; 
+    -webkit-text-fill-color: #fff;
+}
+
+.header-content.row-reverse .header-text { text-align: right; }
+.header-content.row { flex-direction: row; }
+.header-content.row-reverse { flex-direction: row-reverse; justify-content: flex-end; }
+
 /* Media Query */
 @media (max-width: 768px) {
-    .main-heading,
-    .blog-grid { margin-left: 0; padding-left: 0; }
+    .main-heading { margin-left: 0; padding-left: 0; }
     .blog-main-container { padding: 40px 20px; }
 }

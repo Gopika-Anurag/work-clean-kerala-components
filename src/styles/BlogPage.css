@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Base Card Styling */
+.blog-card {
+    background: #fff;
+    border-radius: 0;       /* remove rounding so cards touch cleanly */
+    width: 100%;
+    max-width: none;        /* allow full grid use */
+    overflow: hidden;
+    box-shadow: none;       /* optional: remove shadow so seams are invisible */
+    margin: 0 !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Header Background & Gradient Circle */
+.card-header-bg {
+    position: relative;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 24px 24px 0 0;
+}
+
+/* --- Static Header Background Colors (Vibrant BGY) --- */
+.bg-chrome-light { background: #1565C0; }
+.bg-ai-light { background: #4CAF50; }
+.bg-lighthouse-light { background: #FFC107; }
+
+/* Circle */
+.circle-bg {
+    position: absolute;
+    top: 50%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+}
+
+/* --- AI Card Specific Layout Fixes (Text Left, Circle Right) --- */
+/* 1. Set up the header for space-between layout */
+.bg-ai-light.card-header-bg {
+    /* This makes the header a flex container and spaces its children out. */
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0 24px;
+}
+.bg-ai-light .circle-bg {
+    position: relative; 
+    width: 160px !important; 
+    height: 160px !important;
+    opacity: 0.95;
+    transform: none; 
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    flex-shrink: 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* 2. Style the Content (Text) to take the remaining left space */
+.bg-ai-light .header-content {
+    /* This allows the text container to take up all the space on the left side. */
+    flex: 1; 
+    justify-content: flex-start !important; 
+    text-align: left !important;
+}
+
+.card-header-bg.align-left .circle-bg { left: -60px; }
+.card-header-bg.align-right .circle-bg { right: -60px; }
+
+/* Icon inside the small circle */
+.icon-inside-circle svg {
+    width: 110px; 
+    height: 110px;
+    z-index: 2;
+}
+
+/* Header Content (Text and Icon) */
+.header-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    height: 140px;
+    padding: 0 24px;
+    gap: 16px;
+    width: 100%;
+}
+
+.icon-header svg {
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+}
+
+.header-text {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: left;
+    max-width: 180px; 
+}
+
+.blog-main-container {
+    padding: 60px 80px; 
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.main-heading {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    text-align: left;
+    margin-left: 40px; 
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 50px; 
+    justify-content: start;
+    width: 80%;
+    padding: 0; 
+    margin: 40px;
+}
+
+/* Ensure white text for better contrast on vibrant backgrounds */
+.bg-chrome-light .header-text, 
+.bg-ai-light .header-text, 
+.bg-lighthouse-light .header-text {
+    color: #fff; 
+    -webkit-text-fill-color: #fff;
+}
+
+.header-content.row-reverse .header-text { text-align: right; }
+.header-content.row { flex-direction: row; }
+.header-content.row-reverse { flex-direction: row-reverse; justify-content: flex-end; }
+
+/* Card Content */
+.card-content { padding: 24px; }
+.card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; color: #2c3e50; }
+.card-desc { font-size: 0.95rem; color: #617283; margin-bottom: 16px; line-height: 1.5; }
+.card-tags { margin-bottom: 20px; }
+.card-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+/* Tag Colors */
+.tag-0 { background: #fee2e2; color: #dc2626; }
+.tag-1 { background: #dcfce7; color: #16a34a; }
+.tag-2 { background: #eff6ff; color: #2563eb; }
+.tag-3 { background: #f3e5f5; color: #a855f7; }
+
+/* Footer */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #777;
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+}
+.author { font-weight: 600; color: #374151; }
+.date { color: #9ca3af; }
+
+/* Media Query */
+@media (max-width: 768px) {
+    .main-heading,
+    .blog-grid { margin-left: 0; padding-left: 0; }
+    .blog-main-container { padding: 40px 20px; }
+}

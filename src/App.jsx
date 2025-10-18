@@ -57,6 +57,7 @@ import PatientComponent from "./components/PatientComponent";
 import MainTestimonialsSection from "./components/MainTestimonialsSection";
 import AIVideoTool from "./components/AIVideoTool";
 import AITool from "./components/AITool";
+import BlogPage from "./components/BlogPage";
 
 function App() {
 const [currentUser, setCurrentUser] = useState(null);
@@ -74,7 +75,10 @@ const [currentUser, setCurrentUser] = useState(null);
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
-                <AITool/>
+
+        <BlogPage />
+
+                {/* <AITool/> */}
 
         <AIVideoTool/>
 

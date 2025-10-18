@@ -154,10 +154,10 @@
   word-wrap: break-word;
 }
 
-.script-input-div:focus {
+/* .script-input-div:focus {
   border-color: #4a80f0;
   box-shadow: 0 0 0 2px rgba(74, 128, 240, 0.5);
-}
+} */
 
 /* ✅ Show placeholder only when empty */
 .script-input-div:empty::before {

@@ -1,130 +1,140 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Base Card Styling */
+/* --- BASE CARD STYLING --- */
 .blog-card {
-    background: #fff;
-    border-radius: 0;
-    width: 100%;
-    max-width: none;
-    overflow: hidden;
-    box-shadow: none;
-    margin: 0 !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
+  background: #fff;
+  border-radius: 0;
+  width: 100%;
+  max-width: none;
+  overflow: hidden;
+  box-shadow: none;
+  margin: 0 !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 .blog-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
-/* Header Background & Gradient Circle */
+/* --- HEADER BACKGROUND & CIRCLE --- */
 .card-header-bg {
-    position: relative;
-    height: 180px;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 24px 24px 0 0;
+  position: relative;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 24px 24px 0 0;
 }
 
-/* --- Static Header Background Colors (Vibrant BGY) --- */
+/* Vibrant header background colors */
 .bg-chrome-light { background: #1565C0; }
 .bg-ai-light { background: #4CAF50; }
 .bg-lighthouse-light { background: #FFC107; }
 
-/* Circle */
+/* Circle (Default position) */
 .circle-bg {
-    position: absolute;
-    top: 50%;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    z-index: 1;
-    transform: translateY(-50%);
+  position: absolute;
+  top: 50%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  z-index: 1;
+  transform: translateY(-50%);
 }
-
-/* AI Card Specific Layout Fixes */
-.bg-ai-light.card-header-bg {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    padding: 0 24px;
-}
-.bg-ai-light .circle-bg {
-    position: relative; 
-    width: 160px !important; 
-    height: 160px !important;
-    opacity: 0.95;
-    transform: none; 
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    flex-shrink: 0; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.bg-ai-light .header-content {
-    flex: 1; 
-    justify-content: flex-start !important; 
-    text-align: left !important;
-}
-
 .card-header-bg.align-left .circle-bg { left: -60px; }
 .card-header-bg.align-right .circle-bg { right: -60px; }
 
-/* Icon inside the circle */
-.icon-inside-circle svg {
-    width: 110px; 
-    height: 110px;
-    z-index: 2;
+/* --- AI CARD SPECIFIC FIXES --- */
+.bg-ai-light.card-header-bg {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: auto;
+  min-height: 180px;
 }
 
-/* Header Content */
-.header-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    height: 140px;
-    padding: 0 24px;
-    gap: 16px;
-    width: 100%;
+.bg-ai-light .header-content {
+  flex-wrap: wrap; /* Allow text to wrap */
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.bg-ai-light .header-text {
+  flex: 1;
+  max-width: none;
+  word-wrap: break-word;
+  white-space: normal;
+  color: #fff !important;
+  text-align: left !important;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.bg-ai-light .circle-bg {
+  flex-shrink: 0;
+  position: relative;
+  width: 140px !important;
+  height: 140px !important;
+  opacity: 0.95;
+}
+
+/* --- ICONS --- */
+.icon-inside-circle svg {
+  width: 110px;
+  height: 110px;
+  z-index: 2;
 }
 .icon-header svg {
-    width: 110px;
-    height: 110px;
-    flex-shrink: 0;
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+/* --- HEADER CONTENT GENERAL --- */
+.header-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 140px;
+  padding: 0 24px;
+  gap: 16px;
+  width: 100%;
 }
 .header-text {
-    font-size: 1.35rem;
-    font-weight: 700;
-    line-height: 1.3;
-    text-align: left;
-    max-width: 180px; 
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  max-width: 180px;
 }
 
+/* --- MAIN PAGE --- */
 .blog-main-container {
-    padding: 60px 80px; 
-    width: 100%;
-    box-sizing: border-box;
+  padding: 60px 80px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .main-heading {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 40px;
-    text-align: left;
-    margin-left: 40px; 
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 40px;
+  text-align: left;
+  margin-left: 40px;
 }
 
-/* Carousel wrapper */
+/* --- CAROUSEL --- */
 .carousel-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
-
-/* Carousel scrollable container */
 .carousel {
   display: flex;
   gap: 20px;
@@ -138,7 +148,7 @@
 .carousel::-webkit-scrollbar { display: none; }
 .carousel { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Navigation buttons */
+/* Navigation Buttons */
 .carousel-btn {
   position: absolute;
   top: 50%;
@@ -157,69 +167,204 @@
 .carousel-btn.left { left: -20px; }
 .carousel-btn.right { right: -20px; }
 
-/* Each card width: 3.5 on desktop, 1 on mobile */
+/* --- RESPONSIVE CARD WIDTHS --- */
 .carousel .blog-card {
   flex: 0 0 calc((100% / 3.5) - 16px);
   min-width: 220px;
 }
-
-/* Tablet: ~2 cards */
 @media (max-width: 1024px) {
-  .carousel .blog-card {
-    flex: 0 0 calc((100% / 2.2) - 16px);
-  }
+  .carousel .blog-card { flex: 0 0 calc((100% / 2.2) - 16px); }
 }
-
-/* Mobile: 1 card */
 @media (max-width: 768px) {
-  .carousel .blog-card {
-    flex: 0 0 90%;
-  }
+  .carousel .blog-card { flex: 0 0 90%; }
   .carousel-wrapper { padding: 0 10px; }
   .carousel-btn.left { left: 0; }
   .carousel-btn.right { right: 0; }
 }
 
-/* Card Content */
+/* --- CARD CONTENT --- */
 .card-content { padding: 24px; }
 .card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; color: #2c3e50; }
 .card-desc { font-size: 0.95rem; color: #617283; margin-bottom: 16px; line-height: 1.5; }
 .card-tags { margin-bottom: 20px; }
 .card-tag {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 9999px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    margin-right: 8px;
-    margin-bottom: 8px;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
-/* Footer */
+
+/* --- FOOTER --- */
 .card-footer {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #777;
-    border-top: 1px solid #eee;
-    padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #777;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
 }
 .author { font-weight: 600; color: #374151; }
 .date { color: #9ca3af; }
 
-/* Text contrast for vibrant backgrounds */
-.bg-chrome-light .header-text, 
-.bg-ai-light .header-text, 
+/* --- TEXT CONTRAST FOR HEADERS --- */
+.bg-chrome-light .header-text,
+.bg-ai-light .header-text,
 .bg-lighthouse-light .header-text {
-    color: #fff; 
-    -webkit-text-fill-color: #fff;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
 }
 
+/* --- FLEX DIRECTION OPTIONS --- */
 .header-content.row-reverse .header-text { text-align: right; }
 .header-content.row { flex-direction: row; }
 .header-content.row-reverse { flex-direction: row-reverse; justify-content: flex-end; }
 
-/* Media Query */
-@media (max-width: 768px) {
-    .main-heading { margin-left: 0; padding-left: 0; }
-    .blog-main-container { padding: 40px 20px; }
+
+/* --- Force perfect center for circle in the non-texted area of the 2nd card --- */
+.blog-card:nth-child(2) .card-header-bg {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+/* --- Prevent text from entering circle area in the 2nd card --- */
+.blog-card:nth-child(2) .card-header-bg.align-right .header-text {
+  max-width: 50%; /* keep text on left half */
+}
+
+.blog-card:nth-child(2) .card-header-bg.align-left .header-text {
+  max-width: 50%; /* keep text on right half */
+  margin-left: auto; /* push it toward the edge if needed */
+}
+
+
+
+/* For text on the LEFT, circle on the RIGHT */
+.blog-card:nth-child(2) .card-header-bg.align-right .circle-bg {
+  position: absolute;
+  top: 50%;
+  right: calc(25% - 70px); /* Adjust horizontally */
+  transform: translateY(-50%);
+}
+
+/* For text on the RIGHT, circle on the LEFT */
+.blog-card:nth-child(2) .card-header-bg.align-left .circle-bg {
+  position: absolute;
+  top: 50%;
+  left: calc(25% - 70px); /* Adjust horizontally */
+  transform: translateY(-50%);
+}
+
+/* --- Perfectly center the icon inside the circle --- */
+.blog-card:nth-child(2) .icon-inside-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2; /* stay above the background circle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 140px;  /* same as circle size */
+  height: 140px; /* same as circle size */
+  pointer-events: none; /* prevent accidental clicks */
+}
+
+.blog-card:nth-child(2) .icon-inside-circle svg {
+  width: 110px;
+  height: 110px;
+}
+
+/* --- General Circle Centering for AI Cards --- */
+.blog-card.ai .card-header-bg {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Circle background stays centered in the blank half */
+.blog-card.ai .circle-bg {
+  width: 160px !important;  /* PC circle size */
+  height: 160px !important;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+
+/* If AI card’s text is on left → circle goes right half */
+.blog-card.ai .card-header-bg.align-right .circle-bg {
+  right: 10%;
+  left: auto;
+}
+
+/* If AI card’s text is on right → circle goes left half */
+.blog-card.ai .card-header-bg.align-left .circle-bg {
+  left: 10%;
+  right: auto;
+}
+
+/* Center the icon inside the circle */
+/* --- Perfectly center the SVG icon inside AI circle --- */
+.blog-card.ai .icon-inside-circle {
+  width: 100px !important;   /* PC icon size */
+  height: 100px !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.blog-card.ai .icon-inside-circle svg {
+  width: 100px !important;
+  height: 100px !important;
+}
+
+
+/* Make sure text doesn’t overlap with circle */
+.blog-card.ai .header-text {
+  max-width: 50%;
+  position: relative;
+  z-index: 2;
+}
+
+
+/* --- RESPONSIVE LAYOUT --- */
+/* --- RESPONSIVE LAYOUT --- */
+@media (max-width: 768px) {
+  .main-heading { 
+    margin-left: 0; 
+    padding-left: 0; 
+  }
+  .blog-main-container { 
+    padding: 40px 20px; 
+  }
+
+  /* 🔹 Smaller circle for mobile */
+   .blog-card.ai .circle-bg {
+    width: 120px !important;
+    height: 120px !important;
+  }
+  .blog-card.ai .icon-inside-circle {
+    width: 90px !important;
+    height: 90px !important;
+  }
+  .blog-card.ai .icon-inside-circle svg {
+    width: 90px !important;
+    height: 90px !important;
+  }
+}
+

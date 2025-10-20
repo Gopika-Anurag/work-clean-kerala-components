@@ -2,15 +2,23 @@ import React, { useRef } from "react";
 import { blogData, categoryMap } from "../data/blogData";
 import "../styles/BlogPage.css";
 
-const BlogCard = ({ post, cardType, forceTextLeft }) => {
+const BlogCard = ({ post, cardType, index, forceTextLeft }) => {
   let bgClass = "";
   if (cardType === "chrome") bgClass = "bg-chrome-light";
   else if (cardType === "ai") bgClass = "bg-ai-light";
   else if (cardType === "lighthouse") bgClass = "bg-lighthouse-light";
 
+  // --- Alignment Logic ---
   let headerDirection = "row";
   let circleAlignmentClass = "align-left";
   let isAI = false;
+
+  const alignClass =
+    post.cardType === "ai"
+      ? "align-right" // All AI cards same side
+      : index % 2 === 0
+      ? "align-left"
+      : "align-right";
 
   if (forceTextLeft) {
     headerDirection = "row";
@@ -18,7 +26,7 @@ const BlogCard = ({ post, cardType, forceTextLeft }) => {
     isAI = true;
   } else if (cardType === "ai") {
     headerDirection = "row";
-    circleAlignmentClass = "align-right";
+    circleAlignmentClass = alignClass; // now uses correct logic
     isAI = true;
   }
 
@@ -60,13 +68,17 @@ const BlogCard = ({ post, cardType, forceTextLeft }) => {
         <h3 className="card-title">{post.title}</h3>
         <p className="card-desc">{post.description}</p>
         <div className="card-tags">
-          {allBadges.map((badgeName, index) => {
-            const badgeStyle = categoryMap[badgeName] || { color: "#ccc", textColor: "#333" };
+          {allBadges.map((badgeName, i) => {
+            const badgeStyle =
+              categoryMap[badgeName] || { color: "#ccc", textColor: "#333" };
             return (
               <span
-                key={index}
+                key={i}
                 className="card-tag"
-                style={{ backgroundColor: badgeStyle.color, color: badgeStyle.textColor }}
+                style={{
+                  backgroundColor: badgeStyle.color,
+                  color: badgeStyle.textColor,
+                }}
               >
                 {badgeName}
               </span>
@@ -108,6 +120,7 @@ const BlogPage = () => {
               key={post.id}
               post={post}
               cardType={post.cardType}
+              index={index} // ✅ pass index here
               forceTextLeft={index === 1}
             />
           ))}

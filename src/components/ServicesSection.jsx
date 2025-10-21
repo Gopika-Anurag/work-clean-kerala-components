@@ -112,6 +112,17 @@ const ServicesCarousel = () => {
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
+  // New function for Mouse Wheel/Scroll
+  const handleWheelScroll = (e) => {
+    if (carouselRef.current) {
+      // Prevent vertical page scrolling when scrolling over the carousel
+      e.preventDefault();
+      // Scroll horizontally based on the deltaY (vertical scroll) of the mouse wheel
+      // You might need to adjust the multiplier (e.g., 2 or 3) for comfortable speed
+      carouselRef.current.scrollLeft += e.deltaY * 2; 
+    }
+  };
+
   // Manual arrow button control
   const scrollLeftFn = () => {
     carouselRef.current.scrollBy({ left: -400, behavior: "smooth" });
@@ -154,6 +165,7 @@ const ServicesCarousel = () => {
         onMouseMove={duringDrag}
         onMouseUp={stopDrag}
         onMouseLeave={stopDrag}
+        onWheel={handleWheelScroll} 
       >
         {coreServicesData.map((service, index) => (
           <ServiceCard key={index} {...service} />

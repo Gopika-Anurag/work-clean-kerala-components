@@ -112,16 +112,40 @@ const ServicesCarousel = () => {
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
-  // New function for Mouse Wheel/Scroll
-  const handleWheelScroll = (e) => {
-    if (carouselRef.current) {
-      // Prevent vertical page scrolling when scrolling over the carousel
-      e.preventDefault();
-      // Scroll horizontally based on the deltaY (vertical scroll) of the mouse wheel
-      // You might need to adjust the multiplier (e.g., 2 or 3) for comfortable speed
-      carouselRef.current.scrollLeft += e.deltaY * 2; 
+  // Inside ServicesCarousel component
+useEffect(() => {
+  const carousel = carouselRef.current;
+  if (!carousel) return;
+
+  const handleWheel = (e) => {
+    const delta = e.deltaY;
+    const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+    const atStart = carousel.scrollLeft <= 0;
+    const atEnd = carousel.scrollLeft >= maxScrollLeft;
+
+    // If we can scroll horizontally, do that first
+    if (
+      (delta > 0 && !atEnd) || // scrolling right
+      (delta < 0 && !atStart)  // scrolling left
+    ) {
+      e.preventDefault(); // block vertical page scroll while inside
+      carousel.scrollBy({
+        left: delta * 3, // adjust horizontal scroll speed
+        behavior: "smooth",
+      });
     }
+    // else — at start or end — do NOT preventDefault → page scrolls normally
   };
+
+  carousel.addEventListener("wheel", handleWheel, { passive: false });
+
+  return () => {
+    carousel.removeEventListener("wheel", handleWheel);
+  };
+}, []);
+
+
+
 
   // Manual arrow button control
   const scrollLeftFn = () => {
@@ -165,7 +189,6 @@ const ServicesCarousel = () => {
         onMouseMove={duringDrag}
         onMouseUp={stopDrag}
         onMouseLeave={stopDrag}
-        onWheel={handleWheelScroll} 
       >
         {coreServicesData.map((service, index) => (
           <ServiceCard key={index} {...service} />

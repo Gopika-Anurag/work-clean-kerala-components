@@ -1,0 +1,66 @@
+/* ServicesCarousel.css */
+
+/* Hide scrollbar while keeping scroll functionality */
+.services-carousel {
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.services-carousel::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+.carousel-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  cursor: grab;
+}
+
+/* Hide scrollbar but keep scroll */
+.carousel-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.carousel-container {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.services-carousel-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 1.5rem;
+  scroll-behavior: smooth;
+  cursor: grab;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.services-carousel-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.services-carousel-container {
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.service-card .read-more {
+  width: 100%;              /* full card width */
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 13px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: block;
+  box-sizing: border-box;
+}
+
+.service-card .read-more:hover {
+  background: #fff;
+  color: #000;
+}

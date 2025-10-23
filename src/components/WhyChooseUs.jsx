@@ -204,41 +204,43 @@ const WhyChooseUs = () => {
           </button>
 
           {/* Cards */}
-          <div
-            ref={carouselRef}
-            className="
-              flex overflow-x-auto scroll-smooth scrollbar-hide 
-              space-x-4 sm:space-x-10 
-              py-6 px-[calc(50%-150px)] sm:px-16 
-              cursor-grab select-none
-            "
-          >
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className={`flex-shrink-0 w-[300px] relative cursor-pointer ${
-                  index === 0 ? "ml-2 sm:ml-0" : ""
-                } ${index === features.length - 1 ? "mr-2 sm:mr-0" : ""}`}
-                onClick={() => {
-                  setCurrentIndex(index);
-                  if (carouselRef.current) {
-                    const cardWidth =
-                      carouselRef.current.children[0].offsetWidth + 16;
-                    const containerWidth = carouselRef.current.offsetWidth;
-                    const scrollLeft =
-                      cardWidth * index -
-                      (containerWidth / 2 - cardWidth / 2);
-                    carouselRef.current.scrollTo({
-                      left: scrollLeft,
-                      behavior: "smooth",
-                    });
-                  }
-                }}
-              >
-                <Card item={feature} isActive={index === currentIndex} />
-              </div>
-            ))}
-          </div>
+<div
+  ref={carouselRef}
+  className="
+    flex overflow-x-auto scroll-smooth scrollbar-hide
+    space-x-6 sm:space-x-10
+    py-6 px-4 sm:px-16 
+    cursor-grab select-none
+    snap-x snap-mandatory
+  "
+>
+  {features.map((feature, index) => (
+    <div
+      key={index}
+      className={`
+        flex-shrink-0 w-[300px] relative cursor-pointer snap-center
+        ${index === 0 ? "ml-[calc(50%-150px)] sm:ml-0" : ""}
+        ${index === features.length - 1 ? "mr-[calc(50%-150px)] sm:mr-0" : ""}
+      `}
+      onClick={() => {
+        setCurrentIndex(index);
+        if (carouselRef.current) {
+          const cardWidth = carouselRef.current.children[0].offsetWidth + 24;
+          const containerWidth = carouselRef.current.offsetWidth;
+          const scrollLeft =
+            cardWidth * index - (containerWidth / 2 - cardWidth / 2);
+          carouselRef.current.scrollTo({
+            left: scrollLeft,
+            behavior: "smooth",
+          });
+        }
+      }}
+    >
+      <Card item={feature} isActive={index === currentIndex} />
+    </div>
+  ))}
+</div>
+
         </div>
       </div>
     </div>

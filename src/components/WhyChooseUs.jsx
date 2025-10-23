@@ -208,8 +208,8 @@ const WhyChooseUs = () => {
   ref={carouselRef}
   className="
     flex overflow-x-auto scroll-smooth scrollbar-hide
-    space-x-6 sm:space-x-10
-    py-6 px-4 sm:px-16 
+    space-x-8 sm:space-x-10
+    py-6 px-4 sm:px-16
     cursor-grab select-none
     snap-x snap-mandatory
   "
@@ -219,13 +219,13 @@ const WhyChooseUs = () => {
       key={index}
       className={`
         flex-shrink-0 w-[300px] relative cursor-pointer snap-center
-        ${index === 0 ? "ml-[calc(50%-150px)] sm:ml-0" : ""}
-        ${index === features.length - 1 ? "mr-[calc(50%-150px)] sm:mr-0" : ""}
+        ${index === 0 ? "ml-[calc(50%-155px)] sm:ml-0" : ""}
+        ${index === features.length - 1 ? "mr-[calc(50%-155px)] sm:mr-0" : ""}
       `}
       onClick={() => {
         setCurrentIndex(index);
         if (carouselRef.current) {
-          const cardWidth = carouselRef.current.children[0].offsetWidth + 24;
+          const cardWidth = carouselRef.current.children[0].offsetWidth + 32; // slightly more gap
           const containerWidth = carouselRef.current.offsetWidth;
           const scrollLeft =
             cardWidth * index - (containerWidth / 2 - cardWidth / 2);
@@ -240,7 +240,6 @@ const WhyChooseUs = () => {
     </div>
   ))}
 </div>
-
         </div>
       </div>
     </div>

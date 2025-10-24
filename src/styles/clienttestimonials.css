@@ -1,0 +1,28 @@
+@keyframes slideGradient {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.gradient-slide-animated {
+  position: absolute;
+  bottom: 210px; /* default desktop */
+  left: 0;
+  width: 300%; /* wider than container for smooth movement */
+  height: 180px; /* default desktop */
+  pointer-events: none;
+  z-index: 30;
+  border-radius: 1rem;
+  animation: slideGradient 8s linear infinite;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .gradient-slide-animated {
+    bottom: 180px; /* higher on mobile */
+    height: 150px; /* shorter on mobile */
+  }
+}

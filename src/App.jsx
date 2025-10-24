@@ -60,6 +60,7 @@ import AITool from "./components/AITool";
 import BlogPage from "./components/BlogPage";
 import ServicesSection from "./components/ServicesSection";
 import WhyChooseUs from "./components/WhyChooseUs";
+import ClientTestimonials from "./components/ClientTestimonials";
 
 function App() {
 const [currentUser, setCurrentUser] = useState(null);
@@ -77,6 +78,8 @@ const [currentUser, setCurrentUser] = useState(null);
     
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="w-full">
+
+        <ClientTestimonials />
 
               <WhyChooseUs />
 

@@ -1,16 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { clientTestimonials } from "../data/clientTestimonialsData";
-import '../styles/clienttestimonials.css'
+import "../styles/clienttestimonials.css";
 
-{/* --- Global Style for Keyframes --- */}
-
-// Reusable Card component
 const ClientTestimonialCard = ({ logoText, logoBg, quote, clientName, company }) => (
-
-    
   <div
     className="
+      relative group overflow-hidden
       p-6 md:p-10
       bg-purple-900/70 border border-purple-800/50
       rounded-xl shadow-2xl transition duration-300
@@ -20,42 +16,52 @@ const ClientTestimonialCard = ({ logoText, logoBg, quote, clientName, company })
       h-[420px]
     "
   >
-    {/* Circular Logo */}
-    <div
-      className={`
-        w-20 h-20 rounded-full ${logoBg}
-        flex items-center justify-center text-white text-[9px] font-semibold text-center leading-tight
-        shadow-lg ring-4 ring-purple-700/50
-      `}
-    >
-      <span className="p-1">{logoText.toUpperCase()}</span>
-    </div>
+    {/* 🌈 Animated Gradient Overlay — FULL HEIGHT */}
+    <span
+      className="
+        absolute top-0 left-0 w-full h-full 
+        rounded-xl animated-gradient
+        bg-gradient-to-br from-blue-400/40 via-pink-500/40 to-purple-600/40
+        opacity-0 group-hover:opacity-100
+        transition-opacity duration-500 ease-out
+        pointer-events-none
+        z-0
+      "
+    ></span>
 
-    {/* Quote */}
-    <p className="text-gray-200 text-base leading-relaxed grow min-h-[120px] lg:min-h-[140px]">
-      {quote}
-    </p>
+    {/* 🧱 Foreground Content */}
+    <div className="relative z-10 flex flex-col space-y-6">
+      <div
+        className={`w-20 h-20 rounded-full ${logoBg}
+          flex items-center justify-center text-white text-[9px] font-semibold text-center leading-tight
+          shadow-lg ring-4 ring-purple-700/50`}
+      >
+        <span className="p-1">{logoText.toUpperCase()}</span>
+      </div>
 
-    {/* Client Info */}
-    <div>
-      <p className="text-fuchsia-400 font-semibold text-lg mb-1">{clientName}</p>
-      <p className="text-fuchsia-400 text-sm font-medium hover:text-fuchsia-300 transition cursor-pointer">
-        @{company}
+      <p className="text-gray-200 text-base leading-relaxed grow min-h-[120px] lg:min-h-[140px]">
+        {quote}
       </p>
+
+      <div>
+        <p className="text-fuchsia-400 font-semibold text-lg mb-1">{clientName}</p>
+        <p className="text-fuchsia-400 text-sm font-medium hover:text-fuchsia-300 transition cursor-pointer">
+          @{company}
+        </p>
+      </div>
     </div>
   </div>
 );
 
-// Main Carousel Component
+
 const ClientTestimonials = () => {
   const carouselRef = useRef(null);
-  const [scrollIndex, setScrollIndex] = useState(0);
 
   const scroll = (direction) => {
     const container = carouselRef.current;
     if (!container) return;
     const cardWidth = container.firstChild?.offsetWidth || 380;
-    const gap = 24; // Tailwind gap
+    const gap = 24;
     const scrollAmount = cardWidth + gap;
 
     container.scrollBy({
@@ -64,21 +70,26 @@ const ClientTestimonials = () => {
     });
   };
 
-  
-
-  // Mouse drag support
+  // 🖱️ Click & Drag Scroll
   useEffect(() => {
     const el = carouselRef.current;
     if (!el) return;
+
     let isDown = false;
     let startX, scrollLeft;
 
     const startDrag = (e) => {
       isDown = true;
+      el.classList.add("dragging");
       startX = e.pageX - el.offsetLeft;
       scrollLeft = el.scrollLeft;
     };
-    const stopDrag = () => (isDown = false);
+
+    const stopDrag = () => {
+      isDown = false;
+      el.classList.remove("dragging");
+    };
+
     const moveDrag = (e) => {
       if (!isDown) return;
       e.preventDefault();
@@ -91,15 +102,22 @@ const ClientTestimonials = () => {
     el.addEventListener("mouseleave", stopDrag);
     el.addEventListener("mouseup", stopDrag);
     el.addEventListener("mousemove", moveDrag);
+
+    const preventSelection = (e) => {
+      if (isDown) e.preventDefault();
+    };
+    document.addEventListener("selectstart", preventSelection);
+
     return () => {
       el.removeEventListener("mousedown", startDrag);
       el.removeEventListener("mouseleave", stopDrag);
       el.removeEventListener("mouseup", stopDrag);
       el.removeEventListener("mousemove", moveDrag);
+      document.removeEventListener("selectstart", preventSelection);
     };
   }, []);
 
-  // Keyboard navigation
+  // ⌨️ Keyboard Navigation
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === "ArrowRight") scroll("right");
@@ -109,9 +127,51 @@ const ClientTestimonials = () => {
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
-  
+  // 🧭 Mouse Wheel Scroll
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+
+    let touchpadDetected = false;
+    let lastTime = 0;
+
+    const handleWheel = (e) => {
+      const now = Date.now();
+      const delta = Math.abs(e.deltaX) + Math.abs(e.deltaY);
+      if (delta < 10) return;
+      if (now - lastTime < 50 && delta < 100) touchpadDetected = true;
+      lastTime = now;
+
+      const maxScrollLeft = el.scrollWidth - el.clientWidth;
+      const direction = e.deltaY > 0 || e.deltaX > 0 ? "right" : "left";
+      const canScrollLeft = el.scrollLeft > 0;
+      const canScrollRight = el.scrollLeft < maxScrollLeft;
+      const canScroll =
+        (direction === "left" && canScrollLeft) ||
+        (direction === "right" && canScrollRight);
+
+      if (canScroll) {
+        e.preventDefault();
+        if (touchpadDetected) {
+          el.scrollLeft += e.deltaY * 1.5 + e.deltaX * 1.5;
+        } else {
+          const cardWidth = el.firstChild?.offsetWidth || 380;
+          const gap = 24;
+          const scrollAmount = cardWidth + gap;
+          el.scrollBy({
+            left: direction === "right" ? scrollAmount : -scrollAmount,
+            behavior: "smooth",
+          });
+        }
+      }
+    };
+
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
+  }, []);
 
   return (
+    
     <div
       className="
         min-h-screen
@@ -123,12 +183,9 @@ const ClientTestimonials = () => {
         flex flex-col items-center justify-center
       "
     >
-      {/* Violet transparent glow band */}
-{/* Violet transparent glow band */}
-<div className="gradient-slide-animated bg-gradient-to-t from-transparent via-[#5e1af9]/40 to-transparent"></div>
+      {/* 🚫 Removed Gradient Band */}
 
-
-      {/* Arrows */}
+      {/* Navigation Arrows */}
       <div className="flex justify-between w-full max-w-7xl mb-6 relative z-20">
         <button
           onClick={() => scroll("left")}
@@ -163,4 +220,4 @@ const ClientTestimonials = () => {
   );
 };
 
-export default ClientTestimonials;    
+export default ClientTestimonials;

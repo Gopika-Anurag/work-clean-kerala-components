@@ -1,28 +1,24 @@
-@keyframes slideGradient {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+/* --- Neon Gradient Animation --- */
+
+/* Keyframes for diagonal gradient movement */
+@keyframes gradient-move {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
 }
 
-.gradient-slide-animated {
-  position: absolute;
-  bottom: 210px; /* default desktop */
-  left: 0;
-  width: 300%; /* wider than container for smooth movement */
-  height: 180px; /* default desktop */
-  pointer-events: none;
-  z-index: 30;
-  border-radius: 1rem;
-  animation: slideGradient 8s linear infinite;
+/* Custom class to define and pause the animation */
+.animated-gradient {
+  animation-name: gradient-move;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+  animation-play-state: paused; /* Start paused */
+  background-size: 400% 400%; /* Needed for smooth diagonal motion */
 }
 
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  .gradient-slide-animated {
-    bottom: 180px; /* higher on mobile */
-    height: 150px; /* shorter on mobile */
-  }
+/* Play animation when the parent (.group) is hovered */
+.group:hover .animated-gradient {
+  animation-play-state: running;
 }

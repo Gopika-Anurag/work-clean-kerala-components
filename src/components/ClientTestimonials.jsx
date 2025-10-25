@@ -3,12 +3,14 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { clientTestimonials } from "../data/clientTestimonialsData";
 import "../styles/clienttestimonials.css";
 
+// 🌟 Card Component
 const ClientTestimonialCard = ({ logoText, logoBg, quote, clientName, company }) => (
   <div
     className="
       relative group overflow-hidden
       p-6 md:p-10
-      bg-purple-900/70 border border-purple-800/50
+      bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900
+      border border-purple-800/50
       rounded-xl shadow-2xl transition duration-300
       flex flex-col space-y-6
       hover:border-purple-600/80 hover:scale-[1.01]
@@ -16,11 +18,11 @@ const ClientTestimonialCard = ({ logoText, logoBg, quote, clientName, company })
       h-[420px]
     "
   >
-    {/* 🌈 Animated Gradient Overlay — FULL HEIGHT */}
+    {/* 🌈 Animated Overlay */}
     <span
       className="
-        absolute top-0 left-0 w-full h-full 
-        rounded-xl animated-gradient
+        absolute top-0 left-0 w-full h-full rounded-xl
+        animated-gradient
         bg-gradient-to-br from-blue-400/40 via-pink-500/40 to-purple-600/40
         opacity-0 group-hover:opacity-100
         transition-opacity duration-500 ease-out
@@ -29,7 +31,7 @@ const ClientTestimonialCard = ({ logoText, logoBg, quote, clientName, company })
       "
     ></span>
 
-    {/* 🧱 Foreground Content */}
+    {/* ✨ Foreground Content */}
     <div className="relative z-10 flex flex-col space-y-6">
       <div
         className={`w-20 h-20 rounded-full ${logoBg}
@@ -53,7 +55,34 @@ const ClientTestimonialCard = ({ logoText, logoBg, quote, clientName, company })
   </div>
 );
 
+// 🌌 Stars Background
+const StarsBackground = () => {
+  const stars = Array.from({ length: 50 }, (_, i) => ({
+    top: `${Math.random() * 100}%`,
+    left: `${Math.random() * 100}%`,
+    delay: `${Math.random() * 2}s`,
+    duration: `${1 + Math.random() * 2}s`,
+  }));
 
+  return (
+    <div className="stars-bg">
+      {stars.map((s, i) => (
+        <div
+          key={i}
+          className="star"
+          style={{
+            top: s.top,
+            left: s.left,
+            animationDelay: s.delay,
+            animationDuration: s.duration,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// 🌟 Main Carousel Component
 const ClientTestimonials = () => {
   const carouselRef = useRef(null);
 
@@ -70,7 +99,7 @@ const ClientTestimonials = () => {
     });
   };
 
-  // 🖱️ Click & Drag Scroll
+  // Click & Drag Scroll
   useEffect(() => {
     const el = carouselRef.current;
     if (!el) return;
@@ -117,7 +146,7 @@ const ClientTestimonials = () => {
     };
   }, []);
 
-  // ⌨️ Keyboard Navigation
+  // Keyboard Navigation
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === "ArrowRight") scroll("right");
@@ -127,7 +156,7 @@ const ClientTestimonials = () => {
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
-  // 🧭 Mouse Wheel Scroll
+  // Mouse Wheel Scroll
   useEffect(() => {
     const el = carouselRef.current;
     if (!el) return;
@@ -171,52 +200,43 @@ const ClientTestimonials = () => {
   }, []);
 
   return (
+<div className="h-screen w-full relative main-bg overflow-hidden flex flex-col">
+  <StarsBackground />
+
+  {/* Carousel + Navigation */}
+  <div className="flex flex-col h-full justify-center items-center relative z-20 px-4">
     
-    <div
-      className="
-        min-h-screen
-        bg-indigo-950
-        font-sans
-        relative
-        p-8 md:p-16
-        overflow-hidden
-        flex flex-col items-center justify-center
-      "
-    >
-      {/* 🚫 Removed Gradient Band */}
-
-      {/* Navigation Arrows */}
-      <div className="flex justify-between w-full max-w-7xl mb-6 relative z-20">
-        <button
-          onClick={() => scroll("left")}
-          className="p-3 bg-purple-800/50 rounded-full hover:bg-purple-700/70 transition"
-        >
-          <ChevronLeft className="text-white" />
-        </button>
-        <button
-          onClick={() => scroll("right")}
-          className="p-3 bg-purple-800/50 rounded-full hover:bg-purple-700/70 transition"
-        >
-          <ChevronRight className="text-white" />
-        </button>
-      </div>
-
-      {/* Carousel */}
-      <div
-        ref={carouselRef}
-        className="
-          flex gap-6 overflow-x-auto scroll-smooth 
-          max-w-7xl mx-auto pb-6 
-          no-scrollbar relative z-20
-        "
+    {/* Navigation Arrows */}
+    <div className="flex justify-between w-full max-w-7xl mb-6">
+      <button
+        onClick={() => scroll("left")}
+        className="p-3 bg-purple-800/50 rounded-full hover:bg-purple-700/70 transition"
       >
-        {clientTestimonials.map((t) => (
-          <div key={t.id}>
-            <ClientTestimonialCard {...t} />
-          </div>
-        ))}
-      </div>
+        <ChevronLeft className="text-white" />
+      </button>
+      <button
+        onClick={() => scroll("right")}
+        className="p-3 bg-purple-800/50 rounded-full hover:bg-purple-700/70 transition"
+      >
+        <ChevronRight className="text-white" />
+      </button>
     </div>
+
+    {/* Carousel */}
+    <div
+      ref={carouselRef}
+      className="flex gap-6 overflow-x-auto scroll-smooth max-w-7xl mx-auto pb-6 no-scrollbar pl-4 sm:pl-0"
+    >
+      {clientTestimonials.map((t) => (
+        <div key={t.id}>
+          <ClientTestimonialCard {...t} />
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
   );
 };
 

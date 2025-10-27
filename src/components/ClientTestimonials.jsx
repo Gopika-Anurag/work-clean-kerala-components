@@ -342,13 +342,20 @@ className="flex gap-6 overflow-x-auto scroll-smooth mx-auto pb-6 no-scrollbar pl
 onTouch={() => {
   setTouchedCard(index);
 
-  // Re-trigger class by forcing React to re-render on repeated taps
-  setTimeout(() => setTouchedCard(null), 1500);
+  // ✅ Force animation restart reliably on all mobile browsers
+  requestAnimationFrame(() => {
+    const el = document.querySelector(".touch-active .animated-gradient");
+    if (el) {
+      el.style.animation = "none";     // stop animation
+      el.offsetHeight;                 // force browser reflow (critical for Safari)
+      el.style.animation = "";         // remove inline style so CSS restarts animation
+    }
+  });
 
-  // ⚡ Force reflow to make sure animation restarts on iOS
-  const el = document.activeElement || document.body;
-  el.offsetHeight; // force reflow
+  // Reset touch effect after short delay
+  setTimeout(() => setTouchedCard(null), 2000);
 }}
+
 
     />
   </div>

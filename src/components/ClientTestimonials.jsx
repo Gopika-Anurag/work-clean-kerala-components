@@ -339,11 +339,17 @@ className="flex gap-6 overflow-x-auto scroll-smooth mx-auto pb-6 no-scrollbar pl
       isActive={currentIndex === index}
       isTouched={touchedCard === index}
       onClick={() => focusCard(index)}
-      onTouch={() => {
-        setTouchedCard(index);
-        // remove highlight after 2s or on next tap
-        setTimeout(() => setTouchedCard(null), 2000);
-      }}
+onTouch={() => {
+  setTouchedCard(index);
+
+  // Re-trigger class by forcing React to re-render on repeated taps
+  setTimeout(() => setTouchedCard(null), 1500);
+
+  // ⚡ Force reflow to make sure animation restarts on iOS
+  const el = document.activeElement || document.body;
+  el.offsetHeight; // force reflow
+}}
+
     />
   </div>
 ))}

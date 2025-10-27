@@ -127,13 +127,23 @@ html, body {
 }
 
 /* 📱 Ensure gradient always visible + animated on mobile */
+/* 📱 Mobile: Force gradient visible + animated on touch */
 @media (hover: none) and (pointer: coarse) {
+  .animated-gradient {
+    opacity: 0; /* default */
+    animation-play-state: paused;
+  }
 
+  /* Touch-active class from React — forces the effect */
+  .touch-active .animated-gradient {
+    opacity: 1 !important;
+    animation-play-state: running !important;
+    transition: opacity 0.3s ease-in-out;
+  }
 
-  /* 📱 Show gradient on touch */
-.touch-active .animated-gradient {
-  opacity: 1 !important;
-  animation-play-state: running !important;
+  /* Ensure animation starts immediately on mobile */
+  .animated-gradient {
+    will-change: background-position, opacity;
+  }
 }
 
-}

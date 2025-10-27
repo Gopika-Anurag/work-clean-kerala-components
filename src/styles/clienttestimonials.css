@@ -126,10 +126,14 @@ html, body {
   }
 }
 
-/* 📱 Mobile — overlay always animates */
+/* 📱 Ensure gradient always visible + animated on mobile */
 @media (hover: none) and (pointer: coarse) {
-  .animated-gradient {
-    opacity: 0.6;
-    animation-play-state: running;
-  }
+
+
+  /* 📱 Show gradient on touch */
+.touch-active .animated-gradient {
+  opacity: 1 !important;
+  animation-play-state: running !important;
+}
+
 }

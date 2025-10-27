@@ -12,9 +12,12 @@ const ClientTestimonialCard = ({
   company,
   isActive,
   onClick,
+  isTouched,
+  onTouch,
 }) => (
   <div
     onClick={onClick}
+    onTouchStart={onTouch}
     className={`
       relative group overflow-hidden cursor-pointer
       p-6 md:p-10
@@ -24,13 +27,12 @@ const ClientTestimonialCard = ({
       flex flex-col space-y-6
       min-w-[300px] sm:min-w-[350px] md:min-w-[380px]
       h-[420px]
-      ${
-        isActive
-          ? "scale-105 opacity-100 ring-2 ring-fuchsia-500/60"
-          : "scale-95 opacity-70 hover:scale-[1.01] hover:opacity-100"
-      }
+      ${isActive ? "scale-105 opacity-100 ring-2 ring-fuchsia-500/60"
+      : "scale-95 opacity-70 hover:scale-[1.01] hover:opacity-100"}
+      ${isTouched ? "touch-active" : ""}
     `}
   >
+
     {/* 🌈 Animated Overlay */}
     <span
       className="
@@ -101,6 +103,9 @@ const StarsBackground = () => {
 const ClientTestimonials = () => {
   const carouselRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchedCard, setTouchedCard] = useState(null);
+
+  
 
   // 🌠 Focus selected card (Unchanged)
   const focusCard = (index) => {
@@ -325,17 +330,24 @@ const ClientTestimonials = () => {
             ref={carouselRef}
             // Increased horizontal padding (px-5) to give space for the buttons to be visible next to the cards
             // The arrows are now on the sides, so the flow of the container no longer needs space between the arrows and the content.
-            className="flex gap-6 overflow-x-auto scroll-smooth mx-auto pb-6 no-scrollbar pl-5 sm:pl-0 pt-0"
+className="flex gap-6 overflow-x-auto scroll-smooth mx-auto pb-6 no-scrollbar pl-10 sm:pl-6 pt-8"
           >
             {clientTestimonials.map((t, index) => (
-              <div key={t.id}>
-                <ClientTestimonialCard
-                  {...t}
-                  isActive={currentIndex === index}
-                  onClick={() => focusCard(index)}
-                />
-              </div>
-            ))}
+  <div key={t.id}>
+    <ClientTestimonialCard
+      {...t}
+      isActive={currentIndex === index}
+      isTouched={touchedCard === index}
+      onClick={() => focusCard(index)}
+      onTouch={() => {
+        setTouchedCard(index);
+        // remove highlight after 2s or on next tap
+        setTimeout(() => setTouchedCard(null), 2000);
+      }}
+    />
+  </div>
+))}
+
           </div>
         </div>
         

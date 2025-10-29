@@ -150,11 +150,11 @@ const WhyChooseUs = () => {
     if (!carousel) return;
 
     const handleScroll = () => {
-      if (window.innerWidth > 768) return;
-
+const containerWidth = carousel.offsetWidth;
+if (containerWidth > 768) return;
       const scrollLeft = carousel.scrollLeft;
       const cardWidth = carousel.children[0].offsetWidth + 16;
-      const center = scrollLeft + carousel.offsetWidth / 2;
+const center = scrollLeft + containerWidth / 2;
 
       let closestIndex = 0;
       let closestDistance = Infinity;

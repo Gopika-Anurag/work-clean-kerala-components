@@ -8,12 +8,12 @@ const Card = ({ item, isActive }) => (
       ${isActive ? "scale-105 opacity-100" : "scale-95 opacity-60"}
       hover:scale-105 hover:opacity-100 bg-white`}
   >
-{/* Vertical Label */}
-<div className="absolute bottom-4 left-1.5 sm:left-0 transform -rotate-90 origin-bottom-left pointer-events-none">
-  <span className="text-lg sm:text-xl font-extrabold uppercase tracking-widest text-blue-800 drop-shadow-md whitespace-nowrap">
-    {item.label}
-  </span>
-</div>
+    {/* Vertical Label - USE left-2 for safe mobile positioning */}
+    <div className="absolute bottom-4 left-2 sm:left-0 transform -rotate-90 origin-bottom-left pointer-events-none">
+      <span className="text-lg sm:text-xl font-extrabold uppercase tracking-widest text-blue-800 drop-shadow-md whitespace-nowrap">
+        {item.label}
+      </span>
+    </div>
 
 
     {/* Image */}

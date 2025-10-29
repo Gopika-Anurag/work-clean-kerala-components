@@ -9,11 +9,14 @@ const Card = ({ item, isActive }) => (
       hover:scale-105 hover:opacity-100 bg-white`}
   >
     {/* Vertical Label - USE left-2 for safe mobile positioning */}
-    <div className="absolute bottom-4 left-2 sm:left-0 transform -rotate-90 origin-bottom-left pointer-events-none">
-      <span className="text-lg sm:text-xl font-extrabold uppercase tracking-widest text-blue-800 drop-shadow-md whitespace-nowrap">
-        {item.label}
-      </span>
-    </div>
+<div className="absolute bottom-4 left-2 sm:left-0 transform -rotate-90 origin-bottom-left pointer-events-none">
+  <span
+    className="inline-block text-lg sm:text-xl font-extrabold uppercase tracking-widest text-blue-800 drop-shadow-md whitespace-nowrap px-2 py-1 ml-1 mt-1"
+  >
+    {item.label}
+  </span>
+</div>
+
 
 
     {/* Image */}

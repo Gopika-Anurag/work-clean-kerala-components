@@ -27,8 +27,10 @@ const ClientTestimonialCard = ({
       flex flex-col space-y-6
       min-w-[300px] sm:min-w-[350px] md:min-w-[380px]
       h-[420px]
-      ${isActive ? "scale-105 opacity-100 ring-2 ring-fuchsia-500/60"
-      : "scale-95 opacity-70 hover:scale-[1.01] hover:opacity-100"}
+${isActive
+  ? "scale-105 opacity-100 ring-2 ring-fuchsia-500/60 active-card"
+  : "scale-95 opacity-70 hover:scale-[1.01] hover:opacity-100"}
+
       ${isTouched ? "touch-active" : ""}
     `}
   >

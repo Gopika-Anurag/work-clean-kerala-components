@@ -98,6 +98,13 @@ html, body {
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
 }
+
+/* 🌟 Always animate the first active card */
+.active-card .animated-gradient {
+  opacity: 1 !important;
+  animation: gradient-move 8s ease-in-out infinite !important;
+}
+
 /* 🖥️ Desktop hover behavior */
 @media (hover: hover) and (pointer: fine) {
   .group:hover .animated-gradient {

@@ -8,7 +8,7 @@ const Card = ({ item, isActive }) => (
       ${isActive ? "scale-105 opacity-100" : "scale-95 opacity-60"}
       hover:scale-105 hover:opacity-100 bg-white`}
   >
-    {/* Vertical Label */}
+    {/* Vertical Label - CHANGE HERE */}
     <div className="absolute bottom-4 left-0 transform -rotate-90 origin-bottom-left pointer-events-none">
       <span className="text-lg font-extrabold uppercase tracking-widest text-blue-800 drop-shadow-md whitespace-nowrap">
         {item.label}
@@ -209,7 +209,7 @@ const WhyChooseUs = () => {
   className="
     flex overflow-x-auto scroll-smooth scrollbar-hide
     space-x-8 sm:space-x-10
-    py-6 px-4 sm:px-16
+    py-6 px-10 sm:px-16 /* <--- CHANGED px-4 TO px-10 */
     cursor-grab select-none
     snap-x snap-mandatory
   "

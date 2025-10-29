@@ -353,7 +353,7 @@ onTouch={() => {
   });
 
   // Reset touch effect after short delay
-  setTimeout(() => setTouchedCard(null), 2000);
+  setTimeout(() => setTouchedCard(null), 1200);
 }}
 
 

@@ -244,21 +244,7 @@ const ClientTestimonials = () => {
     };
   }, []);
 
-  // 🎹 Keyboard Navigation
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "ArrowRight") {
-        const next = Math.min(currentIndex + 1, clientTestimonials.length - 1);
-        focusCard(next);
-      }
-      if (e.key === "ArrowLeft") {
-        const prev = Math.max(currentIndex - 1, 0);
-        focusCard(prev);
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [currentIndex]);
+
 
   // 🖱️ Mouse Wheel Scroll (auto focus)
   useEffect(() => {
@@ -267,21 +253,22 @@ const ClientTestimonials = () => {
 
     let lastTime = 0;
 
-    const handleWheel = (e) => {
-      const now = Date.now();
-      const delta = Math.abs(e.deltaX) + Math.abs(e.deltaY);
-      if (delta < 10) return;
-      // Removed touchpad check as it's not strictly necessary for the core logic
-      lastTime = now;
+const handleWheel = (e) => {
+  // 🧱 Stop the event from bubbling to other scrollable containers
+  e.stopPropagation();
+  e.preventDefault();
 
-      e.preventDefault();
-      const direction = e.deltaY > 0 || e.deltaX > 0 ? "right" : "left";
-      const newIndex =
-        direction === "right"
-          ? Math.min(currentIndex + 1, clientTestimonials.length - 1)
-          : Math.max(currentIndex - 1, 0);
-      focusCard(newIndex);
-    };
+  const delta = Math.abs(e.deltaX) + Math.abs(e.deltaY);
+  if (delta < 10) return;
+
+  const direction = e.deltaY > 0 || e.deltaX > 0 ? "right" : "left";
+  const newIndex =
+    direction === "right"
+      ? Math.min(currentIndex + 1, clientTestimonials.length - 1)
+      : Math.max(currentIndex - 1, 0);
+
+  focusCard(newIndex);
+};
 
     el.addEventListener("wheel", handleWheel, { passive: false });
     return () => el.removeEventListener("wheel", handleWheel);
@@ -330,9 +317,31 @@ const ClientTestimonials = () => {
           {/* Carousel */}
           <div
             ref={carouselRef}
-            // Increased horizontal padding (px-5) to give space for the buttons to be visible next to the cards
-            // The arrows are now on the sides, so the flow of the container no longer needs space between the arrows and the content.
-className="flex gap-6 overflow-x-auto scroll-smooth mx-auto pb-6 no-scrollbar pl-10 sm:pl-6 pt-8"
+tabIndex={0} // Makes the element focusable
+  onKeyDown={(e) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      const next = Math.min(currentIndex + 1, clientTestimonials.length - 1);
+      focusCard(next);
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      const prev = Math.max(currentIndex - 1, 0);
+      focusCard(prev);
+    }
+  }}
+  onMouseEnter={() => {
+    if (carouselRef.current) {
+      // ✅ FIX: Set focus but tell the browser NOT to scroll the page/viewport
+      carouselRef.current.focus({ preventScroll: true });
+    }
+  }}
+onMouseLeave={() => {
+    if (carouselRef.current) {
+      carouselRef.current.blur(); // ⬅️ Removes focus when the mouse leaves
+    }
+  }}
+className="flex gap-6 overflow-x-auto scroll-smooth mx-auto pb-6 no-scrollbar pl-10 sm:pl-6 pt-8 focus:outline-none"
           >
             {clientTestimonials.map((t, index) => (
   <div key={t.id}>

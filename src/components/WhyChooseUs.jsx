@@ -4,20 +4,16 @@ import { features } from "../data/whyChooseUsData";
 
 const Card = ({ item, isActive }) => (
   <div
-    className={`relative flex flex-col h-[530px] w-full shadow-2xl rounded-2xl overflow-visible transform transition-all duration-500 
+    className={`relative flex flex-col h-[530px] w-full shadow-2xl rounded-2xl overflow-visible transform transition-all duration-500 ml-5
       ${isActive ? "scale-105 opacity-100" : "scale-95 opacity-60"}
       hover:scale-105 hover:opacity-100 bg-white`}
   >
-    {/* Vertical Label - USE left-2 for safe mobile positioning */}
-<div className="absolute bottom-4 left-2 sm:left-0 transform -rotate-90 origin-bottom-left pointer-events-none">
-  <span
-    className="inline-block text-lg sm:text-xl font-extrabold uppercase tracking-widest text-blue-800 drop-shadow-md whitespace-nowrap px-2 py-1 ml-1 mt-1"
-  >
-    {item.label}
-  </span>
-</div>
-
-
+    {/* Vertical Label */}
+    <div className="absolute bottom-4 left-0 transform -rotate-90 origin-bottom-left pointer-events-none">
+      <span className="text-lg font-extrabold uppercase tracking-widest text-blue-800 drop-shadow-md whitespace-nowrap">
+        {item.label}
+      </span>
+    </div>
 
     {/* Image */}
     <div className="h-[70%] overflow-hidden relative rounded-t-2xl">
@@ -54,14 +50,22 @@ const WhyChooseUs = () => {
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
-  const scrollToIndex = (index) => {
-    if (!carouselRef.current) return;
-    const cardWidth = carouselRef.current.children[0].offsetWidth + 16;
-    carouselRef.current.scrollTo({
-      left: cardWidth * index,
-      behavior: "smooth",
-    });
-  };
+const scrollToIndex = (index) => {
+  if (!carouselRef.current) return;
+  
+  const slideElement = carouselRef.current.children[0];
+  if (!slideElement) return;
+
+  const slideWidth = slideElement.offsetWidth;
+  
+  const gap = 32; // Corresponds to Tailwind's space-x-8
+  const totalItemWidth = slideWidth + gap;
+
+  carouselRef.current.scrollTo({
+    left: totalItemWidth * index, // Use the correct calculated width
+    behavior: "smooth",
+  });
+};
 
   const nextSlide = () => {
     const nextIndex = Math.min(currentIndex + 1, totalItems - 1);
@@ -75,15 +79,7 @@ const WhyChooseUs = () => {
     scrollToIndex(prevIndex);
   };
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowRight") nextSlide();
-      if (e.key === "ArrowLeft") prevSlide();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex]);
+
 
   // Mouse wheel / trackpad scroll
   useEffect(() => {
@@ -153,11 +149,11 @@ const WhyChooseUs = () => {
     if (!carousel) return;
 
     const handleScroll = () => {
-const containerWidth = carousel.offsetWidth;
-if (containerWidth > 768) return;
+      if (window.innerWidth > 768) return;
+
       const scrollLeft = carousel.scrollLeft;
       const cardWidth = carousel.children[0].offsetWidth + 16;
-const center = scrollLeft + containerWidth / 2;
+      const center = scrollLeft + carousel.offsetWidth / 2;
 
       let closestIndex = 0;
       let closestDistance = Infinity;
@@ -210,12 +206,35 @@ const center = scrollLeft + containerWidth / 2;
           {/* Cards */}
 <div
   ref={carouselRef}
+  tabIndex={0} // Makes the element focusable
+  onKeyDown={(e) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault(); // Crucial to stop the default browser scroll
+      nextSlide();
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      prevSlide();
+    }
+  }}
+  onMouseEnter={() => {
+    if (carouselRef.current) {
+      // ✅ FIX: Set focus but tell the browser NOT to scroll the page/viewport
+      carouselRef.current.focus({ preventScroll: true }); 
+    }
+  }}
+onMouseLeave={() => {
+    if (carouselRef.current) {
+      carouselRef.current.blur(); // ⬅️ Removes focus when the mouse leaves
+    }
+  }}
   className="
     flex overflow-x-auto scroll-smooth scrollbar-hide
     space-x-8 sm:space-x-10
-    py-6 px-10 sm:px-16 /* <--- CHANGED px-4 TO px-10 */
+    py-6 px-4 sm:px-16
     cursor-grab select-none
     snap-x snap-mandatory
+    focus:outline-none
   "
 >
   {features.map((feature, index) => (
@@ -226,19 +245,31 @@ const center = scrollLeft + containerWidth / 2;
         ${index === 0 ? "ml-[calc(50%-155px)] sm:ml-0" : ""}
         ${index === features.length - 1 ? "mr-[calc(50%-155px)] sm:mr-0" : ""}
       `}
-      onClick={() => {
-        setCurrentIndex(index);
-        if (carouselRef.current) {
-          const cardWidth = carouselRef.current.children[0].offsetWidth + 32; // slightly more gap
-          const containerWidth = carouselRef.current.offsetWidth;
-          const scrollLeft =
-            cardWidth * index - (containerWidth / 2 - cardWidth / 2);
-          carouselRef.current.scrollTo({
-            left: scrollLeft,
-            behavior: "smooth",
-          });
-        }
-      }}
+// Inside the WhyChooseUs return statement, within features.map:
+
+onClick={() => {
+  setCurrentIndex(index);
+  if (carouselRef.current) {
+    
+    // Get the actual dimensions accurately
+    const slideElement = carouselRef.current.children[0];
+    const slideWidth = slideElement.offsetWidth; // 300px
+    const gap = 32; // Corresponds to space-x-8 (32px)
+    const totalItemWidth = slideWidth + gap;
+
+    const containerWidth = carouselRef.current.offsetWidth;
+    
+    // Calculate scroll position to center the card
+    // Target scroll = (Start of card) - (Space needed to push the card to center)
+    const scrollLeft =
+      totalItemWidth * index - (containerWidth / 2 - slideWidth / 2);
+      
+    carouselRef.current.scrollTo({
+      left: scrollLeft,
+      behavior: "smooth",
+    });
+  }
+}}
     >
       <Card item={feature} isActive={index === currentIndex} />
     </div>

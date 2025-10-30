@@ -241,7 +241,7 @@ onMouseLeave={() => {
     <div
       key={index}
       className={`
-        flex-shrink-0 w-[300px] relative cursor-pointer snap-center
+  flex-shrink-0 w-[270px] sm:w-[300px] relative cursor-pointer snap-center
         ${index === 0 ? "ml-[calc(50%-155px)] sm:ml-0" : ""}
         ${index === features.length - 1 ? "mr-[calc(50%-155px)] sm:mr-0" : ""}
       `}

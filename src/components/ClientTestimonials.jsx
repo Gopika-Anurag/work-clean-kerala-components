@@ -192,7 +192,21 @@ const ClientTestimonials = () => {
   };
 
   // Auto-focus, drag, keyboard, and wheel effect hooks (Unchanged)
-  useEffect(() => { focusCard(0); }, []);
+useEffect(() => {
+  // ✅ Only focus if the carousel is already visible in viewport
+  const el = carouselRef.current;
+  if (!el) return;
+
+  const rect = el.getBoundingClientRect();
+  const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+
+  if (isVisible) {
+    focusCard(0);
+  } else {
+    // Set initial index only, without scroll
+    setCurrentIndex(0);
+  }
+}, []);
   // ... (drag logic)
   // ... (keyboard logic)
   // ... (wheel logic)
